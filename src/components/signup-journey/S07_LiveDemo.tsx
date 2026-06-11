@@ -27,7 +27,7 @@ export default function S07_LiveDemo() {
                 <svg className="w-3 h-3 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <span className="font-mono text-[10px] text-white/60">dashboard.launchgrid.in</span>
+                <span className="font-mono text-xs text-white/60">dashboard.launchgrid.in</span>
               </div>
             </div>
 
@@ -51,9 +51,9 @@ export default function S07_LiveDemo() {
               <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
                   <span className="font-inter font-bold text-xs uppercase tracking-widest text-white/40">Recent Activity</span>
-                  <div className="flex items-center gap-2 bg-green-500/10 px-2 py-1 rounded">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="font-inter text-[10px] font-bold text-green-400 uppercase tracking-widest">Live</span>
+                  {/* Honest label: this is a product demo, not a live feed */}
+                  <div className="flex items-center gap-2 bg-white/5 px-2 py-1 rounded">
+                    <span className="font-inter text-xs font-bold text-white/50 uppercase tracking-widest">Demo</span>
                   </div>
                 </div>
                 <div className="flex flex-col">

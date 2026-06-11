@@ -134,6 +134,21 @@ export async function POST(req: Request) {
       console.error('[INNGEST_ABANDONED_CART_ERROR]', inngestErr)
     }
 
+    // Mobile push: instant order alert to the merchant's devices (fire-and-forget)
+    try {
+      const { sendPushToTenant } = await import('@/lib/push')
+      const itemSummary = items[0]?.title
+        ? `${items[0].title}${items.length > 1 ? ` +${items.length - 1} more` : ''}`
+        : `${items.length} item${items.length > 1 ? 's' : ''}`
+      void sendPushToTenant(tenantId, {
+        title: `New order — ₹${Number(total).toLocaleString('en-IN')}`,
+        body: `${customerDetails.name || 'A customer'} ordered ${itemSummary}`,
+        data: { type: 'order', order_id: order.id },
+      })
+    } catch (pushErr) {
+      console.error('[PUSH_ORDER_ALERT_ERROR]', pushErr)
+    }
+
     // Notify Merchant and Buyer via Resend if RESEND_API_KEY is available (H-01 / A-01 / A-02)
     if (process.env.RESEND_API_KEY) {
       try {

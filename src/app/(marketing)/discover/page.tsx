@@ -172,7 +172,7 @@ export default async function DiscoverPage() {
             </h2>
             
             <p className="font-inter text-zinc-400 text-sm leading-relaxed">
-              Launch your fully-functional store today. Free for 24 hours, no credit card required. Import products instantly and start selling.
+              Launch your fully-functional store today. Free for 7 days, no credit card required. Import products instantly and start selling.
             </p>
             
             <div className="pt-2">

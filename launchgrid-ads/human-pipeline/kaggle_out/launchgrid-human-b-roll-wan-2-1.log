@@ -1,0 +1,273 @@
+[{"stream_name":"stderr","time":7.447086184,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.447176095,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.447180943,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.447183565,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.034998216,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.035029298,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.035032846,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.035035386,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.127444797,"data":"Thu Jun 11 19:30:09 2026       \r\n"}
+,{"stream_name":"stdout","time":9.127483951,"data":"+-----------------------------------------------------------------------------------------+\r\n"}
+,{"stream_name":"stdout","time":9.127489334,"data":"| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |\r\n"}
+,{"stream_name":"stdout","time":9.127494413,"data":"+-----------------------------------------+------------------------+----------------------+\r\n"}
+,{"stream_name":"stdout","time":9.127499512,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\r\n"}
+,{"stream_name":"stdout","time":9.127504648,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\r\n"}
+,{"stream_name":"stdout","time":9.127509756,"data":"|                                         |                        |               MIG M. |\r\n"}
+,{"stream_name":"stdout","time":9.127514898,"data":"|=========================================+========================+======================|\r\n"}
+,{"stream_name":"stdout","time":9.178063685,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\r\n"}
+,{"stream_name":"stdout","time":9.178085161,"data":"| N/A   44C    P8              9W /   70W |       0MiB /  15360MiB |      0%      Default |\r\n"}
+,{"stream_name":"stdout","time":9.178090778,"data":"|                                         |                        |                  N/A |\r\n"}
+,{"stream_name":"stdout","time":9.178095904,"data":"+-----------------------------------------+------------------------+----------------------+\r\n"}
+,{"stream_name":"stdout","time":9.178101007,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\r\n"}
+,{"stream_name":"stdout","time":9.17810615,"data":"| N/A   40C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\r\n"}
+,{"stream_name":"stdout","time":9.178111271,"data":"|                                         |                        |                  N/A |\r\n"}
+,{"stream_name":"stdout","time":9.17811653,"data":"+-----------------------------------------+------------------------+----------------------+\r\n"}
+,{"stream_name":"stdout","time":9.178121612,"data":"\r\n"}
+,{"stream_name":"stdout","time":9.178126809,"data":"+-----------------------------------------------------------------------------------------+\r\n"}
+,{"stream_name":"stdout","time":9.178131935,"data":"| Processes:                                                                              |\r\n"}
+,{"stream_name":"stdout","time":9.178148132,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\r\n"}
+,{"stream_name":"stdout","time":9.178153131,"data":"|        ID   ID                                                               Usage      |\r\n"}
+,{"stream_name":"stdout","time":9.17815826,"data":"|=========================================================================================|\r\n"}
+,{"stream_name":"stdout","time":9.178163327,"data":"|  No running processes found                                                             |\r\n"}
+,{"stream_name":"stdout","time":9.178168469,"data":"+-----------------------------------------------------------------------------------------+\r\n"}
+,{"stream_name":"stdout","time":12.285698316,"data":"\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/44.8 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m44.8/44.8 kB\u001b[0m \u001b[31m3.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":12.438170269,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/12.2 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m5.9/12.2 MB\u001b[0m \u001b[31m178.2 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m \u001b[32m11.9/12.2 MB\u001b[0m \u001b[31m168.4 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m12.1/12.2 MB\u001b[0m \u001b[31m160.4 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m12.2/12.2 MB\u001b[0m \u001b[31m88.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":15.012996421,"data":"\u001b[?25h\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\r\n"}
+,{"stream_name":"stdout","time":15.013034123,"data":"dask-cuda 26.2.0 requires cuda-core==0.3.*, but you have cuda-core 1.0.1 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013041918,"data":"dask-cuda 26.2.0 requires numba-cuda\u003c0.23.0,\u003e=0.22.1, but you have numba-cuda 0.30.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013050471,"data":"distributed-ucxx-cu12 0.48.0 requires numba-cuda[cu12]\u003c0.23.0,\u003e=0.22.1, but you have numba-cuda 0.30.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013054134,"data":"cuml-cu12 26.2.0 requires numba\u003c0.62.0,\u003e=0.60.0, but you have numba 0.65.1 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013057455,"data":"cuml-cu12 26.2.0 requires numba-cuda[cu12]\u003c0.23.0,\u003e=0.22.1, but you have numba-cuda 0.30.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013060744,"data":"ucxx-cu12 0.48.0 requires numba-cuda[cu12]\u003c0.23.0,\u003e=0.22.1, but you have numba-cuda 0.30.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013071731,"data":"cudf-cu12 26.2.1 requires numba\u003c0.62.0,\u003e=0.60.0, but you have numba 0.65.1 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":15.013074516,"data":"cudf-cu12 26.2.1 requires numba-cuda[cu12]\u003c0.23.0,\u003e=0.22.2, but you have numba-cuda 0.30.2 which is incompatible.\u001b[0m\u001b[31m\r\n"}
+,{"stream_name":"stdout","time":15.186481088,"data":"\u001b[0mNote: you may need to restart the kernel to use updated packages.\n"}
+,{"stream_name":"stderr","time":49.973926985,"data":"Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.\n"}
+,{"stream_name":"stderr","time":49.973962134,"data":"\n"}
+,{"stream_name":"stderr","time":49.973966424,"data":"Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.\n"}
+,{"stream_name":"stderr","time":49.974973694,"data":"Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.\n"}
+,{"stream_name":"stderr","time":49.974993,"data":"\n"}
+,{"stream_name":"stderr","time":49.974998909,"data":"Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.\n"}
+,{"stream_name":"stderr","time":50.426759766,"data":"/usr/local/lib/python3.12/dist-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.\n"}
+,{"stream_name":"stderr","time":50.426799696,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":50.426805971,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":50.426811622,"data":"\n"}
+,{"stream_name":"stderr","time":50.426816319,"data":"/usr/local/lib/python3.12/dist-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.\n"}
+,{"stream_name":"stderr","time":50.426821268,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":50.426825786,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":50.427557944,"data":"WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":50.427606683,"data":"\n"}
+,{"stream_name":"stderr","time":50.427615287,"data":"WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":313.125303406,"data":"UMT5EncoderModel LOAD REPORT from: /root/.cache/huggingface/hub/models--Wan-AI--Wan2.1-T2V-1.3B-Diffusers/snapshots/0fad780a534b6463e45facd96134c9f345acfa5b/text_encoder\n"}
+,{"stream_name":"stderr","time":313.125900044,"data":"Key                         | Status  | \n"}
+,{"stream_name":"stderr","time":313.125912554,"data":"----------------------------+---------+-\n"}
+,{"stream_name":"stderr","time":313.125918412,"data":"encoder.embed_tokens.weight | MISSING | \n"}
+,{"stream_name":"stderr","time":313.125924026,"data":"\n"}
+,{"stream_name":"stderr","time":313.125935833,"data":"Notes:\n"}
+,{"stream_name":"stderr","time":313.125939354,"data":"- MISSING\t:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.\n"}
+,{"stream_name":"stderr","time":313.125943432,"data":"\n"}
+,{"stream_name":"stderr","time":313.125946642,"data":"UMT5EncoderModel LOAD REPORT from: /root/.cache/huggingface/hub/models--Wan-AI--Wan2.1-T2V-1.3B-Diffusers/snapshots/0fad780a534b6463e45facd96134c9f345acfa5b/text_encoder\n"}
+,{"stream_name":"stderr","time":313.125950374,"data":"Key                         | Status  | \n"}
+,{"stream_name":"stderr","time":313.125953738,"data":"----------------------------+---------+-\n"}
+,{"stream_name":"stderr","time":313.125957057,"data":"encoder.embed_tokens.weight | MISSING | \n"}
+,{"stream_name":"stderr","time":313.125960469,"data":"\n"}
+,{"stream_name":"stderr","time":313.125963627,"data":"Notes:\n"}
+,{"stream_name":"stderr","time":313.125966876,"data":"- MISSING\t:those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.\n"}
+,{"stream_name":"stdout","time":413.188525587,"data":"generating ping-1143 ...\n"}
+,{"stream_name":"stderr","time":461.891833022,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":461.891870485,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":461.891880121,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/execute.py\", line 131, in execute_notebook\n"}
+,{"stream_name":"stderr","time":461.894646774,"data":"    raise_for_execution_errors(nb, output_path)\n"}
+,{"stream_name":"stderr","time":461.894680708,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/execute.py\", line 251, in raise_for_execution_errors\n"}
+,{"stream_name":"stderr","time":461.894890188,"data":"    raise error\n"}
+,{"stream_name":"stderr","time":461.895546404,"data":"papermill.exceptions.PapermillExecutionError: \n"}
+,{"stream_name":"stderr","time":461.895571926,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":461.89559322,"data":"Exception encountered at \"In [3]\":\n"}
+,{"stream_name":"stderr","time":461.895599599,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":461.895604678,"data":"RuntimeError                              Traceback (most recent call last)\n"}
+,{"stream_name":"stderr","time":461.895609295,"data":"/tmp/ipykernel_23/2262623082.py in \u003ccell line: 0\u003e()\n"}
+,{"stream_name":"stderr","time":461.895614189,"data":"     11         print('skip', dst); continue\n"}
+,{"stream_name":"stderr","time":461.89562406699997,"data":"     12     print('generating', clip['id'], '...', flush=True)\n"}
+,{"stream_name":"stderr","time":461.895627515,"data":"---\u003e 13     frames = pipe(\n"}
+,{"stream_name":"stderr","time":461.895630534,"data":"     14         prompt=clip['prompt'],\n"}
+,{"stream_name":"stderr","time":461.895633492,"data":"     15         negative_prompt=spec['negative'],\n"}
+,{"stream_name":"stderr","time":461.895636462,"data":"\n"}
+,{"stream_name":"stderr","time":461.895639299,"data":"/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py in decorate_context(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895642425,"data":"    122         # pyrefly: ignore [bad-context-manager]\n"}
+,{"stream_name":"stderr","time":461.895645534,"data":"    123         with ctx_factory():\n"}
+,{"stream_name":"stderr","time":461.895648538,"data":"--\u003e 124             return func(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895666824,"data":"    125 \n"}
+,{"stream_name":"stderr","time":461.895669366,"data":"    126     return decorate_context\n"}
+,{"stream_name":"stderr","time":461.895671641,"data":"\n"}
+,{"stream_name":"stderr","time":461.895674288,"data":"/usr/local/lib/python3.12/dist-packages/diffusers/pipelines/wan/pipeline_wan.py in __call__(self, prompt, negative_prompt, height, width, num_frames, num_inference_steps, guidance_scale, guidance_scale_2, num_videos_per_prompt, generator, latents, prompt_embeds, negative_prompt_embeds, output_type, return_dict, attention_kwargs, callback_on_step_end, callback_on_step_end_tensor_inputs, max_sequence_length)\n"}
+,{"stream_name":"stderr","time":461.895677919,"data":"    531 \n"}
+,{"stream_name":"stderr","time":461.895680024,"data":"    532         # 3. Encode input prompt\n"}
+,{"stream_name":"stderr","time":461.895682372,"data":"--\u003e 533         prompt_embeds, negative_prompt_embeds = self.encode_prompt(\n"}
+,{"stream_name":"stderr","time":461.895684659,"data":"    534             prompt=prompt,\n"}
+,{"stream_name":"stderr","time":461.895686809,"data":"    535             negative_prompt=negative_prompt,\n"}
+,{"stream_name":"stderr","time":461.895689012,"data":"\n"}
+,{"stream_name":"stderr","time":461.895691191,"data":"/usr/local/lib/python3.12/dist-packages/diffusers/pipelines/wan/pipeline_wan.py in encode_prompt(self, prompt, negative_prompt, do_classifier_free_guidance, num_videos_per_prompt, prompt_embeds, negative_prompt_embeds, max_sequence_length, device, dtype)\n"}
+,{"stream_name":"stderr","time":461.895693826,"data":"    244 \n"}
+,{"stream_name":"stderr","time":461.895695909,"data":"    245         if prompt_embeds is None:\n"}
+,{"stream_name":"stderr","time":461.895698057,"data":"--\u003e 246             prompt_embeds = self._get_t5_prompt_embeds(\n"}
+,{"stream_name":"stderr","time":461.895700359,"data":"    247                 prompt=prompt,\n"}
+,{"stream_name":"stderr","time":461.895702548,"data":"    248                 num_videos_per_prompt=num_videos_per_prompt,\n"}
+,{"stream_name":"stderr","time":461.895704789,"data":"\n"}
+,{"stream_name":"stderr","time":461.895707834,"data":"/usr/local/lib/python3.12/dist-packages/diffusers/pipelines/wan/pipeline_wan.py in _get_t5_prompt_embeds(self, prompt, num_videos_per_prompt, max_sequence_length, device, dtype)\n"}
+,{"stream_name":"stderr","time":461.895710257,"data":"    183         seq_lens = mask.gt(0).sum(dim=1).long()\n"}
+,{"stream_name":"stderr","time":461.895712477,"data":"    184 \n"}
+,{"stream_name":"stderr","time":461.895714609,"data":"--\u003e 185         prompt_embeds = self.text_encoder(text_input_ids.to(device), mask.to(device)).last_hidden_state\n"}
+,{"stream_name":"stderr","time":461.89571697,"data":"    186         prompt_embeds = prompt_embeds.to(dtype=dtype, device=device)\n"}
+,{"stream_name":"stderr","time":461.895719219,"data":"    187         prompt_embeds = [u[:v] for u, v in zip(prompt_embeds, seq_lens)]\n"}
+,{"stream_name":"stderr","time":461.895721468,"data":"\n"}
+,{"stream_name":"stderr","time":461.895723548,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895725835,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.895728107,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.89573029,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895732546,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.895737531,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.895739859,"data":"\n"}
+,{"stream_name":"stderr","time":461.895741969,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895744252,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.895746501,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.895748743,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895751066,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.895753203,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.895755392,"data":"\n"}
+,{"stream_name":"stderr","time":461.895757884,"data":"/usr/local/lib/python3.12/dist-packages/accelerate/hooks.py in new_forward(module, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.89576022,"data":"    190                 output = module._old_forward(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895762471,"data":"    191         else:\n"}
+,{"stream_name":"stderr","time":461.895764629,"data":"--\u003e 192             output = module._old_forward(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895766889,"data":"    193         return module._hf_hook.post_forward(module, output)\n"}
+,{"stream_name":"stderr","time":461.895769172,"data":"    194 \n"}
+,{"stream_name":"stderr","time":461.895771289,"data":"\n"}
+,{"stream_name":"stderr","time":461.895773416,"data":"/usr/local/lib/python3.12/dist-packages/transformers/models/umt5/modeling_umt5.py in forward(self, input_ids, attention_mask, inputs_embeds, output_attentions, output_hidden_states, return_dict, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895775993,"data":"   1360         return_dict = return_dict if return_dict is not None else self.config.use_return_dict\n"}
+,{"stream_name":"stderr","time":461.895778291,"data":"   1361 \n"}
+,{"stream_name":"stderr","time":461.895780399,"data":"-\u003e 1362         encoder_outputs = self.encoder(\n"}
+,{"stream_name":"stderr","time":461.895782647,"data":"   1363             input_ids=input_ids,\n"}
+,{"stream_name":"stderr","time":461.895784847,"data":"   1364             attention_mask=attention_mask,\n"}
+,{"stream_name":"stderr","time":461.895787168,"data":"\n"}
+,{"stream_name":"stderr","time":461.895789462,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895791786,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.895794066,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.895796196,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895798474,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.895800585,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.895802833,"data":"\n"}
+,{"stream_name":"stderr","time":461.895804959,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895807232,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.89580947,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.895813961,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895816255,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.895818372,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.895820655,"data":"\n"}
+,{"stream_name":"stderr","time":461.895822829,"data":"/usr/local/lib/python3.12/dist-packages/transformers/models/umt5/modeling_umt5.py in forward(self, input_ids, attention_mask, encoder_hidden_states, encoder_attention_mask, inputs_embeds, past_key_values, use_cache, output_attentions, output_hidden_states, return_dict, cache_position, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895825474,"data":"    727                 all_hidden_states = all_hidden_states + (hidden_states,)\n"}
+,{"stream_name":"stderr","time":461.895827716,"data":"    728 \n"}
+,{"stream_name":"stderr","time":461.895829917,"data":"--\u003e 729             layer_outputs = layer_module(\n"}
+,{"stream_name":"stderr","time":461.895832148,"data":"    730                 hidden_states,\n"}
+,{"stream_name":"stderr","time":461.895834352,"data":"    731                 causal_mask,\n"}
+,{"stream_name":"stderr","time":461.895836542,"data":"\n"}
+,{"stream_name":"stderr","time":461.895838712,"data":"/usr/local/lib/python3.12/dist-packages/transformers/modeling_layers.py in __call__(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895841026,"data":"     91 \n"}
+,{"stream_name":"stderr","time":461.895843171,"data":"     92             return self._gradient_checkpointing_func(partial(super().__call__, **kwargs), *args)\n"}
+,{"stream_name":"stderr","time":461.895845478,"data":"---\u003e 93         return super().__call__(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895847846,"data":"     94 \n"}
+,{"stream_name":"stderr","time":461.895849971,"data":"     95 \n"}
+,{"stream_name":"stderr","time":461.895852074,"data":"\n"}
+,{"stream_name":"stderr","time":461.895854193,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895856591,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.895858874,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.895861077,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895863339,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.895865443,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.895867724,"data":"\n"}
+,{"stream_name":"stderr","time":461.895869862,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895872151,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.895874796,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.895877072,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895879448,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.895881602,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.895883779,"data":"\n"}
+,{"stream_name":"stderr","time":461.895885918,"data":"/usr/local/lib/python3.12/dist-packages/transformers/models/umt5/modeling_umt5.py in forward(self, hidden_states, attention_mask, encoder_hidden_states, encoder_attention_mask, past_key_values, use_cache, output_attentions, cache_position)\n"}
+,{"stream_name":"stderr","time":461.895890852,"data":"    418         cache_position=None,\n"}
+,{"stream_name":"stderr","time":461.895893074,"data":"    419     ):\n"}
+,{"stream_name":"stderr","time":461.895895223,"data":"--\u003e 420         hidden_states, self_attn_weights = self.layer[0](\n"}
+,{"stream_name":"stderr","time":461.895897506,"data":"    421             hidden_states,\n"}
+,{"stream_name":"stderr","time":461.895899703,"data":"    422             attention_mask=attention_mask,\n"}
+,{"stream_name":"stderr","time":461.895901936,"data":"\n"}
+,{"stream_name":"stderr","time":461.895904017,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895906361,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.895911086,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.895913246,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895916055,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.895918186,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.895920459,"data":"\n"}
+,{"stream_name":"stderr","time":461.895922536,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895924839,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.895927532,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.895929778,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895932026,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.895934143,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.895936334,"data":"\n"}
+,{"stream_name":"stderr","time":461.895938492,"data":"/usr/local/lib/python3.12/dist-packages/transformers/models/umt5/modeling_umt5.py in forward(self, hidden_states, attention_mask, past_key_values, cache_position)\n"}
+,{"stream_name":"stderr","time":461.895941101,"data":"    357     ):\n"}
+,{"stream_name":"stderr","time":461.895943358,"data":"    358         normed_hidden_states = self.layer_norm(hidden_states)\n"}
+,{"stream_name":"stderr","time":461.89594569,"data":"--\u003e 359         attention_output = self.SelfAttention(\n"}
+,{"stream_name":"stderr","time":461.895947959,"data":"    360             normed_hidden_states,\n"}
+,{"stream_name":"stderr","time":461.895950162,"data":"    361             attention_mask=attention_mask,\n"}
+,{"stream_name":"stderr","time":461.895952377,"data":"\n"}
+,{"stream_name":"stderr","time":461.895954452,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895956783,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.895959068,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.895961199,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895964141,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.895966671,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.895970887,"data":"\n"}
+,{"stream_name":"stderr","time":461.895973066,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895975353,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.895977716,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.895980033,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.895982295,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.895984407,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.895986699,"data":"\n"}
+,{"stream_name":"stderr","time":461.895989031,"data":"/usr/local/lib/python3.12/dist-packages/transformers/models/umt5/modeling_umt5.py in forward(self, hidden_states, encoder_hidden_states, past_key_values, attention_mask, cache_position)\n"}
+,{"stream_name":"stderr","time":461.895991469,"data":"    270         is_cross_attention = encoder_hidden_states is not None\n"}
+,{"stream_name":"stderr","time":461.8959937,"data":"    271 \n"}
+,{"stream_name":"stderr","time":461.895995902,"data":"--\u003e 272         query_states = self.q(hidden_states)\n"}
+,{"stream_name":"stderr","time":461.895998307,"data":"    273         query_states = query_states.view(batch_size, -1, self.n_heads, self.key_value_proj_dim).transpose(1, 2)\n"}
+,{"stream_name":"stderr","time":461.896000702,"data":"    274 \n"}
+,{"stream_name":"stderr","time":461.896002924,"data":"\n"}
+,{"stream_name":"stderr","time":461.896005078,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _wrapped_call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.896007363,"data":"   1774             return self._compiled_call_impl(*args, **kwargs)  # type: ignore[misc]\n"}
+,{"stream_name":"stderr","time":461.896009665,"data":"   1775         else:\n"}
+,{"stream_name":"stderr","time":461.896011832,"data":"-\u003e 1776             return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.89601477,"data":"   1777 \n"}
+,{"stream_name":"stderr","time":461.896016971,"data":"   1778     # torchrec tests the code consistency with the following code\n"}
+,{"stream_name":"stderr","time":461.896019226,"data":"\n"}
+,{"stream_name":"stderr","time":461.896021365,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.89602364899997,"data":"   1785                 or _global_backward_pre_hooks or _global_backward_hooks\n"}
+,{"stream_name":"stderr","time":461.896025969,"data":"   1786                 or _global_forward_hooks or _global_forward_pre_hooks):\n"}
+,{"stream_name":"stderr","time":461.8960282,"data":"-\u003e 1787             return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":461.896030528,"data":"   1788 \n"}
+,{"stream_name":"stderr","time":461.896032672,"data":"   1789         result = None\n"}
+,{"stream_name":"stderr","time":461.896034916,"data":"\n"}
+,{"stream_name":"stderr","time":461.896036981,"data":"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/linear.py in forward(self, input)\n"}
+,{"stream_name":"stderr","time":461.89603927,"data":"    132         Runs the forward pass.\n"}
+,{"stream_name":"stderr","time":461.896041462,"data":"    133         \"\"\"\n"}
+,{"stream_name":"stderr","time":461.896043804,"data":"--\u003e 134         return F.linear(input, self.weight, self.bias)\n"}
+,{"stream_name":"stderr","time":461.896050526,"data":"    135 \n"}
+,{"stream_name":"stderr","time":461.896052694,"data":"    136     def extra_repr(self) -\u003e str:\n"}
+,{"stream_name":"stderr","time":461.896055147,"data":"\n"}
+,{"stream_name":"stderr","time":461.896057232,"data":"RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`\n"}
+,{"stream_name":"stderr","time":461.896059532,"data":"\n"}
+,{"stream_name":"stderr","time":464.844238079,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":464.844287874,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":465.13248397,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":465.132527549,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":466.095889661,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":466.42595431,"data":"[NbConvertApp] Writing 136142 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":468.848198015,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":469.962605634,"data":"[NbConvertApp] Writing 396246 bytes to __results__.html\n"}
+]

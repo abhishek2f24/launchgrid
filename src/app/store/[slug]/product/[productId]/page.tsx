@@ -173,7 +173,7 @@ export default async function ProductPage(props: {
 
   return (
     <div className="theme-marketing min-h-screen bg-[var(--color-mark-base)] text-[var(--color-mark-ink)] font-inter relative">
-      <TrackPageView storeId={tenant.id} productId={product.id} />
+      <TrackPageView storeId={tenant.id} productId={product.id} productName={product.title} productPrice={Number(product.retail_price)} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}

@@ -1,0 +1,65 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vaani-desk",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8741", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/vaani-desk"],
+      "port": 8741
+    },
+    {
+      "name": "bolype",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8742", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/bolype"],
+      "port": 8742
+    },
+    {
+      "name": "medscribe",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8743", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/medscribe"],
+      "port": 8743
+    },
+    {
+      "name": "claimsathi",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8744", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/claimsathi"],
+      "port": 8744
+    },
+    {
+      "name": "nyaya-ai",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8745", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/nyaya-ai"],
+      "port": 8745
+    },
+    {
+      "name": "tally-lens",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8746", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/tally-lens"],
+      "port": 8746
+    },
+    {
+      "name": "gst-sahayak",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8747", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/gst-sahayak"],
+      "port": 8747
+    },
+    {
+      "name": "postmandi",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8748", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/postmandi"],
+      "port": 8748
+    },
+    {
+      "name": "clinref",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8750", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/clinref"],
+      "port": 8750
+    },
+    {
+      "name": "clinicfront",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8749", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/clinicfront"],
+      "port": 8749
+    }
+  ]
+}

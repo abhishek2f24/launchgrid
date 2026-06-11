@@ -1,0 +1,24 @@
+{
+  "name": "launchgrid-ads",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "render:ad01": "remotion render Ad01-OrderPing out/ad01-order-ping.mp4",
+    "render:ad02": "remotion render Ad02-OrderStack out/ad02-order-stack.mp4",
+    "render:ad03": "remotion render Ad03-StoreBuild out/ad03-store-build.mp4",
+    "render:all": "remotion render Ad02-OrderStack out/ad02-order-stack.mp4 && remotion render Ad03-StoreBuild out/ad03-store-build.mp4",
+    "sfx": "node scripts/sfx.mjs",
+    "tts": "node scripts/tts.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.230",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "^4.0.230"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.5.0"
+  }
+}

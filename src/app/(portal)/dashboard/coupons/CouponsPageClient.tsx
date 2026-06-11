@@ -184,15 +184,21 @@ export function CouponsPageClient({ initialCoupons, tenantId }: Props) {
       {coupons.length === 0 ? (
         <div className="text-center py-16 bg-white border border-black/5 rounded-[2rem] p-8">
           <Tag className="w-12 h-12 text-[var(--color-mark-secondary)]/30 mx-auto mb-4" />
-          <h3 className="font-playfair text-lg font-bold text-[var(--color-mark-ink)] mb-1">No coupons created</h3>
+          <h3 className="font-playfair text-lg font-bold text-[var(--color-mark-ink)] mb-1">A launch coupon gets your first sale sooner</h3>
           <p className="text-sm text-[var(--color-mark-secondary)] max-w-sm mx-auto mb-6">
-            Create promotional codes to incentivize buyers and increase conversions during campaigns.
+            A small first-order discount gives hesitant friends-of-friends a reason to buy today.
+            We&apos;ve pre-filled <span className="font-bold text-[var(--color-mark-ink)]">FIRST10</span> — 10% off, ready to share on WhatsApp.
           </p>
           <button
-            onClick={() => setShowAddForm(true)}
+            onClick={() => {
+              setCode('FIRST10')
+              setDiscountType('percentage')
+              setValue(10)
+              setShowAddForm(true)
+            }}
             className="px-5 py-2.5 rounded-xl bg-[var(--color-mark-ink)] text-white hover:bg-black/90 transition-all font-bold text-xs"
           >
-            Create Your First Coupon
+            Create FIRST10 →
           </button>
         </div>
       ) : (

@@ -99,7 +99,7 @@ function LoginForm() {
             <div className="flex flex-col gap-1.5 relative">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="font-inter text-xs font-bold tracking-widest uppercase text-[var(--color-mark-secondary)]/60">Password</label>
-                <a href="#" className="font-inter text-xs text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors">Forgot?</a>
+                <a href="/forgot-password" className="font-inter text-xs text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors">Forgot?</a>
               </div>
               <input 
                 id="password" 

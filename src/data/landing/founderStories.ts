@@ -24,7 +24,7 @@ export const founderStories = [
     niche: "Jewellery & Accessories",
     firstSale: "Day 8",
     month1: "₹18,500",
-    quote: "I thought I needed ₹50,000 to start. I needed ₹4,999.",
+    quote: "I thought I needed ₹50,000 to start. I needed ₹9,999.",
     image: "/images/avatars/priya.png"
   },
   {

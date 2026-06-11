@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { CookieConsent } from "@/components/ui-landing/CookieConsent";
 
@@ -44,12 +45,8 @@ export const metadata: Metadata = {
     siteName: 'LaunchGrid',
     title: 'LaunchGrid — Launch Your Online Store in 15 Minutes',
     description: 'Build a real Indian D2C brand. AI storefront, UPI payments, 0% fees.',
-    images: [{
-      url: '/og-image.png',
-      width: 1200,
-      height: 630,
-      alt: 'LaunchGrid — Online Store Builder for India',
-    }],
+    // No explicit images: /og-image.png doesn't exist. The file-convention
+    // src/app/opengraph-image.tsx generates the OG image automatically.
   },
   twitter: {
     card: 'summary_large_image',
@@ -57,7 +54,6 @@ export const metadata: Metadata = {
     creator: '@launchgrid_in',
     title: 'LaunchGrid — Launch Your Online Store in 15 Minutes',
     description: 'Build a real Indian D2C brand. AI storefront, UPI payments, 0% fees.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -99,9 +95,9 @@ export default function RootLayout({
         "applicationCategory": "BusinessApplication",
         "description": "India-first ecommerce platform with native UPI payments, GST compliance, and an Indian dropship catalog. Launch your online store in 15 minutes.",
         "offers": [
-          { "@type": "Offer", "name": "Starter", "price": "999", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
-          { "@type": "Offer", "name": "Growth",  "price": "2499", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
-          { "@type": "Offer", "name": "Scale",   "price": "4999", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } }
+          { "@type": "Offer", "name": "Get Online (Starter)",    "price": "1999",  "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
+          { "@type": "Offer", "name": "Get Customers (Growth)",  "price": "9999",  "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
+          { "@type": "Offer", "name": "Scale Revenue (Scale)",   "price": "24999", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } }
         ]
       },
       {
@@ -147,7 +143,25 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${inter.variable} h-full antialiased`}
     >
+      <head>
+        {/* Google Tag Manager */}
+        <Script id="gtm-head" strategy="afterInteractive">{`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-KW7XZNCC');
+        `}</Script>
+      </head>
       <body className="min-h-full flex flex-col">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-KW7XZNCC"
+            height="0" width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}

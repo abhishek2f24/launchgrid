@@ -16,7 +16,7 @@ const planMap: Record<string, string> = {
 };
 
 const priceMap: Record<string, { monthly: string; annualRate: string; annualTotal: string; originalMonthly: string; originalAnnualRate: string }> = {
-  "Get Online": { monthly: "₹1,999", annualRate: "₹1,399", annualTotal: "₹16,788", originalMonthly: "₹4,999", originalAnnualRate: "₹3,499" },
+  "Get Online": { monthly: "₹1,999", annualRate: "₹1,399", annualTotal: "₹16,788", originalMonthly: "₹9,999", originalAnnualRate: "₹6,999" },
   "Get Customers": { monthly: "₹9,999", annualRate: "₹6,999", annualTotal: "₹83,988", originalMonthly: "₹19,999", originalAnnualRate: "₹13,999" },
   "Scale Revenue": { monthly: "₹24,999", annualRate: "₹17,999", annualTotal: "₹2,15,888", originalMonthly: "₹49,999", originalAnnualRate: "₹34,999" }
 };
@@ -199,4 +199,16 @@ function MissionCard({
       {/* CTA: click to select plan and expand inline form */}
       <button
         onClick={onSelect}
-        classNa
+        className={`w-full text-center font-inter text-xs font-bold py-4 px-6 rounded-full transition-all relative z-10 ${
+          isSelected
+            ? 'bg-green-500 text-white shadow-lg'
+            : isPopular
+            ? 'bg-[var(--color-mark-ink)] text-white hover:bg-black shadow-lg shadow-black/5'
+            : 'bg-[var(--color-mark-subtle)] text-[var(--color-mark-ink)] hover:bg-[var(--color-mark-default)] border border-[var(--color-mark-default)]'
+        }`}
+      >
+        {isSelected ? 'Selected — continue below' : mission.cta || 'Choose this plan'}
+      </button>
+    </motion.div>
+  )
+}

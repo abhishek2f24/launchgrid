@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse \"C:\\\\Users\\\\Abhishek\\\\Desktop\\\\ghd\\\\personal\\\\launchgrid\\\\launchgrid-ads\\\\src\",\"C:\\\\Users\\\\Abhishek\\\\Desktop\\\\ghd\\\\personal\\\\launchgrid\\\\launchgrid-ads\\\\public\")",
+      "Bash(Select-Object FullName)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(Out-String -Width 250)",
+      "Bash(npm install *)"
+    ]
+  }
+}

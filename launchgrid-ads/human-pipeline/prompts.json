@@ -1,0 +1,39 @@
+{
+  "comment": "LaunchGrid human b-roll shot list — fed to generate_wan_colab.ipynb. Portrait 480x832 (upscale later). Concepts marked ★ in VIDEO_ADS_50.md (single-scene, no lip-sync, no on-screen text — ideal for open video models). Keep prompts atmosphere-driven; UI/text gets composited crisply in Remotion, never generated.",
+  "defaults": { "width": 480, "height": 832, "num_frames": 81, "fps": 16, "steps": 30, "guidance": 5.0 },
+  "negative": "text, watermark, logo, subtitles, distorted hands, extra fingers, deformed face, low quality, jpeg artifacts, cartoon, anime",
+  "clips": [
+    {
+      "id": "ping-1143",
+      "prompt": "Cinematic close-up, dark Indian bedroom at night, a smartphone on a wooden bedside table lights up with a soft warm glow, a young woman's face is gently illuminated as she wakes and smiles faintly, shallow depth of field, warm orange screen light against cool blue moonlight, photorealistic, film grain"
+    },
+    {
+      "id": "kitchen-recipes",
+      "prompt": "Cinematic shot, warm golden hour light in an Indian home kitchen, flour dust floating in the air, a middle-aged woman's hands kneading dough, glass pickle jars and brass masala tins on a shelf behind, shallow depth of field, photorealistic, soft film grain"
+    },
+    {
+      "id": "hostel-hq",
+      "prompt": "Cinematic shot, cramped college hostel room at night lit by string fairy lights, a young Indian man packs a small parcel with brown paper at a desk crowded with textbooks, warm intimate lighting, handheld camera feel, photorealistic"
+    },
+    {
+      "id": "commute-check",
+      "prompt": "Cinematic shot inside a crowded Mumbai local train, a young Indian woman holds the overhead rail with one hand and looks at her phone in the other hand with a subtle smile, motion blur of the city passing the window, natural daylight, documentary style, photorealistic"
+    },
+    {
+      "id": "rain-delivery",
+      "prompt": "Cinematic shot, heavy monsoon rain on an Indian street at dusk, a delivery courier on a motorbike with a glowing delivery bag covered in plastic, neon shop reflections on wet asphalt, dramatic atmosphere, photorealistic, shallow depth of field"
+    },
+    {
+      "id": "shutter-dusk",
+      "prompt": "Cinematic wide shot, an old Indian shop owner pulls down a metal shutter of a small shop at dusk, warm streetlight glow, long shadows, melancholic but hopeful atmosphere, photorealistic, anamorphic lens look"
+    },
+    {
+      "id": "fistpump-dinner",
+      "prompt": "Cinematic shot, Indian family dinner table at night, warm tungsten light, a young man glances at his phone under the table and makes a quiet small fist pump, candid documentary feel, shallow depth of field, photorealistic"
+    },
+    {
+      "id": "founder-portrait",
+      "prompt": "Cinematic slow push-in portrait, a confident young Indian woman entrepreneur in a small sunlit studio surrounded by handmade jewelry on a wooden table, she looks toward the camera and smiles softly, golden hour window light, photorealistic, 85mm lens, film grain"
+    }
+  ]
+}

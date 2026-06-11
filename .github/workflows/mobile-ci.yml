@@ -1,0 +1,44 @@
+name: Mobile CI
+
+on:
+  pull_request:
+    paths: ['launchgrid-mobile/**']
+  push:
+    branches: [main]
+    paths: ['launchgrid-mobile/**']
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: launchgrid-mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: launchgrid-mobile/package-lock.json
+      - run: npm install
+      - name: TypeScript check
+        run: npx tsc --noEmit
+      - name: Expo config validation
+        run: npx expo config --type public > /dev/null
+
+  # Production builds run via EAS on release tags (requires EXPO_TOKEN secret)
+  build:
+    if: startsWith(github.ref, 'refs/tags/mobile-v')
+    needs: check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: launchgrid-mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install
+      - run: npx eas-cli build --platform all --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

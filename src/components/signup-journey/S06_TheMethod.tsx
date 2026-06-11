@@ -89,15 +89,15 @@ function StepCard({ step, isLeft, index }: any) {
             >
               <div className="pt-4 border-t border-[var(--color-mark-default)] flex flex-col gap-4">
                 <div className="border-l-2 border-[var(--color-mark-red)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Pain</span>
+                  <span className="text-xs font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Pain</span>
                   <span className="text-[var(--color-mark-secondary)]">{step.pain}</span>
                 </div>
                 <div className="border-l-2 border-[var(--color-mark-ink)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Solution</span>
+                  <span className="text-xs font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Solution</span>
                   <span className="text-[var(--color-mark-ink)] font-medium">{step.solution}</span>
                 </div>
                 <div className="border-l-2 border-[var(--color-mark-green)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Outcome</span>
+                  <span className="text-xs font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Outcome</span>
                   <span className="text-[var(--color-mark-green)] font-medium">{step.outcome}</span>
                 </div>
               </div>

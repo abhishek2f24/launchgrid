@@ -7,7 +7,13 @@ const serviceSupabase = createServiceClient()
 export async function POST(req: Request) {
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    let user = (await supabase.auth.getUser()).data.user
+
+    // Bearer token fallback — used by the mobile app and Chrome extension
+    if (!user) {
+      const token = req.headers.get('Authorization')?.replace('Bearer ', '')
+      if (token) user = (await supabase.auth.getUser(token)).data.user
+    }
 
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

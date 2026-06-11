@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ShoppingBag, Check, MessageSquare, AlertCircle, Minus, Plus } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
+import { pixelAddToCart } from '@/lib/pixel'
 
 interface Variant {
   id: string
@@ -73,6 +74,9 @@ export function ProductActions({ product, variants, whatsapp, storeId, isExpired
         keepalive: true,
       }).catch(() => {})
     }
+
+    // Merchant ad pixels (Meta Pixel / GA4) — no-op if not configured
+    pixelAddToCart({ id: product.id, name: product.title, price: activePrice, quantity })
 
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)

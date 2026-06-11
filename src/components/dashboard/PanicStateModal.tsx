@@ -86,9 +86,9 @@ export function PanicStateModal({ order }: { order: any }) {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl sm:text-3xl font-playfair font-extrabold text-[var(--color-mark-ink)] mb-1">
-              FIRST SALE! Order {order.id.slice(0, 8)}
+              Your first order. You&apos;re officially in business.
             </h2>
-            <p className="text-green-700 text-sm font-bold tracking-wide">₹{order.total_amount} Revenue Generated</p>
+            <p className="text-green-700 text-sm font-bold tracking-wide">Order {order.id.slice(0, 8).toUpperCase()} · ₹{order.total_amount} — someone chose your store.</p>
           </div>
           <button
             onClick={() => setDismissed(true)}
@@ -103,10 +103,10 @@ export function PanicStateModal({ order }: { order: any }) {
 
         {/* Content */}
         <div className="p-8 flex flex-col gap-8 bg-[var(--color-mark-base)]">
-          <div className="flex gap-4 p-5 bg-amber-50 border border-amber-200 rounded-2xl shadow-sm">
-            <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-900 leading-relaxed font-medium">
-              <strong className="font-bold">Don't panic!</strong> First orders can be overwhelming. Follow this strict 4-step checklist to safely fulfill your customer's order without losing money. You cannot close this until the order is handled.
+          <div className="flex gap-4 p-5 bg-black/[0.02] border border-black/5 rounded-2xl">
+            <CheckCircle2 className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
+            <p className="text-sm text-[var(--color-mark-ink)] leading-relaxed font-medium">
+              <strong className="font-bold">Here&apos;s exactly what to do in the next 24 hours.</strong> Four steps — fast fulfilment is what turns a first buyer into a repeat customer. Take them one at a time.
             </p>
           </div>
 

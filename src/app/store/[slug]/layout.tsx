@@ -43,8 +43,10 @@ export default async function StoreLayout(props: {
   // Hide footer for pro and premium plans
   const hidePoweredBy = plan === 'pro' || plan === 'premium'
 
-  const metaPixelId = config.meta_pixel_id || null
-  const ga4Id = config.ga4_measurement_id || null
+  // Sanitize before interpolating into inline <script> tags (defense-in-depth
+  // against script injection — also validated on write in saveStoreDetailsAction)
+  const metaPixelId = /^\d{5,20}$/.test(config.meta_pixel_id || '') ? config.meta_pixel_id : null
+  const ga4Id = /^G-[A-Z0-9]{4,16}$/.test(config.ga4_measurement_id || '') ? config.ga4_measurement_id : null
 
   return (
     <CartProvider slug={params.slug}>
@@ -102,15 +104,15 @@ export default async function StoreLayout(props: {
         {/* Powered-by footer — hidden on premium & enterprise plans */}
         {!hidePoweredBy && (
           <div className="w-full border-t py-2.5 text-center bg-black/80" style={{ borderColor: 'var(--color-mark-default)' }}>
-            <p className="text-[10px] text-slate-500 font-medium tracking-wide">
+            <p className="text-[11px] text-slate-300 font-medium tracking-wide">
               Made with{' '}
-              <span className="text-rose-400/50">♥</span>
+              <span className="text-rose-400">♥</span>
               {' '}by{' '}
               <a
-                href="https://launchgrid.in/join"
+                href={`https://launchgrid.in/join?utm_source=storefront&utm_medium=powered_by&utm_campaign=${encodeURIComponent(params.slug)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-white underline underline-offset-2 decoration-white/30 hover:decoration-white transition-colors"
               >
                 LaunchGrid
               </a>

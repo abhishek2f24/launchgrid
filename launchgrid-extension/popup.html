@@ -1,34 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="header">
-    <div class="logo">LaunchGrid</div>
-    <div id="status-dot" class="status-dot disconnected"></div>
+  <div class="head">
+    <span class="dot"></span>
+    <span class="brand">LaunchGrid</span>
   </div>
 
-  <!-- Connected state -->
-  <div id="connected-state" style="display:none">
-    <div class="store-name" id="store-name"></div>
-    <div class="subdomain" id="store-subdomain"></div>
-    <div class="product-count" id="product-count"></div>
-
-    <a id="dashboard-link" href="http://localhost:3000/dashboard" target="_blank" class="btn btn-secondary">
-      Open Dashboard →
-    </a>
-    <button id="disconnect-btn" class="btn btn-danger">Disconnect</button>
-    <p class="tip">Click the button on any product page to add items to your store.</p>
-  </div>
-
-  <!-- Not connected state -->
-  <div id="not-connected-state">
-    <div class="not-connected">
-      <p>Connect your LaunchGrid account to start adding products from any website.</p>
-      <button id="connect-btn" class="btn btn-primary">Connect Account →</button>
-    </div>
+  <div id="content">
+    <div class="loading">Checking connection…</div>
   </div>
 
   <script src="popup.js"></script>

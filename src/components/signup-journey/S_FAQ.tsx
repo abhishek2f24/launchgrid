@@ -22,7 +22,7 @@ const faqs = [
     a: 'Dropshipping means selling products without holding inventory — your supplier ships directly to the customer. LaunchGrid lets you import products from Indian catalogs with one click, set your own margins, and start selling the same day with no upfront stock cost.',
   },
   {
-    q: 'What happens after my 24-hour trial ends?',
+    q: 'What happens after my 7-day trial ends?',
     a: 'Your store stays live and your data is preserved. Checkout is paused until you activate a plan. Pick any paid plan to re-enable orders — and if you referred friends, each referral earns you 7 free days before you ever need to pay.',
   },
   {

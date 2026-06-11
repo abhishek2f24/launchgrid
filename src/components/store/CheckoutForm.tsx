@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useCart } from '@/contexts/CartContext'
 import { useRouter, useParams } from 'next/navigation'
+import { pixelInitiateCheckout, pixelPurchase } from '@/lib/pixel'
 import { ShoppingBag, Loader2, CheckCircle2, CreditCard, Zap, Truck } from 'lucide-react'
 
 interface Config {
@@ -59,6 +60,38 @@ export function CheckoutForm({ config }: { config: Config }) {
 
   const finalTotal = appliedCoupon ? Math.max(0, total - appliedCoupon.discountAmount) : total
 
+  // ── Conversion tracking (merchant pixels + funnel) ────────────────────
+  const initiateFired = useRef(false)
+  const purchaseFired = useRef(false)
+
+  // Fire InitiateCheckout once when the form mounts with items in cart
+  useEffect(() => {
+    if (initiateFired.current || items.length === 0) return
+    initiateFired.current = true
+    pixelInitiateCheckout(total, items.map(i => ({ id: i.productId, name: i.title, price: i.price, quantity: i.quantity })))
+  }, [items, total])
+
+  // Record a completed purchase: merchant ad pixels + LaunchGrid funnel event.
+  // Must be called BEFORE clearCart() so cart items are still available.
+  const recordPurchase = useCallback((orderId: string) => {
+    if (purchaseFired.current) return
+    purchaseFired.current = true
+    try {
+      pixelPurchase(orderId, finalTotal, items.map(i => ({ id: i.productId, name: i.title, price: i.price, quantity: i.quantity })))
+      const sessionId = typeof window !== 'undefined' ? (sessionStorage.getItem('lg_sid') || '') : ''
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          store_id: config.tenantId,
+          event_type: 'purchase',
+          session_id: sessionId,
+        }),
+        keepalive: true,
+      }).catch(() => {})
+    } catch { /* tracking must never break checkout */ }
+  }, [finalTotal, items, config.tenantId])
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return
     setCouponLoading(true)
@@ -107,6 +140,7 @@ export function CheckoutForm({ config }: { config: Config }) {
         const res = await fetch(`/api/orders/${upiState.orderId}/status`)
         const data = await res.json()
         if (data.payment_status === 'paid') {
+          recordPurchase(upiState.orderId)
           setSuccessOrderId(upiState.orderId)
           clearCart()
           setSuccess(true)
@@ -116,7 +150,7 @@ export function CheckoutForm({ config }: { config: Config }) {
       } catch {}
     }, 3000)
     return () => clearInterval(interval)
-  }, [upiState, clearCart])
+  }, [upiState, clearCart, recordPurchase])
 
   // Poll Razorpay status (H-03)
   useEffect(() => {
@@ -126,6 +160,7 @@ export function CheckoutForm({ config }: { config: Config }) {
         const res = await fetch(`/api/orders/${confirmingRazorpay.orderId}/status`)
         const data = await res.json()
         if (data.payment_status === 'paid') {
+          recordPurchase(confirmingRazorpay.orderId)
           setSuccessOrderId(confirmingRazorpay.orderId)
           clearCart()
           setSuccess(true)
@@ -135,7 +170,7 @@ export function CheckoutForm({ config }: { config: Config }) {
       } catch {}
     }, 2000)
     return () => clearInterval(interval)
-  }, [confirmingRazorpay, clearCart])
+  }, [confirmingRazorpay, clearCart, recordPurchase])
 
   const checkUpiPaymentStatus = async () => {
     if (!upiState) return
@@ -144,6 +179,7 @@ export function CheckoutForm({ config }: { config: Config }) {
       const res = await fetch(`/api/orders/${upiState.orderId}/status`)
       const data = await res.json()
       if (data.payment_status === 'paid') {
+        recordPurchase(upiState.orderId)
         setSuccessOrderId(upiState.orderId)
         clearCart()
         setSuccess(true)
@@ -355,6 +391,7 @@ export function CheckoutForm({ config }: { config: Config }) {
       }
 
       // COD / order created, no payment needed now
+      recordPurchase(data.orderId)
       setSuccessOrderId(data.orderId)
       clearCart()
       setSuccess(true)
@@ -601,9 +638,21 @@ export function CheckoutForm({ config }: { config: Config }) {
           {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing…</> : selectedMethod === 'cod' ? `Place COD Order — ₹${finalTotal}` : `Pay ₹${finalTotal}`}
         </button>
 
-        <p className="text-[10px] text-[var(--color-mark-secondary)] text-center font-bold uppercase tracking-widest mt-4">
-          256-bit SSL encryption. Your payment is secure.
-        </p>
+        {/* Trust signals at the moment of payment */}
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-center gap-x-4 gap-y-1 flex-wrap text-[11px] font-semibold text-[var(--color-mark-secondary)]">
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> 256-bit SSL secured</span>
+            {(config.rzpKeyId || config.merchantUpiId) && (
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> UPI · Cards · Netbanking{config.rzpKeyId ? ' via Razorpay' : ''}</span>
+            )}
+            {config.codEnabled && (
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> Cash on Delivery available</span>
+            )}
+          </div>
+          <p className="text-[11px] text-[var(--color-mark-secondary)] text-center font-medium">
+            Your details are shared only with {config.storeName} to fulfil this order.
+          </p>
+        </div>
       </div>
     </form>
   )

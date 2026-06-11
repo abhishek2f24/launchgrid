@@ -33,11 +33,24 @@ export function UpgradeModal({ isOpen, onClose, businessName }: UpgradeModalProp
     'Priority 1-on-1 support',
   ]
 
+  // Prices must match the public /pricing page (single source of truth pending).
+  const PLAN_DISPLAY: Record<'starter' | 'pro', { name: string; price: string }> = {
+    starter: { name: 'Get Online (Starter)', price: '1,999' },
+    pro: { name: 'Get Customers (Growth)', price: '9,999' },
+  }
+
   const handleUpgrade = (plan: 'starter' | 'pro') => {
     const text = encodeURIComponent(
-      `Hi! I want to upgrade my store "${businessName}" to the ${plan.toUpperCase()} plan (₹${plan === 'starter' ? '999' : '2,499'}/month). Please activate my subscription.`
+      `Hi! I want to upgrade my store "${businessName}" to the ${PLAN_DISPLAY[plan].name} plan (₹${PLAN_DISPLAY[plan].price}/month). Please activate my subscription.`
     )
-    window.open(`https://wa.me/919999999999?text=${text}`, '_blank')
+    // Upgrade concierge number — MUST be set in env before launch.
+    // Without it we fall back to the pricing page so the request is never lost.
+    const waNumber = process.env.NEXT_PUBLIC_UPGRADE_WHATSAPP
+    if (waNumber && /^\d{10,14}$/.test(waNumber)) {
+      window.open(`https://wa.me/${waNumber}?text=${text}`, '_blank')
+    } else {
+      window.location.href = `/pricing?plan=${plan === 'pro' ? 'growth' : 'starter'}`
+    }
   }
 
   return (
@@ -90,8 +103,8 @@ export function UpgradeModal({ isOpen, onClose, businessName }: UpgradeModalProp
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-zinc-900">Starter Plan</h3>
-                      <p className="text-xs text-zinc-400 mt-0.5">Best for new shops</p>
+                      <h3 className="text-lg font-bold text-zinc-900">Get Online</h3>
+                      <p className="text-xs text-zinc-400 mt-0.5">Starter — best for new shops</p>
                     </div>
                     {selectedPlan === 'starter' && (
                       <span className="w-3 h-3 rounded-full bg-zinc-950 ring-4 ring-zinc-200" />
@@ -99,7 +112,7 @@ export function UpgradeModal({ isOpen, onClose, businessName }: UpgradeModalProp
                   </div>
                   
                   <div className="flex items-baseline gap-1.5 mb-6">
-                    <span className="text-3xl font-extrabold text-zinc-900">₹999</span>
+                    <span className="text-3xl font-extrabold text-zinc-900">₹1,999</span>
                     <span className="text-sm text-zinc-500">/ month</span>
                   </div>
 
@@ -148,9 +161,9 @@ export function UpgradeModal({ isOpen, onClose, businessName }: UpgradeModalProp
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-1.5">
-                        Pro Plan <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                        Get Customers <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
                       </h3>
-                      <p className="text-xs text-zinc-400 mt-0.5">Scale your brand</p>
+                      <p className="text-xs text-zinc-400 mt-0.5">Growth — scale your brand</p>
                     </div>
                     {selectedPlan === 'pro' && (
                       <span className="w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-indigo-100" />
@@ -158,7 +171,7 @@ export function UpgradeModal({ isOpen, onClose, businessName }: UpgradeModalProp
                   </div>
                   
                   <div className="flex items-baseline gap-1.5 mb-6">
-                    <span className="text-3xl font-extrabold text-zinc-900">₹2,499</span>
+                    <span className="text-3xl font-extrabold text-zinc-900">₹9,999</span>
                     <span className="text-sm text-zinc-500">/ month</span>
                   </div>
 

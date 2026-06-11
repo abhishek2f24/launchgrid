@@ -41,3 +41,11 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# subproject dependencies & build outputs
+**/node_modules/
+launchgrid-ads/out/
+launchgrid-mobile/.expo/
+launchgrid-mobile/.env
+*.tsbuildinfo
+launchgrid-mobile/tsconfig.check*.json

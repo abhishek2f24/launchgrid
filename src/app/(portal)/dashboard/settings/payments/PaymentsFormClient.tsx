@@ -69,7 +69,8 @@ export function PaymentsFormClient({ config }: Props) {
       if (res.error) {
         setMessage({ type: 'error', text: res.error })
       } else {
-        setMessage({ type: 'success', text: `Successfully activated ${tier === 'free_upi' ? 'Merchant UPI' : tier === 'byok' ? 'Razorpay BYOK' : 'LaunchGrid Route'}!` })
+        // Capability framing: state what the business can now do, not what was configured
+        setMessage({ type: 'success', text: tier === 'free_upi' ? 'Customers can now pay you instantly via UPI.' : tier === 'byok' ? 'Customers can now pay you with cards, netbanking, wallets and UPI.' : 'Customers can now pay you — LaunchGrid Route is live.' })
         setActiveTier(tier)
       }
     } catch (err: any) {

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { platformEvent } from '@/lib/pixel';
 
 export function SignupForm() {
   const [email, setEmail]       = useState('');
@@ -53,6 +54,9 @@ export function SignupForm() {
         body: JSON.stringify({ refCode: trimmedRef, newUserId: data.user.id }),
       }).catch(() => {}); // fire-and-forget
     }
+
+    // Conversion event → GTM dataLayer (wire Google Ads / Meta tags in GTM)
+    platformEvent('sign_up', { method: 'email', referred: !!trimmedRef });
 
     if (data.session) {
       router.push('/dashboard');
@@ -134,7 +138,7 @@ export function SignupForm() {
         <div className="flex flex-col gap-1.5">
           <label htmlFor="refCode" className="font-inter text-xs font-bold tracking-widest uppercase text-[var(--color-mark-secondary)]/60 flex items-center justify-between">
             Referral Code
-            <span className="normal-case text-[10px] font-semibold text-[var(--color-mark-secondary)]/40">Optional</span>
+            <span className="normal-case text-xs font-semibold text-[var(--color-mark-secondary)]/50">Optional</span>
           </label>
           <div className="relative">
             <input

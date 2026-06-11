@@ -76,10 +76,10 @@ export default async function DashboardPage() {
       .select('id', { count: 'exact', head: true })
       .eq('store_id', tenant.id)
       .eq('event_type', 'checkout_start'),
-    // referrer breakdown (for traffic sources)
+    // referrer + UTM breakdown (for traffic sources & campaign performance)
     supabase
       .from('store_events')
-      .select('referrer')
+      .select('referrer, utm_source, utm_medium, utm_campaign')
       .eq('store_id', tenant.id)
       .eq('event_type', 'page_view')
       .limit(2000),
@@ -87,16 +87,26 @@ export default async function DashboardPage() {
 
   const revenue = orders.reduce((sum, order) => sum + Number(order.total_amount), 0)
 
-  // Classify referrers into traffic source buckets
+  // Classify referrers + UTM tags into traffic source buckets
   const referrerRows = referrerEventsRes.data ?? []
+  const PAID_MEDIUMS = ['cpc', 'ppc', 'paid', 'paid_social', 'cpm', 'display']
   const trafficSources = referrerRows.reduce<Record<string, number>>((acc, row) => {
     const ref = (row.referrer || '').toLowerCase()
+    const medium = ((row as { utm_medium?: string }).utm_medium || '').toLowerCase()
     let bucket = 'Direct'
-    if (ref.includes('whatsapp') || ref.includes('wa.me')) bucket = 'WhatsApp'
+    if (PAID_MEDIUMS.includes(medium)) bucket = 'Paid Ads'
+    else if (ref.includes('whatsapp') || ref.includes('wa.me')) bucket = 'WhatsApp'
     else if (ref.includes('google') || ref.includes('bing') || ref.includes('yahoo')) bucket = 'Organic Search'
     else if (ref.includes('facebook') || ref.includes('instagram') || ref.includes('twitter') || ref.includes('t.co') || ref.includes('linkedin') || ref.includes('youtube')) bucket = 'Social Media'
     else if (ref !== '') bucket = 'Referral'
     acc[bucket] = (acc[bucket] || 0) + 1
+    return acc
+  }, {})
+
+  // Campaign performance (visits per utm_campaign)
+  const campaignStats = referrerRows.reduce<Record<string, number>>((acc, row) => {
+    const campaign = (row as { utm_campaign?: string }).utm_campaign
+    if (campaign) acc[campaign] = (acc[campaign] || 0) + 1
     return acc
   }, {})
 
@@ -118,6 +128,7 @@ export default async function DashboardPage() {
       allTimeCartAdds={allCartAddsRes.count ?? 0}
       allTimeCheckoutStarts={allCheckoutStartsRes.count ?? 0}
       trafficSources={trafficSources}
+      campaignStats={campaignStats}
     />
   )
 }

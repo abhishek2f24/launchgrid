@@ -135,6 +135,41 @@ export default async function SettingsPage() {
                 </div>
               </div>
             </div>
+
+            {/* Tracking & Ads */}
+            <div className="pt-4 border-t border-black/5">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-black uppercase tracking-widest text-[var(--color-mark-secondary)]">Tracking &amp; Ads</span>
+              </div>
+              <p className="text-[11px] text-[var(--color-mark-secondary)] mb-4 font-medium">
+                Connect your ad accounts. We automatically send ViewContent, AddToCart, InitiateCheckout and Purchase events to your pixel — so you can run Meta and Google ads with proper conversion tracking.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[var(--color-mark-secondary)] uppercase tracking-widest mb-1.5">Meta Pixel ID</label>
+                  <input
+                    type="text"
+                    name="metaPixelId"
+                    placeholder="e.g. 123456789012345"
+                    defaultValue={config.meta_pixel_id || ''}
+                    inputMode="numeric"
+                    className="w-full px-4 py-2.5 bg-black/[0.02] border border-black/10 rounded-xl text-sm font-bold text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:bg-white transition-colors"
+                  />
+                  <p className="text-[11px] text-[var(--color-mark-secondary)] mt-1 font-medium">Events Manager → Data Sources → your pixel. Numbers only.</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[var(--color-mark-secondary)] uppercase tracking-widest mb-1.5">Google Analytics 4 ID</label>
+                  <input
+                    type="text"
+                    name="ga4MeasurementId"
+                    placeholder="e.g. G-XXXXXXXXXX"
+                    defaultValue={config.ga4_measurement_id || ''}
+                    className="w-full px-4 py-2.5 bg-black/[0.02] border border-black/10 rounded-xl text-sm font-bold text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:bg-white transition-colors"
+                  />
+                  <p className="text-[11px] text-[var(--color-mark-secondary)] mt-1 font-medium">GA4 Admin → Data Streams → Measurement ID. Also works for Google Ads via linked accounts.</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* GST / Invoice Config */}
@@ -210,15 +245,18 @@ export default async function SettingsPage() {
               <p className="text-[11px] text-[var(--color-mark-secondary)] mt-1 font-medium">Subdomain cannot be changed after setup.</p>
             </div>
             <div>
-              <label className="block text-xs font-bold text-[var(--color-mark-secondary)] uppercase tracking-widest mb-1.5">Custom Domain <span className="normal-case text-[10px] text-green-600 font-bold ml-1">All plans ✓</span></label>
+              <label className="block text-xs font-bold text-[var(--color-mark-secondary)] uppercase tracking-widest mb-1.5">Custom Domain <span className="normal-case text-xs text-green-600 font-bold ml-1">Included on all plans ✓</span></label>
               <input
                 type="text"
                 name="customDomain"
-                placeholder="e.g. mystore.com"
+                placeholder={`e.g. ${(tenant.subdomain || 'mystore').replace(/-/g, '')}.in`}
                 defaultValue={tenant.custom_domain || ''}
                 className="w-full px-4 py-2.5 bg-black/[0.02] border border-black/10 rounded-xl text-sm font-bold text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:bg-white transition-colors"
               />
-              <p className="text-[11px] text-[var(--color-mark-secondary)] mt-1 font-medium">Point your domain CNAME to <code className="font-mono bg-black/5 px-1 rounded">cname.vercel-dns.com</code></p>
+              <p className="text-[11px] text-[var(--color-mark-secondary)] mt-1 font-medium">
+                A domain of your own builds customer trust, ranks better on Google, and is yours forever.
+                Point your domain&apos;s CNAME to <code className="font-mono bg-black/5 px-1 rounded">cname.vercel-dns.com</code> and save — SSL is automatic.
+              </p>
             </div>
           </div>
           <div className="mt-6">

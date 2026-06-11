@@ -1,4 +1,4 @@
-import { LogOut } from 'lucide-react'
+import { LogOut, ExternalLink } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOutAction } from '@/actions/portal'
@@ -17,6 +17,14 @@ export default async function PortalLayout({
     redirect('/login')
   }
 
+  // Persistent "view my store" link — merchants constantly want to see their own store
+  const { data: tenantRow } = await supabase
+    .from('tenants')
+    .select('subdomain')
+    .eq('owner_id', user.id)
+    .single()
+  const storeHost = tenantRow?.subdomain ? `${tenantRow.subdomain}.launchgrid.in` : null
+
   return (
     <div className="theme-marketing flex h-screen bg-[var(--color-mark-base)] overflow-hidden text-[var(--color-mark-primary)] pb-[68px] md:pb-0 relative antialiased">
       {/* Background Ambience */}
@@ -31,7 +39,17 @@ export default async function PortalLayout({
         
         <SidebarNavClient />
         
-        <div className="p-4 border-t border-black/5">
+        <div className="p-4 border-t border-black/5 space-y-1">
+          {storeHost && (
+            <a
+              href={`https://${storeHost}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl hover:bg-black/[0.03] text-[var(--color-mark-ink)] font-semibold transition-all duration-200"
+            >
+              <ExternalLink className="w-4.5 h-4.5" /> View my store
+            </a>
+          )}
           <form action={signOutAction}>
             <button type="submit" className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl hover:bg-red-50 text-[var(--color-mark-secondary)] hover:text-red-600 font-semibold transition-all duration-200 text-left cursor-pointer">
               <LogOut className="w-4.5 h-4.5" /> Sign out

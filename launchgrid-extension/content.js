@@ -1,428 +1,552 @@
-function isProductPage() {
-  const url = window.location.href
-  const hostname = window.location.hostname
+// LaunchGrid content script — Honey-style corner widget on product pages.
+// Detection order: JSON-LD Product → OpenGraph/meta → site-specific selectors.
+// UI lives entirely inside a Shadow DOM so host-page CSS can never break it.
+(() => {
+  'use strict'
 
-  if (hostname.includes('amazon.in')) return url.includes('/dp/') || url.includes('/gp/product/')
-  if (hostname.includes('flipkart.com')) return url.includes('/p/') || url.includes('pid=')
-  if (hostname.includes('meesho.com')) return url.includes('/p/') || url.includes('detail')
-  if (hostname.includes('myntra.com')) return true // Myntra product pages often don't have a clear path pattern, just allow on Myntra
-  if (hostname.includes('nykaa.com')) return url.includes('/p/') || url.includes('product')
-  if (hostname.includes('ajio.com')) return url.includes('/p/') || url.includes('product')
-  
-  // For generic fallback, we could check if ld+json has Product, but for now let's just show it on any page 
-  // where the extension is manually triggered, or just show the FAB everywhere for now.
-  // Actually, to avoid clutter, let's just return true for any page since the user has to click the extension icon to trigger the generic fallback, wait no, it injects a FAB.
-  // Let's just return true to make sure the user can always see the FAB on the pages they want to import from.
-  return true
-}
+  if (window.__lgWidgetLoaded) return
+  window.__lgWidgetLoaded = true
 
-function extractAmazon() {
-  const titleEl = document.getElementById('productTitle')
-  const title = titleEl?.textContent?.trim() ?? ''
+  // ───────────────────────── Product detection ─────────────────────────
 
-  const whole    = document.querySelector('.a-price-whole')?.textContent?.replace(/[^0-9]/g, '') ?? ''
-  const fraction = document.querySelector('.a-price-fraction')?.textContent?.replace(/[^0-9]/g, '') ?? '00'
-  const cost_price = whole ? parseFloat(`${whole}.${fraction}`) : null
-
-  const mainImg = document.getElementById('imgTagWrapperId')?.querySelector('img')?.src
-  const thumbs  = [...document.querySelectorAll('#altImages .a-button-thumbnail img')]
-    .map(img => img.src.replace(/\._[A-Z0-9_,]+_\./, '._SL500_.'))
-    .filter(Boolean)
-  const images = [...new Set([mainImg, ...thumbs].filter(Boolean))].slice(0, 6)
-
-  const bullets = [...document.querySelectorAll('#feature-bullets li span')]
-    .map(el => el.textContent?.trim())
-    .filter(t => t && !t.includes('Make sure this fits'))
-    .slice(0, 5)
-  const description = bullets.join(' • ')
-
-  return {
-    title,
-    description,
-    cost_price,
-    images,
-    source_url:  window.location.href,
-    source_site: 'amazon.in',
+  function parsePrice(raw) {
+    if (raw == null) return null
+    if (typeof raw === 'number') return raw > 0 ? Math.round(raw) : null
+    const m = String(raw).replace(/[,\s]/g, '').match(/(\d+(?:\.\d{1,2})?)/)
+    if (!m) return null
+    const n = parseFloat(m[1])
+    return n > 0 && n < 10000000 ? Math.round(n) : null
   }
-}
 
-function extractFlipkart() {
-  const title = document.querySelector('span.B_NuCI, h1.yhB1nd')?.textContent?.trim() ?? ''
-  const priceText = document.querySelector('div._30jeq3, div._16Jk6d')?.textContent ?? ''
-  const cost_price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || null
-  const imgEls = document.querySelectorAll('div._2r_T1I img, div.CXW8mj img, div._3kidJX img')
-  const images = [...imgEls]
-    .map(img => img.src)
-    .filter(src => src && !src.includes('data:') && src.includes('rukminim'))
-    .map(src => src.replace(/\/128\/128\//, '/512/512/').replace(/\/96\/96\//, '/512/512/'))
-    .filter((src, i, arr) => arr.indexOf(src) === i)
-    .slice(0, 6)
-  const descEls = document.querySelectorAll('div._1AN87F li, ._2o-xpa li')
-  const description = [...descEls].map(el => el.textContent?.trim()).filter(Boolean).join(' • ')
+  function firstImage(img) {
+    if (!img) return null
+    if (Array.isArray(img)) img = img[0]
+    if (typeof img === 'object' && img !== null) img = img.url || img.contentUrl || null
+    if (typeof img !== 'string') return null
+    try { return new URL(img, location.href).href } catch { return null }
+  }
 
-  return { title, description, cost_price, images, source_url: window.location.href, source_site: 'flipkart.com' }
-}
-
-function extractMeesho() {
-  const title = document.querySelector('h1')?.textContent?.trim() ?? ''
-  const allText = [...document.querySelectorAll('h4, span, p')]
-  const priceEl = allText.find(el => /^₹\s*\d/.test(el.textContent?.trim() ?? ''))
-  const cost_price = priceEl ? parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) : null
-  const images = [...document.querySelectorAll('img')]
-    .map(img => img.src)
-    .filter(src => src.includes('meesho') && src.includes('product') && !src.includes('icon'))
-    .filter((src, i, arr) => arr.indexOf(src) === i)
-    .slice(0, 6)
-  const description = document.querySelector('div[class*="Description"], div[class*="description"]')?.textContent?.trim() ?? ''
-
-  return { title, description, cost_price, images, source_url: window.location.href, source_site: 'meesho.com' }
-}
-
-function extractMyntra() {
-  const title = [document.querySelector('h1.pdp-title')?.textContent, document.querySelector('h1.pdp-name')?.textContent].find(Boolean)?.trim() ?? ''
-  const priceText = document.querySelector('span.pdp-price strong, div.pdp-price')?.textContent ?? ''
-  const cost_price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || null
-  const images = [...document.querySelectorAll('div.image-grid-image img, div.pdp-carousel img')]
-    .map(img => img.src).filter(src => src && !src.includes('data:')).filter((src, i, arr) => arr.indexOf(src) === i).slice(0, 6)
-  const description = document.querySelector('div.pdp-product-description-content p, div.index-sizeFitDesc')?.textContent?.trim() ?? ''
-
-  return { title, description, cost_price, images, source_url: window.location.href, source_site: 'myntra.com' }
-}
-
-function extractNykaa() {
-  const title = document.querySelector('h1[class*="css-"], h1.product-title')?.textContent?.trim() ?? ''
-  const priceText = document.querySelector('span[class*="css-"] span, .price-container span')?.textContent ?? ''
-  const cost_price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || null
-  const images = [...document.querySelectorAll('div[class*="image"] img, .product-image img')]
-    .map(img => img.src).filter(src => src && src.startsWith('http') && !src.includes('icon'))
-    .filter((src, i, arr) => arr.indexOf(src) === i).slice(0, 6)
-
-  return { title, description: '', cost_price, images, source_url: window.location.href, source_site: 'nykaa.com' }
-}
-
-function extractAjio() {
-  const title = document.querySelector('h1.prod-name, .prod-name')?.textContent?.trim() ?? ''
-  const priceText = document.querySelector('div.prod-sp, strong.prod-sp')?.textContent ?? ''
-  const cost_price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || null
-  const images = [...document.querySelectorAll('ul.prod-list li img, .image-carousel img')]
-    .map(img => img.src).filter(src => src && src.startsWith('http'))
-    .filter((src, i, arr) => arr.indexOf(src) === i).slice(0, 6)
-
-  return { title, description: '', cost_price, images, source_url: window.location.href, source_site: 'ajio.com' }
-}
-
-function extractGeneric() {
-  const scripts = [...document.querySelectorAll('script[type="application/ld+json"]')]
-  let ld = null
-  for (const script of scripts) {
-    try {
-      const json = JSON.parse(script.textContent ?? '')
-      const items = Array.isArray(json) ? json : [json]
-      for (const item of items) {
-        if (item['@type'] === 'Product') { ld = item; break }
-        if (item['@graph']) {
-          const found = item['@graph'].find(g => g['@type'] === 'Product')
-          if (found) { ld = found; break }
+  function fromJsonLd() {
+    for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+      let data
+      try { data = JSON.parse(script.textContent) } catch { continue }
+      const nodes = []
+      const collect = (n) => {
+        if (!n || typeof n !== 'object') return
+        if (Array.isArray(n)) return n.forEach(collect)
+        nodes.push(n)
+        if (n['@graph']) collect(n['@graph'])
+      }
+      collect(data)
+      for (const node of nodes) {
+        const type = [].concat(node['@type'] || [])
+        if (!type.includes('Product')) continue
+        const offers = [].concat(node.offers || [])[0] || {}
+        const price = parsePrice(offers.price ?? offers.lowPrice ?? offers.highPrice)
+        if (!node.name) continue
+        return {
+          title: String(node.name).trim().slice(0, 200),
+          price,
+          image: firstImage(node.image),
+          description: typeof node.description === 'string' ? node.description.trim().slice(0, 600) : '',
+          confidence: 'high',
         }
       }
-    } catch {}
-    if (ld) break
+    }
+    return null
   }
 
-  const title = ld?.name || document.querySelector('meta[property="og:title"]')?.getAttribute('content') || document.querySelector('h1')?.textContent?.trim() || document.title || ''
-  const description = ld?.description || document.querySelector('meta[property="og:description"]')?.getAttribute('content') || document.querySelector('meta[name="description"]')?.getAttribute('content') || ''
-  
-  let cost_price = null
-  if (ld?.offers) {
-    const offer = Array.isArray(ld.offers) ? ld.offers[0] : ld.offers
-    cost_price = parseFloat(String(offer?.price ?? '').replace(/[^0-9.]/g, '')) || null
-  }
-  if (!cost_price) {
-    const ogPrice = document.querySelector('meta[property="og:price:amount"]')?.getAttribute('content')
-    cost_price = parseFloat((ogPrice ?? '').replace(/[^0-9.]/g, '')) || null
+  function meta(sel) {
+    const el = document.querySelector(sel)
+    return el ? (el.getAttribute('content') || '').trim() : ''
   }
 
-  let images = []
-  if (ld?.image) {
-    const img = ld.image
-    if (typeof img === 'string') images = [img]
-    else if (Array.isArray(img)) images = img.map(i => typeof i === 'string' ? i : i.url).filter(Boolean)
-    else if (img.url) images = [img.url]
+  function fromOpenGraph() {
+    const ogType = meta('meta[property="og:type"]')
+    const title = meta('meta[property="og:title"]') || meta('meta[name="twitter:title"]')
+    const image = meta('meta[property="og:image"]') || meta('meta[name="twitter:image"]')
+    const price = parsePrice(
+      meta('meta[property="product:price:amount"]') ||
+      meta('meta[property="og:price:amount"]') ||
+      meta('meta[itemprop="price"]')
+    )
+    if (!title) return null
+    // Only trust OG alone when it self-declares a product, or we found a price
+    if (!/product/i.test(ogType) && !price) return null
+    return {
+      title: title.slice(0, 200),
+      price,
+      image: image || null,
+      description: meta('meta[property="og:description"]').slice(0, 600),
+      confidence: price ? 'high' : 'medium',
+    }
   }
-  if (images.length === 0) {
-    const ogImg = document.querySelector('meta[property="og:image"]')?.getAttribute('content')
-    if (ogImg) images = [ogImg]
+
+  const SITE_RULES = [
+    {
+      host: /amazon\./,
+      isProduct: () => /\/(dp|gp\/product)\//.test(location.pathname),
+      title: ['#productTitle'],
+      price: ['.a-price .a-offscreen', '#priceblock_dealprice', '#priceblock_ourprice'],
+      image: ['#landingImage', '#imgBlkFront'],
+    },
+    {
+      host: /flipkart\./,
+      isProduct: () => /\/p\//.test(location.pathname),
+      title: ['h1 span', 'h1'],
+      price: ['div._30jeq3._16Jk6d', 'div._30jeq3', '[class*="price"] div'],
+      image: ['img[loading="eager"]', 'img._396cs4', 'img._2r_T1I'],
+    },
+    {
+      host: /meesho\./,
+      isProduct: () => /\/p\//.test(location.pathname) || /\/product\//.test(location.pathname),
+      title: ['h1'],
+      price: ['h4', '[class*="DesktopPrice"]', '[class*="discounted"]'],
+      image: ['img[alt][src*="images.meesho"]', 'main img'],
+    },
+    {
+      host: /myntra\./,
+      isProduct: () => /\/\d+\/buy/.test(location.pathname) || /\/buy$/.test(location.pathname),
+      title: ['.pdp-title', 'h1.pdp-name', 'h1'],
+      price: ['.pdp-price strong', '.pdp-price'],
+      image: ['.image-grid-image', '.image-grid-imageContainer img'],
+    },
+    {
+      host: /nykaa\./,
+      isProduct: () => /\/p\//.test(location.pathname),
+      title: ['h1'],
+      price: ['[class*="css-1jczs19"]', '[class*="price"] span'],
+      image: ['img[src*="images-static.nykaa"]'],
+    },
+    {
+      host: /ajio\./,
+      isProduct: () => /\/p\//.test(location.pathname),
+      title: ['h1.prod-name', 'h1'],
+      price: ['.prod-sp', '.prod-price-section .prod-sp'],
+      image: ['.img-container img', '.rilrtl-lazy-img'],
+    },
+    {
+      host: /snapdeal\./,
+      isProduct: () => /\/product\//.test(location.pathname),
+      title: ['h1[itemprop="name"]', 'h1'],
+      price: ['.payBlkBig', '[itemprop="price"]'],
+      image: ['#bx-pager img', '.cloudzoom'],
+    },
+    {
+      host: /glowroad\./,
+      isProduct: () => /\/product/.test(location.pathname),
+      title: ['h1'],
+      price: ['[class*="price"]'],
+      image: ['main img'],
+    },
+    {
+      host: /indiamart\./,
+      isProduct: () => /\/proddetail\//.test(location.pathname),
+      title: ['h1'],
+      price: ['.bo.price-unit', '[class*="price"]'],
+      image: ['#big_img', '.bigImg img'],
+    },
+  ]
+
+  function pickText(selectors) {
+    for (const sel of selectors) {
+      try {
+        const el = document.querySelector(sel)
+        const t = el && (el.textContent || '').trim()
+        if (t) return t
+      } catch { /* invalid selector — skip */ }
+    }
+    return ''
   }
-  images = images.filter(src => src && src.startsWith('http') && !src.includes('icon') && !src.includes('logo')).slice(0, 6)
 
-  return { title: title.replace(/\s*[|—–-]\s*\S.*$/, '').trim(), description: description.slice(0, 500), cost_price, images, source_url: window.location.href, source_site: window.location.hostname.replace(/^www\./, '') }
-}
+  function pickImage(selectors) {
+    for (const sel of selectors) {
+      try {
+        const el = document.querySelector(sel)
+        const src = el && (el.currentSrc || el.src)
+        if (src && src.startsWith('http')) return src
+      } catch { /* skip */ }
+    }
+    return null
+  }
 
-function extractProductData() {
-  const host = window.location.hostname
-  if (host.includes('amazon.in')) return extractAmazon()
-  if (host.includes('flipkart.com')) return extractFlipkart()
-  if (host.includes('meesho.com')) return extractMeesho()
-  if (host.includes('myntra.com')) return extractMyntra()
-  if (host.includes('nykaa.com')) return extractNykaa()
-  if (host.includes('ajio.com')) return extractAjio()
-  
-  return extractGeneric()
-}
+  function fromSiteRules() {
+    const rule = SITE_RULES.find(r => r.host.test(location.hostname))
+    if (!rule || !rule.isProduct()) return null
+    const title = pickText(rule.title)
+    if (!title) return null
+    return {
+      title: title.slice(0, 200),
+      price: parsePrice(pickText(rule.price)),
+      image: pickImage(rule.image),
+      description: '',
+      confidence: 'medium',
+    }
+  }
 
-// Ensure we only inject once
-if (!document.getElementById('lg-extension-root')) {
-  initExtension();
-}
+  function detectProduct() {
+    const product = fromJsonLd() || fromOpenGraph() || fromSiteRules()
+    if (!product) return null
+    // Fill gaps across strategies
+    if (!product.image) product.image = meta('meta[property="og:image"]') || null
+    if (!product.description) product.description = meta('meta[property="og:description"]').slice(0, 600)
+    return product
+  }
 
-function initExtension() {
-  if (!isProductPage()) return;
+  // ───────────────────────── Widget UI (Shadow DOM) ─────────────────────────
 
-  const root = document.createElement('div')
-  root.id = 'lg-extension-root'
-  document.body.appendChild(root)
+  const CSS = `
+    :host { all: initial; }
+    * { box-sizing: border-box; margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
-  const shadow = root.attachShadow({ mode: 'open' })
-  
-  // Fetch CSS file contents and inject as a style block so it applies within shadow DOM
-  const styleLink = document.createElement('link')
-  styleLink.setAttribute('rel', 'stylesheet')
-  styleLink.setAttribute('href', chrome.runtime.getURL('content.css'))
-  shadow.appendChild(styleLink)
+    .root { position: fixed; top: 96px; right: 16px; z-index: 2147483647; }
 
-  const container = document.createElement('div')
-  container.innerHTML = `
-    <!-- Floating Action Button -->
-    <button id="lg-fab">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
-      Add to LaunchGrid
-    </button>
+    .pill {
+      display: flex; align-items: center; gap: 8px;
+      background: #1A1A18; color: #fff; border: none; cursor: pointer;
+      padding: 10px 14px; border-radius: 999px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.28);
+      font-size: 13px; font-weight: 700; letter-spacing: .01em;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .pill:hover { transform: translateY(-1px); box-shadow: 0 12px 36px rgba(0,0,0,.32); }
+    .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #FF8A00; }
 
-    <!-- Side Panel -->
-    <div id="lg-panel">
-      <!-- Header -->
-      <div class="lg-panel-header">
-        <div class="lg-logo">LaunchGrid</div>
-        <button class="lg-close" id="lg-close-btn">✕</button>
-      </div>
+    .card {
+      width: 320px; background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,.30), 0 0 0 1px rgba(0,0,0,.06);
+      animation: lgIn .18s ease;
+    }
+    @keyframes lgIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-      <!-- Loading state -->
-      <div id="lg-loading" class="lg-state">
-        <div class="lg-spinner"></div>
-        <p>Reading product details...</p>
-      </div>
+    .head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; background: #1A1A18; color: #fff;
+    }
+    .head .brand { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; }
+    .head .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: #FF8A00; }
+    .head button { background: none; border: none; color: rgba(255,255,255,.6); font-size: 18px; line-height: 1; cursor: pointer; padding: 2px 4px; }
+    .head button:hover { color: #fff; }
 
-      <!-- Error state (not connected) -->
-      <div id="lg-auth-error" class="lg-state hidden">
-        <p class="lg-icon">🔗</p>
-        <h3>Not connected</h3>
-        <p>Connect your LaunchGrid account to add products.</p>
-        <button id="lg-connect-btn" class="lg-btn-primary">Connect Account →</button>
-      </div>
+    .body { padding: 14px; }
 
-      <!-- Product form -->
-      <div id="lg-product-form" class="hidden">
-        <!-- Image carousel -->
-        <div class="lg-images">
-          <div class="lg-main-image">
-            <img id="lg-main-img" src="" alt="Product image" />
-          </div>
-          <div class="lg-thumbs" id="lg-thumbs"></div>
-          <p class="lg-img-count" id="lg-img-count"></p>
-        </div>
+    .prod { display: flex; gap: 10px; margin-bottom: 12px; }
+    .prod img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background: #f3f3f1; flex: none; }
+    .prod .ph { width: 56px; height: 56px; border-radius: 10px; background: #f3f3f1; display: flex; align-items: center; justify-content: center; color: #999; font-size: 22px; flex: none; }
+    .prod .t { font-size: 12.5px; font-weight: 600; color: #1A1A18; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .prod .src { font-size: 11px; color: #8a8a86; margin-top: 3px; }
 
-        <!-- Fields -->
-        <div class="lg-fields">
-          <label>PRODUCT NAME</label>
-          <input type="text" id="lg-title" placeholder="Product title" />
+    .row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .field { flex: 1; }
+    .field label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #8a8a86; margin-bottom: 4px; }
+    .field input {
+      width: 100%; padding: 9px 10px; border: 1px solid rgba(0,0,0,.12); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: #1A1A18; outline: none; background: #fff;
+    }
+    .field input:focus { border-color: #FF8A00; box-shadow: 0 0 0 3px rgba(255,138,0,.15); }
+    .field input[readonly] { background: #f7f7f5; color: #6b6b67; }
 
-          <label>DESCRIPTION <span class="optional">(optional)</span></label>
-          <textarea id="lg-desc" rows="3" placeholder="Short description..."></textarea>
+    .profit { font-size: 12px; font-weight: 600; color: #15803d; margin: -2px 0 12px; min-height: 15px; }
+    .profit.neg { color: #b91c1c; }
 
-          <div class="lg-price-row">
-            <div>
-              <label>THEIR PRICE (₹)</label>
-              <input type="number" id="lg-cost" placeholder="e.g. 355" />
-              <p class="hint">Source price</p>
-            </div>
-            <div>
-              <label>YOUR PRICE (₹) <span class="required">*</span></label>
-              <input type="number" id="lg-retail" placeholder="e.g. 499" />
-              <p class="hint">Customer pays this</p>
-            </div>
-          </div>
+    .btn {
+      width: 100%; padding: 12px; border: none; border-radius: 12px; cursor: pointer;
+      background: #1A1A18; color: #fff; font-size: 13.5px; font-weight: 800;
+      transition: background .15s ease, transform .1s ease;
+    }
+    .btn:hover { background: #000; }
+    .btn:active { transform: scale(.985); }
+    .btn:disabled { opacity: .55; cursor: default; }
+    .btn.orange { background: #FF8A00; }
+    .btn.orange:hover { background: #e67c00; }
 
-          <!-- Margin badge -->
-          <div id="lg-margin" class="lg-margin hidden"></div>
+    .note { font-size: 11px; color: #8a8a86; text-align: center; margin-top: 9px; line-height: 1.4; }
+    .note a, .link { color: #1A1A18; font-weight: 700; cursor: pointer; text-decoration: underline; }
 
-          <button id="lg-submit" class="lg-btn-primary" disabled>
-            Add to My Store
-          </button>
+    .state { text-align: center; padding: 6px 4px 2px; }
+    .state .big { font-size: 30px; margin-bottom: 8px; }
+    .state .msg { font-size: 13.5px; font-weight: 700; color: #1A1A18; margin-bottom: 4px; }
+    .state .sub { font-size: 12px; color: #8a8a86; line-height: 1.45; margin-bottom: 12px; }
 
-          <p id="lg-save-error" class="lg-error hidden"></p>
-        </div>
-      </div>
+    .err { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 12px; font-weight: 600; padding: 8px 10px; border-radius: 10px; margin-bottom: 10px; line-height: 1.4; }
 
-      <!-- Success state -->
-      <div id="lg-success" class="lg-state hidden">
-        <p class="lg-icon">✅</p>
-        <h3 id="lg-success-title"></h3>
-        <p>Added to your store and ready to sell.</p>
-        <div class="lg-success-actions">
-          <a id="lg-dashboard-link" href="http://localhost:3000/dashboard/products" target="_blank" class="lg-btn-secondary">
-            View in Dashboard →
-          </a>
-          <button id="lg-add-another" class="lg-btn-primary">Add Another</button>
-        </div>
-      </div>
-    </div>
+    .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: lgSpin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+    @keyframes lgSpin { to { transform: rotate(360deg); } }
   `
-  shadow.appendChild(container)
 
-  let currentProductData = null;
-
-  // Panel interaction logic
-  const fab     = shadow.getElementById('lg-fab')
-  const panel   = shadow.getElementById('lg-panel')
-  const closeBtn = shadow.getElementById('lg-close-btn')
-  const submitBtn = shadow.getElementById('lg-submit')
-  const retailInput = shadow.getElementById('lg-retail')
-  const costInput   = shadow.getElementById('lg-cost')
-  const marginDiv   = shadow.getElementById('lg-margin')
-  const connectBtn  = shadow.getElementById('lg-connect-btn')
-
-  // Open panel on FAB click
-  fab.addEventListener('click', async () => {
-    fab.classList.add('hidden')
-    panel.classList.add('open')
-
-    // Check auth first
-    const { lg_token } = await chrome.storage.local.get('lg_token')
-    if (!lg_token) {
-      showState('auth-error')
-      return
-    }
-
-    // Extract product data
-    showState('loading')
-    const data = extractProductData()
-    populateForm(data)
-    showState('form')
-  })
-
-  closeBtn.addEventListener('click', () => {
-    panel.classList.remove('open')
-    fab.classList.remove('hidden')
-  })
-
-  connectBtn.addEventListener('click', async () => {
-    // Attempt to open the auth window using dynamic backend URL
-    const { lg_backend_url } = await chrome.storage.local.get('lg_backend_url')
-    const baseUrl = lg_backend_url || 'http://localhost:3000'
-    window.open(`${baseUrl}/dashboard/extension-auth?ext_id=${chrome.runtime.id}`, '_blank')
-  })
-
-  shadow.getElementById('lg-add-another').addEventListener('click', () => {
-    panel.classList.remove('open')
-    fab.classList.remove('hidden')
-  })
-
-  // Live margin calculation
-  function updateMargin() {
-    const cost   = parseFloat(costInput.value)   || 0
-    const retail = parseFloat(retailInput.value) || 0
-    submitBtn.disabled = !retailInput.value || !shadow.getElementById('lg-title').value
-
-    if (retail <= 0) { marginDiv.classList.add('hidden'); return }
-    marginDiv.classList.remove('hidden')
-
-    if (retail <= cost) {
-      marginDiv.className = 'lg-margin loss'
-      marginDiv.textContent = `⚠ Selling at a loss — reduce cost or raise your price`
-      submitBtn.disabled = true
-      return
-    }
-
-    const margin  = Math.round(((retail - cost) / retail) * 100)
-    const profit  = Math.round(retail - cost)
-    const quality = margin >= 30 ? 'good' : margin >= 15 ? 'ok' : 'low'
-    marginDiv.className = `lg-margin ${quality}`
-    marginDiv.textContent = `Margin: ${margin}% — ₹${profit} profit per sale`
-    submitBtn.disabled = false
+  const state = {
+    product: null,
+    open: false,
+    auth: null,        // null = unknown, {connected, store_name, subdomain}
+    adding: false,
+    added: false,
+    error: null,
+    dismissed: false,
   }
 
-  retailInput.addEventListener('input', updateMargin)
-  costInput.addEventListener('input', updateMargin)
+  let host = null
+  let shadow = null
 
-  // Submit
-  submitBtn.addEventListener('click', async () => {
-    submitBtn.disabled = true
-    submitBtn.textContent = 'Adding...'
+  function suggestSellPrice(cost) {
+    if (!cost) return ''
+    // +30% margin, rounded up to a price ending in 9 (₹649, ₹1,299 style)
+    const raw = cost * 1.3
+    return Math.max(cost + 10, Math.ceil(raw / 10) * 10 - 1)
+  }
 
-    const title       = shadow.getElementById('lg-title').value.trim()
-    const description = shadow.getElementById('lg-desc').value.trim()
-    const cost_price  = parseFloat(costInput.value)   || undefined
-    const retail_price = parseFloat(retailInput.value)
-    const images      = currentProductData.images || []
-    const source_url  = currentProductData.source_url
+  function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+  }
 
-    // Send to background script (which makes the API call)
-    chrome.runtime.sendMessage({
-      type: 'ADD_PRODUCT',
-      data: { title, description, cost_price, retail_price, image_urls: images, source_url },
-    }, (response) => {
-      if (response && response.success) {
-        shadow.getElementById('lg-success-title').textContent = `"${title}" added!`
-        showState('success')
-      } else {
-        submitBtn.disabled = false
-        submitBtn.textContent = 'Add to My Store'
-        shadow.getElementById('lg-save-error').textContent = response?.error || 'Something went wrong'
-        shadow.getElementById('lg-save-error').classList.remove('hidden')
+  function render() {
+    if (!shadow) return
+    const p = state.product
+    let inner = ''
+
+    if (!state.open) {
+      inner = `
+        <button class="pill" id="lg-open" title="Add this product to your LaunchGrid store">
+          <span class="dot"></span> Add to my store
+        </button>`
+    } else if (state.added) {
+      inner = `
+        <div class="card">
+          <div class="head">
+            <span class="brand"><span class="dot"></span> LaunchGrid</span>
+            <button id="lg-close" aria-label="Close">×</button>
+          </div>
+          <div class="body">
+            <div class="state">
+              <div class="big">✓</div>
+              <div class="msg">Added to ${esc(state.auth?.store_name || 'your store')}</div>
+              <div class="sub">It's live in your catalog. Set photos &amp; details in the dashboard if needed.</div>
+              <button class="btn" id="lg-dash">Open my dashboard</button>
+              <div class="note"><span class="link" id="lg-again">Add another product</span></div>
+            </div>
+          </div>
+        </div>`
+    } else if (state.auth && !state.auth.connected) {
+      inner = `
+        <div class="card">
+          <div class="head">
+            <span class="brand"><span class="dot"></span> LaunchGrid</span>
+            <button id="lg-close" aria-label="Close">×</button>
+          </div>
+          <div class="body">
+            <div class="state">
+              <div class="big">🔗</div>
+              <div class="msg">Connect your store</div>
+              <div class="sub">One-time login links this extension to your LaunchGrid store. Takes 10 seconds.</div>
+              <button class="btn orange" id="lg-connect">Connect my store</button>
+              <div class="note">No store yet? <a href="https://launchgrid.in/onboarding?utm_source=extension" target="_blank" rel="noopener">Create one free</a></div>
+            </div>
+          </div>
+        </div>`
+    } else {
+      const cost = p.price || ''
+      const sell = suggestSellPrice(p.price)
+      inner = `
+        <div class="card">
+          <div class="head">
+            <span class="brand"><span class="dot"></span> LaunchGrid</span>
+            <button id="lg-close" aria-label="Close">×</button>
+          </div>
+          <div class="body">
+            ${state.error ? `<div class="err">${esc(state.error)}</div>` : ''}
+            <div class="prod">
+              ${p.image ? `<img src="${esc(p.image)}" alt="">` : `<div class="ph">📦</div>`}
+              <div>
+                <div class="t">${esc(p.title)}</div>
+                <div class="src">${esc(location.hostname.replace('www.', ''))}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label>Source price</label>
+                <input id="lg-cost" type="number" min="0" inputmode="numeric" value="${cost}" placeholder="—">
+              </div>
+              <div class="field">
+                <label>Your selling price</label>
+                <input id="lg-sell" type="number" min="0" inputmode="numeric" value="${sell}" placeholder="e.g. 499">
+              </div>
+            </div>
+            <div class="profit" id="lg-profit"></div>
+            <button class="btn" id="lg-add" ${state.adding ? 'disabled' : ''}>
+              ${state.adding ? '<span class="spin"></span>Adding…' : `Add to ${esc(state.auth?.store_name || 'my store')}`}
+            </button>
+            <div class="note">Photos &amp; description import automatically</div>
+          </div>
+        </div>`
+    }
+
+    shadow.getElementById('lg-root').innerHTML = inner
+    wire()
+  }
+
+  function updateProfit() {
+    const out = shadow.getElementById('lg-profit')
+    if (!out) return
+    const cost = parseFloat(shadow.getElementById('lg-cost')?.value) || 0
+    const sell = parseFloat(shadow.getElementById('lg-sell')?.value) || 0
+    if (!sell) { out.textContent = ''; return }
+    const profit = sell - cost
+    out.classList.toggle('neg', profit < 0)
+    out.textContent = cost
+      ? `Profit per sale: ₹${profit.toLocaleString('en-IN')}`
+      : `Selling at ₹${sell.toLocaleString('en-IN')}`
+  }
+
+  function wire() {
+    const $ = (id) => shadow.getElementById(id)
+
+    $('lg-open')?.addEventListener('click', async () => {
+      state.open = true
+      render()
+      // Lazy auth check on first open
+      if (state.auth === null) {
+        state.auth = await send({ type: 'GET_AUTH_STATE' }) || { connected: false }
+        render()
       }
     })
-  })
 
-  function showState(state) {
-    // 'loading' | 'auth-error' | 'form' | 'success'
-    shadow.getElementById('lg-loading').classList.toggle('hidden',      state !== 'loading')
-    shadow.getElementById('lg-auth-error').classList.toggle('hidden',   state !== 'auth-error')
-    shadow.getElementById('lg-product-form').classList.toggle('hidden', state !== 'form')
-    shadow.getElementById('lg-success').classList.toggle('hidden',      state !== 'success')
-  }
-
-  function populateForm(data) {
-    shadow.getElementById('lg-title').value = data.title || ''
-    shadow.getElementById('lg-desc').value  = data.description || ''
-    costInput.value   = data.cost_price ? String(Math.round(data.cost_price)) : ''
-    retailInput.value = ''
-    shadow.getElementById('lg-save-error').classList.add('hidden')
-
-    // Images
-    const mainImg  = shadow.getElementById('lg-main-img')
-    const thumbsEl = shadow.getElementById('lg-thumbs')
-    const countEl  = shadow.getElementById('lg-img-count')
-
-    mainImg.src = data.images?.[0] || ''
-    mainImg.style.display = data.images?.length ? 'block' : 'none'
-
-    thumbsEl.innerHTML = ''
-    data.images?.slice(0, 6).forEach((src, i) => {
-      const btn = document.createElement('button')
-      btn.className = `lg-thumb${i === 0 ? ' active' : ''}`
-      btn.innerHTML = `<img src="${src}" />`
-      btn.addEventListener('click', () => {
-        mainImg.src = src
-        thumbsEl.querySelectorAll('.lg-thumb').forEach(t => t.classList.remove('active'))
-        btn.classList.add('active')
-      })
-      thumbsEl.appendChild(btn)
+    $('lg-close')?.addEventListener('click', () => {
+      state.open = false
+      state.error = null
+      render()
     })
 
-    countEl.textContent = `${data.images?.length || 0} image${data.images?.length !== 1 ? 's' : ''} found`
-    currentProductData = data
-    updateMargin()
+    $('lg-connect')?.addEventListener('click', async () => {
+      await send({ type: 'OPEN_AUTH' })
+      // Poll for the auth to complete while the user logs in on the other tab
+      const poll = setInterval(async () => {
+        const auth = await send({ type: 'GET_AUTH_STATE' })
+        if (auth?.connected) {
+          clearInterval(poll)
+          state.auth = auth
+          render()
+        }
+      }, 1500)
+      setTimeout(() => clearInterval(poll), 120000)
+    })
+
+    $('lg-dash')?.addEventListener('click', () => {
+      window.open('https://launchgrid.in/dashboard/products', '_blank', 'noopener')
+    })
+
+    $('lg-again')?.addEventListener('click', () => {
+      state.added = false
+      render()
+    })
+
+    $('lg-cost')?.addEventListener('input', updateProfit)
+    $('lg-sell')?.addEventListener('input', updateProfit)
+    updateProfit()
+
+    $('lg-add')?.addEventListener('click', async () => {
+      const cost = parseFloat($('lg-cost')?.value) || null
+      const sell = parseFloat($('lg-sell')?.value) || null
+      if (!sell || sell <= 0) {
+        state.error = 'Set your selling price first.'
+        render()
+        return
+      }
+      state.adding = true
+      state.error = null
+      render()
+
+      const result = await send({
+        type: 'ADD_PRODUCT',
+        data: {
+          title: state.product.title,
+          description: state.product.description || '',
+          retail_price: sell,
+          cost_price: cost,
+          image_urls: state.product.image ? [state.product.image] : [],
+          source_url: location.href.split('?')[0],
+        },
+      })
+
+      state.adding = false
+      if (result?.success) {
+        state.added = true
+      } else if (result?.code === 'AUTH_REQUIRED') {
+        state.auth = { connected: false }
+      } else {
+        state.error = result?.error || 'Something went wrong. Try again.'
+      }
+      render()
+    })
   }
-}
+
+  function send(message) {
+    return new Promise(resolve => {
+      try {
+        chrome.runtime.sendMessage(message, response => {
+          if (chrome.runtime.lastError) resolve(null)
+          else resolve(response)
+        })
+      } catch { resolve(null) }
+    })
+  }
+
+  function mount(product) {
+    state.product = product
+    if (host) { render(); return }
+    host = document.createElement('div')
+    host.id = 'lg-widget-host'
+    const sr = host.attachShadow({ mode: 'closed' })
+    const style = document.createElement('style')
+    style.textContent = CSS
+    const root = document.createElement('div')
+    root.className = 'root'
+    root.id = 'lg-root'
+    sr.appendChild(style)
+    sr.appendChild(root)
+    // ShadowRoot supports getElementById (DocumentFragment interface)
+    shadow = { getElementById: (id) => sr.getElementById(id) }
+    document.documentElement.appendChild(host)
+    render()
+  }
+
+  function unmount() {
+    if (host) { host.remove(); host = null; shadow = null }
+    state.open = false
+    state.added = false
+    state.error = null
+  }
+
+  // ───────────────────────── SPA-aware lifecycle ─────────────────────────
+  // Meesho/Flipkart/Myntra are SPAs: re-detect on URL change and late renders.
+
+  let lastUrl = location.href
+  let attempts = 0
+
+  function tryDetect() {
+    const product = detectProduct()
+    if (product && product.title) {
+      mount(product)
+      return true
+    }
+    unmount()
+    return false
+  }
+
+  function scheduleDetection() {
+    attempts = 0
+    const timer = setInterval(() => {
+      attempts++
+      if (tryDetect() || attempts >= 8) clearInterval(timer) // retry up to ~8s for late SPA renders
+    }, 1000)
+    tryDetect()
+  }
+
+  setInterval(() => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href
+      unmount()
+      scheduleDetection()
+    }
+  }, 800)
+
+  scheduleDetection()
+})()

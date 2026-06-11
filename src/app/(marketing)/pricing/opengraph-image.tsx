@@ -32,8 +32,8 @@ export default function OGImage() {
         <div style={{ display: 'flex', gap: '16px' }}>
           {[
             { plan: 'Starter', price: '₹999' },
-            { plan: 'Growth', price: '₹2,499' },
-            { plan: 'Scale', price: '₹4,999' },
+            { plan: 'Growth', price: '₹3,999' },
+            { plan: 'Scale', price: '₹9,999' },
           ].map((p) => (
             <div
               key={p.plan}

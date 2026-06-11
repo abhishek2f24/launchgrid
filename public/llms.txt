@@ -7,18 +7,23 @@ LaunchGrid is built specifically for Indian founders and side-hustlers selling p
 ## Key Features
 - Store creation in 15 minutes with AI-generated content
 - Native UPI checkout (GPay, PhonePe, Paytm) — no bank account required to start
-- GST threshold monitoring and automated tax invoice generation
+- GST threshold monitoring and automated tax invoice generation (CGST/SGST/IGST)
 - Product import from Meesho, Amazon, Ajio, Nykaa by pasting any URL
+- Chrome extension for one-click product import while browsing
 - Cash on Delivery (COD) with OTP fraud prevention
 - Abandoned cart recovery via WhatsApp and email
-- Custom domain on all paid plans
+- Custom domain with SSL on all plans
 - Dropship catalog of Indian SKUs — ready to sell with one click
+- Meta Pixel and Google Analytics 4 integration for every store
+- Built-in store analytics: conversion funnel, traffic sources, top products
 - Built-in referral program
+- Marketing campaign templates (email + WhatsApp)
 
-## Pricing (INR)
-- Starter: ₹999/mo — Store, UPI checkout, custom domain, 50 catalog items
-- Growth: ₹2,499/mo — Everything + Meta Ads templates, WhatsApp recovery, Razorpay BYOK
-- Scale: ₹4,999/mo — Everything + GST automation, 500 catalog items, priority support
+## Pricing (INR, as of 2026)
+- Get Online (Starter): ₹1,999/mo (₹1,399/mo billed annually) — AI-generated store, COD + UPI payments, custom domain, dropship catalog (50 items), standard analytics
+- Get Customers (Growth): ₹9,999/mo (₹6,999/mo billed annually) — everything in Starter + Meta Ads campaign templates, Google Shopping setup, WhatsApp abandoned cart recovery, Razorpay BYOK, advanced conversion analytics, AI business assistant
+- Scale Revenue (Scale): ₹24,999/mo (₹17,999/mo billed annually) — everything in Growth + automated GST compliance, expanded catalog (500 items), email cart sequences, priority 24/7 support, revenue scaling playbooks
+- 7-day free trial on all plans. 0% platform transaction fees.
 
 ## Target Users
 - First-time entrepreneurs in India
@@ -32,8 +37,14 @@ LaunchGrid is built specifically for Indian founders and side-hustlers selling p
 - Pricing: https://launchgrid.in/pricing
 - FAQ: https://launchgrid.in/faq
 - Blog: https://launchgrid.in/blog
+- Discover stores: https://launchgrid.in/discover
 - Support: https://launchgrid.in/support
-- Compare vs Shopify/Dukaan: https://launchgrid.in/pricing#comparison
+- LaunchGrid vs Shopify: https://launchgrid.in/vs-shopify
+- LaunchGrid vs Dukaan: https://launchgrid.in/vs-dukaan
+- Feature: GST invoicing: https://launchgrid.in/features/gst-invoicing
+- Feature: Abandoned cart recovery: https://launchgrid.in/features/abandoned-cart
+- Feature: One-click checkout: https://launchgrid.in/features/one-click-checkout
+- Feature: WhatsApp marketing: https://launchgrid.in/features/whatsapp-marketing
 
 ## How It Works
 1. Sign up and describe your business (2 minutes)
@@ -48,6 +59,7 @@ LaunchGrid is built specifically for Indian founders and side-hustlers selling p
 - Indian dropship catalog: Meesho/GlowRoad SKUs, not AliExpress
 - INR billing: no FX conversion losses unlike Shopify (USD billing)
 - COD with fraud prevention: OTP verification reduces fake orders
+- 0% platform transaction fees vs 1.99–2.99% on Dukaan and 0.5–2% on Shopify
 
 ## Company
 LaunchGrid is an Indian startup. Contact: support@launchgrid.in

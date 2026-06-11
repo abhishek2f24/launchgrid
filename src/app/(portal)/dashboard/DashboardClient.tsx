@@ -7,7 +7,6 @@ import {
   Lock, ExternalLink, ChevronRight, PackagePlus
 } from 'lucide-react'
 import { PanicStateModal } from '@/components/dashboard/PanicStateModal'
-import { ImmediateWinCard } from '@/components/dashboard/ImmediateWinCard'
 import { AnimatedCounter } from '@/components/animations/AnimatedCounter'
 import { TrialWinTracker } from '@/components/dashboard/TrialWinTracker'
 import { TrialExpiryModal } from '@/components/dashboard/TrialExpiryModal'
@@ -33,6 +32,8 @@ interface Props {
   allTimeCheckoutStarts?: number
   // Real traffic source breakdown
   trafficSources?: Record<string, number>
+  // Visits per utm_campaign (paid/organic campaign attribution)
+  campaignStats?: Record<string, number>
 }
 
 // ─── Always-visible Action Banner ──────────────────────────────────────────
@@ -200,6 +201,129 @@ function getComplianceStatus(revenue: number, shippingScope: string | undefined,
   }
 }
 
+// ─── Merchant Success Score ─────────────────────────────────────────────────
+// One card, one number, one next action. Replaces the banner/win-card pile-up.
+function SuccessScoreCard({
+  productCount, paymentReady, shared, visitors, cartAdds, orderCount,
+  storeUrl, businessName, tenantId,
+}: {
+  productCount: number; paymentReady: boolean; shared: boolean;
+  visitors: number; cartAdds: number; orderCount: number;
+  storeUrl: string; businessName: string; tenantId: string;
+}) {
+  const shareMessage = `Hey! I just launched my new online store "${businessName}". Check out our catalog and order directly on our website: https://${storeUrl}`
+  const shareHref = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`
+
+  // Each milestone: honest directional impact (never invented statistics) + real time cost
+  const items = [
+    { label: 'Store live', pts: 10, earned: 10, done: true, hint: 'Your store URL is active', impact: '', time: '' },
+    { label: 'Add 3+ products', pts: 15, earned: productCount >= 3 ? 15 : productCount > 0 ? 7 : 0, done: productCount >= 3, hint: productCount > 0 ? `${productCount} added — aim for 3+` : 'Stores under 3 products rarely convert', href: '/dashboard/products/add', cta: 'Add a product', impact: 'A stocked store gets taken seriously by buyers', time: '2 min per product — paste any Meesho/Amazon link' },
+    { label: 'Connect payments', pts: 15, earned: paymentReady ? 15 : 0, done: paymentReady, hint: 'UPI or Razorpay — get paid from order one', href: '/dashboard/settings/payments', cta: 'Connect payments', impact: 'Customers can pay the moment they want to buy', time: '3 minutes' },
+    { label: 'Share your store', pts: 15, earned: shared ? 15 : 0, done: shared, hint: 'The #1 predictor of a first sale', share: true, cta: 'Share on WhatsApp', impact: 'Your first visitors come from people you know', time: '30 seconds' },
+    { label: 'First 10 visitors', pts: 10, earned: visitors >= 10 ? 10 : 0, done: visitors >= 10, hint: visitors > 0 ? `${visitors} so far — keep sharing` : 'Share in 2 groups + Instagram bio', share: true, cta: 'Share again', impact: 'No visitors, no sales — traffic comes first', time: '5 minutes of sharing' },
+    { label: 'First cart add', pts: 5, earned: cartAdds > 0 ? 5 : 0, done: cartAdds > 0, hint: 'Someone wants what you sell', impact: '', time: '' },
+    { label: 'First order', pts: 30, earned: orderCount > 0 ? 30 : 0, done: orderCount > 0, hint: 'The moment it becomes a business', impact: '', time: '' },
+  ]
+
+  const score = items.reduce((s, i) => s + i.earned, 0)
+  const band = score >= 86 ? 'Growing' : score >= 66 ? 'Selling' : score >= 36 ? 'Ready to sell' : 'Setting up'
+  const next = items.find(i => !i.done)
+
+  // SVG ring geometry
+  const R = 34
+  const CIRC = 2 * Math.PI * R
+
+  return (
+    <div className="bg-white border border-black/5 rounded-[2rem] p-6 md:p-8 shadow-sm relative z-10 font-inter">
+      <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+        {/* Score ring */}
+        <div className="flex items-center gap-5 shrink-0">
+          <div className="relative w-24 h-24">
+            <svg viewBox="0 0 80 80" className="w-24 h-24 -rotate-90">
+              <circle cx="40" cy="40" r={R} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="7" />
+              <circle
+                cx="40" cy="40" r={R} fill="none"
+                stroke={score >= 66 ? '#16a34a' : 'var(--color-mark-ink, #1A1A18)'}
+                strokeWidth="7" strokeLinecap="round"
+                strokeDasharray={`${(score / 100) * CIRC} ${CIRC}`}
+                className="transition-all duration-700"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-2xl font-extrabold text-[var(--color-mark-ink)] font-playfair leading-none">{score}</span>
+              <span className="text-[11px] font-bold text-[var(--color-mark-secondary)]">/ 100</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]">Success Score</p>
+            <p className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)]">{band}</p>
+            {next ? (
+              <div className="mt-2 max-w-[260px] space-y-1">
+                <p className="text-xs font-medium text-[var(--color-mark-secondary)]">
+                  Next highest-impact action: <span className="font-bold text-[var(--color-mark-ink)]">{next.label}</span> (+{next.pts} pts)
+                </p>
+                {next.impact && (
+                  <p className="text-xs font-medium text-[var(--color-mark-secondary)]">{next.impact}.</p>
+                )}
+                {next.time && (
+                  <p className="text-xs font-bold text-[var(--color-mark-ink)]">Time required: {next.time}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs font-medium text-green-700 mt-1">All milestones complete — time to scale.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Checklist */}
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5">
+          {items.map(item => (
+            <div key={item.label} className="flex items-start gap-2.5">
+              {item.done ? (
+                <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+              ) : (
+                <div className={`w-4 h-4 rounded-full border-2 mt-0.5 shrink-0 ${item === next ? 'border-[var(--color-mark-ink)]' : 'border-black/15'}`} />
+              )}
+              <div className="min-w-0">
+                <p className={`text-sm leading-tight ${item.done ? 'text-[var(--color-mark-secondary)] line-through decoration-black/20' : item === next ? 'font-bold text-[var(--color-mark-ink)]' : 'font-medium text-[var(--color-mark-ink)]'}`}>
+                  {item.label}
+                </p>
+                {!item.done && item === next && (
+                  <p className="text-xs text-[var(--color-mark-secondary)] font-medium mt-0.5">{item.hint}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* One primary CTA */}
+        {next && (next.href || next.share) && (
+          <div className="shrink-0">
+            {next.share ? (
+              <a
+                href={shareHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => { markStoreShared(tenantId).catch(console.error) }}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 transition-all shadow-md active:scale-95"
+              >
+                {next.cta} <ArrowUpRight className="w-4 h-4" />
+              </a>
+            ) : (
+              <a
+                href={next.href!}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[var(--color-mark-ink)] text-white font-bold text-sm hover:bg-black/90 transition-all shadow-md active:scale-95"
+              >
+                {next.cta} <ArrowUpRight className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Step Card ─────────────────────────────────────────────────────────────
 function StepCard({ step, isActive }: { step: ReturnType<typeof getMissionSteps>[number], isActive: boolean }) {
   const content = (
@@ -265,8 +389,8 @@ export function DashboardClient({
   allTimeCartAdds = 0,
   allTimeCheckoutStarts = 0,
   trafficSources = {},
+  campaignStats = {},
 }: Props) {
-  const [showImmediateWin, setShowImmediateWin] = useState(true)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [unlockedStepAlert, setUnlockedStepAlert] = useState(false)
 
@@ -303,23 +427,45 @@ export function DashboardClient({
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val)
 
-  // Dynamic Visitor & Conversion Rate Calculations (U-07)
-  const tenantSeed = tenant?.id ? tenant.id.split('-').map((part: string) => parseInt(part, 16) || 0).reduce((a: number, b: number) => a + b, 0) : 101
-  const rawSimulatedVisitors = orders.length > 0 
-    ? Math.max(orders.length * 30, (tenantSeed % 20) + (orders.length * 45) + Math.floor(revenue / 1000))
-    : 0
-  const simulatedVisitors = visitorCount > 0 ? visitorCount : rawSimulatedVisitors
-  const conversionRate = simulatedVisitors > 0
-    ? parseFloat(((orders.length / simulatedVisitors) * 100).toFixed(2))
+  // Real metrics only — no simulated fallbacks. Honest zeros build more trust
+  // than impressive fakes, and merchants make real decisions from these numbers.
+  const realVisitors = visitorCount
+  const conversionRate = realVisitors > 0
+    ? parseFloat(((orders.length / realVisitors) * 100).toFixed(2))
     : 0.0
-  const activeVisitors = orders.length > 0
-    ? Math.max(1, (tenantSeed % 4) + (orders.length % 3))
-    : 0
 
   const compliance = getComplianceStatus(revenue, config.shipping_scope, formatCurrency)
   const missionSteps = getMissionSteps(tenant, orders, productCount, plan)
   const completedCount = missionSteps.filter(s => s.done).length
   const nextStep = missionSteps.find(s => !s.done && !s.locked)
+
+  // ── Launch Readiness (mirrors SuccessScoreCard weights) → zone gating ──
+  const paymentReady = !!(config.merchant_upi_id || config.rzp_key_id)
+  const sharedOnce = !!tenant.tenant_missions?.[0]?.step_5_shared
+  const launchScore =
+    10 +
+    (productCount >= 3 ? 15 : productCount > 0 ? 7 : 0) +
+    (paymentReady ? 15 : 0) +
+    (sharedOnce ? 15 : 0) +
+    (realVisitors >= 10 ? 10 : 0) +
+    (allTimeCartAdds > 0 ? 5 : 0) +
+    (orders.length > 0 ? 30 : 0)
+  // Focused mode: until the store is "Ready", analytics zones stay collapsed —
+  // a wall of zeros overwhelms; one next action focuses.
+  const focusedMode = launchScore < 36
+
+  // ── Growth phase from real business data (MERCHANT_JOURNEY_DESIGN §6) ──
+  const phase = revenue >= 100000
+    ? { num: 4, label: 'Phase 4 · ₹1 Lakh+' }
+    : revenue >= 10000
+    ? { num: 3, label: 'Phase 3 · ₹10K+' }
+    : orders.length > 0
+    ? { num: 2, label: 'Phase 2 · Selling' }
+    : { num: 1, label: 'Phase 1 · Launch' }
+
+  // ── "Since you were here": today's real activity for the returning merchant ──
+  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0)
+  const todayOrderCount = orders.filter(o => new Date(o.created_at) >= startOfToday).length
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-10 relative overflow-hidden min-h-screen pb-24">
@@ -328,9 +474,16 @@ export function DashboardClient({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
         <div>
           <h1 className="font-playfair text-4xl font-bold text-[var(--color-mark-ink)] mb-2">Overview.</h1>
-          <p className="font-inter text-sm text-[var(--color-mark-secondary)]">Track your store performance and next steps.</p>
+          <p className="font-inter text-sm text-[var(--color-mark-secondary)]">
+            {(todayViews > 0 || todayOrderCount > 0)
+              ? <>Today so far: <span className="font-bold text-[var(--color-mark-ink)]">{todayViews} {todayViews === 1 ? 'visitor' : 'visitors'}</span>{todayOrderCount > 0 && <> · <span className="font-bold text-green-700">{todayOrderCount} {todayOrderCount === 1 ? 'order' : 'orders'}</span></>}</>
+              : 'Track your store performance and next steps.'}
+          </p>
         </div>
         <div className="flex items-center gap-4">
+          <div className="hidden sm:flex px-4 py-2 rounded-xl border border-black/5 bg-white shadow-sm items-center gap-2">
+            <span className="font-inter text-sm font-bold text-[var(--color-mark-ink)]">{phase.label}</span>
+          </div>
           {productCount === 0 ? (
             <div className="px-4 py-2 rounded-xl border border-amber-200 bg-amber-50 shadow-sm flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
@@ -366,10 +519,14 @@ export function DashboardClient({
         </div>
       </div>
 
-      {/* ── ALWAYS-VISIBLE ACTION BANNER ── */}
-      <ActionBanner
+      {/* ── MERCHANT SUCCESS SCORE — the one card that matters ── */}
+      <SuccessScoreCard
         productCount={productCount}
-        plan={plan}
+        paymentReady={!!(config.merchant_upi_id || config.rzp_key_id)}
+        shared={!!tenant.tenant_missions?.[0]?.step_5_shared}
+        visitors={realVisitors}
+        cartAdds={allTimeCartAdds}
+        orderCount={orders.length}
         storeUrl={`${tenant.subdomain}.launchgrid.in`}
         businessName={tenant.business_name}
         tenantId={tenant.id}
@@ -377,17 +534,6 @@ export function DashboardClient({
 
       {/* ── PANIC STATE MODAL ── */}
       {hasFirstOrder && <PanicStateModal order={unfulfilledFirstOrder} />}
-
-      {/* ── WELCOME CARD ── */}
-      {showImmediateWin && (
-        <div className="relative z-10">
-          <ImmediateWinCard
-            storeUrl={`${tenant.subdomain}.launchgrid.in`}
-            storeName={tenant.business_name}
-            onClose={() => setShowImmediateWin(false)}
-          />
-        </div>
-      )}
 
       {/* ── UPGRADE ALERT ── */}
       {unlockedStepAlert && (
@@ -440,7 +586,7 @@ export function DashboardClient({
               <p className="text-xs font-medium opacity-90 mt-0.5">
                 {isTrialExpired 
                   ? 'Your storefront checkouts are temporarily disabled. Upgrade to a paid plan to instantly reactivate checkouts.'
-                  : `You are currently on a 24-hour free trial of LaunchGrid ${plan.toUpperCase()}. Upgrade to a paid plan anytime to prevent checkout lockouts.`
+                  : `You are on a 7-day free trial of LaunchGrid ${plan.toUpperCase()}. Upgrade anytime to keep checkout active after it ends.`
                 }
               </p>
             </div>
@@ -546,6 +692,14 @@ export function DashboardClient({
         )}
       </div>
 
+      {/* ── METRICS + ANALYTICS — collapsed in focused mode until the store is Ready ── */}
+      {focusedMode ? (
+        <div className="bg-white/60 border border-dashed border-black/10 rounded-[2rem] p-6 text-center relative z-10 font-inter">
+          <p className="text-sm font-semibold text-[var(--color-mark-ink)]">Revenue, visitors and insights will light up here as your store comes to life.</p>
+          <p className="text-xs font-medium text-[var(--color-mark-secondary)] mt-1">Finish the next step above — everything unlocks automatically.</p>
+        </div>
+      ) : (
+      <>
       {/* ── METRICS ROW ── */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10 font-inter">
         {(() => {
@@ -594,17 +748,20 @@ export function DashboardClient({
             <AnimatedCounter value={conversionRate} suffix="%" decimals={conversionRate > 0 ? 2 : 0} />
           </div>
           <div className="text-xs font-semibold text-[var(--color-mark-secondary)]">
-            {orders.length > 0 ? `Optimal (${simulatedVisitors} visitors)` : 'Awaiting first visitor'}
+            {realVisitors > 0 ? `From ${realVisitors.toLocaleString('en-IN')} visitors` : 'Awaiting first visitor'}
           </div>
         </div>
 
         <div className="bg-white border border-black/5 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60">Active Visitors</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60">Visitors Today</h3>
             <Activity className="w-4.5 h-4.5 text-[var(--color-mark-ink)]/60" />
           </div>
           <div className="text-3xl font-extrabold text-[var(--color-mark-ink)] mb-2 font-playfair tracking-tight">
-            <AnimatedCounter value={activeVisitors} />
+            <AnimatedCounter value={todayViews} />
+          </div>
+          <div className="text-xs font-semibold text-[var(--color-mark-secondary)]">
+            {todayViews > 0 ? `${todayProductViews} product views · ${todayCartAdds} cart adds` : 'Share your store to get eyes on it'}
           </div>
         </div>
       </div>
@@ -624,28 +781,35 @@ export function DashboardClient({
                 'WhatsApp': 'bg-emerald-600',
                 'Organic Search': 'bg-blue-600',
                 'Social Media': 'bg-purple-600',
+                'Paid Ads': 'bg-rose-600',
                 'Referral': 'bg-amber-500',
               }
-              const bucketOrder = ['Direct', 'WhatsApp', 'Organic Search', 'Social Media', 'Referral']
+              const bucketOrder = ['Direct', 'WhatsApp', 'Organic Search', 'Social Media', 'Paid Ads', 'Referral']
               const total = Object.values(trafficSources).reduce((s, n) => s + n, 0)
-              const hasRealData = total > 0
 
-              const rows = hasRealData
-                ? bucketOrder
-                    .filter(b => (trafficSources[b] ?? 0) > 0)
-                    .map(b => ({
-                      source: b,
-                      count: trafficSources[b] ?? 0,
-                      percentage: Math.round(((trafficSources[b] ?? 0) / total) * 100),
-                      color: colorMap[b] ?? 'bg-slate-400',
-                    }))
-                    .sort((a, b) => b.count - a.count)
-                : [
-                    { source: 'Direct / Typing', percentage: 45, count: Math.floor(simulatedVisitors * 0.45), color: 'bg-slate-900' },
-                    { source: 'WhatsApp Share', percentage: 30, count: Math.floor(simulatedVisitors * 0.30), color: 'bg-emerald-600' },
-                    { source: 'Organic Search', percentage: 15, count: Math.floor(simulatedVisitors * 0.15), color: 'bg-blue-600' },
-                    { source: 'Social Media', percentage: 10, count: Math.floor(simulatedVisitors * 0.10), color: 'bg-purple-600' },
-                  ]
+              if (total === 0) {
+                return (
+                  <div className="py-6 text-center space-y-3">
+                    <p className="text-sm font-semibold text-[var(--color-mark-ink)]">No visitors yet — let&apos;s fix that.</p>
+                    <ul className="text-xs text-[var(--color-mark-secondary)] font-medium space-y-1.5 text-left max-w-[260px] mx-auto">
+                      <li>1. Share your store link in 2 WhatsApp groups</li>
+                      <li>2. Add the link to your Instagram bio</li>
+                      <li>3. Post one product as a story today</li>
+                    </ul>
+                    <p className="text-xs text-[var(--color-mark-secondary)] font-medium pt-1">Sources will appear here as people visit.</p>
+                  </div>
+                )
+              }
+
+              const rows = bucketOrder
+                .filter(b => (trafficSources[b] ?? 0) > 0)
+                .map(b => ({
+                  source: b,
+                  count: trafficSources[b] ?? 0,
+                  percentage: Math.round(((trafficSources[b] ?? 0) / total) * 100),
+                  color: colorMap[b] ?? 'bg-slate-400',
+                }))
+                .sort((a, b) => b.count - a.count)
 
               return rows.map((item) => (
                 <div key={item.source} className="space-y-1.5">
@@ -660,6 +824,27 @@ export function DashboardClient({
               ))
             })()}
           </div>
+
+          {/* Campaign performance (UTM) */}
+          {Object.keys(campaignStats).length > 0 && (
+            <div className="pt-4 border-t border-black/5">
+              <p className="text-[11px] font-black uppercase tracking-widest text-[var(--color-mark-secondary)] mb-3">Top Campaigns</p>
+              <div className="space-y-2">
+                {Object.entries(campaignStats)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 5)
+                  .map(([campaign, count]) => (
+                    <div key={campaign} className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-[var(--color-mark-ink)] truncate pr-2" title={campaign}>{campaign}</span>
+                      <span className="text-[var(--color-mark-secondary)] font-medium shrink-0">{count} visits</span>
+                    </div>
+                  ))}
+              </div>
+              <p className="text-[10px] text-[var(--color-mark-secondary)] mt-3 font-medium">
+                Tag your ad links with <code className="bg-black/5 px-1 rounded">?utm_campaign=...</code> to see performance here.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Conversion Funnel */}
@@ -670,16 +855,14 @@ export function DashboardClient({
           </div>
           <div className="space-y-4 pt-2">
             {(() => {
-              const funnelVisitors = simulatedVisitors
-              const funnelProductViews = allTimeProductViews > 0 ? allTimeProductViews : Math.round(funnelVisitors * 0.65)
-              const funnelCartAdds = allTimeCartAdds > 0 ? allTimeCartAdds : Math.round(funnelVisitors * 0.25)
-              const funnelCheckoutStarts = allTimeCheckoutStarts > 0 ? allTimeCheckoutStarts : Math.round(funnelVisitors * 0.12)
+              // Real funnel data only — zeros are honest and actionable
+              const funnelVisitors = realVisitors
               const pct = (n: number) => funnelVisitors > 0 ? Math.round((n / funnelVisitors) * 100) : 0
               return [
-                { step: '1. Store Visitors',      count: funnelVisitors,         percentage: 100,                  label: 'All traffic' },
-                { step: '2. Product Views',        count: funnelProductViews,     percentage: pct(funnelProductViews),    label: `${pct(funnelProductViews)}% of visitors` },
-                { step: '3. Cart Adds',            count: funnelCartAdds,         percentage: pct(funnelCartAdds),         label: `${pct(funnelCartAdds)}% of visitors` },
-                { step: '4. Checkout Initiated',   count: funnelCheckoutStarts,   percentage: pct(funnelCheckoutStarts),   label: `${pct(funnelCheckoutStarts)}% of visitors` },
+                { step: '1. Store Visitors',      count: funnelVisitors,         percentage: funnelVisitors > 0 ? 100 : 0, label: 'All traffic' },
+                { step: '2. Product Views',        count: allTimeProductViews,    percentage: pct(allTimeProductViews),    label: `${pct(allTimeProductViews)}% of visitors` },
+                { step: '3. Cart Adds',            count: allTimeCartAdds,        percentage: pct(allTimeCartAdds),        label: `${pct(allTimeCartAdds)}% of visitors` },
+                { step: '4. Checkout Initiated',   count: allTimeCheckoutStarts,  percentage: pct(allTimeCheckoutStarts),  label: `${pct(allTimeCheckoutStarts)}% of visitors` },
                 { step: '5. Orders Placed',        count: orders.length,          percentage: pct(orders.length),          label: `${conversionRate}% conversion` },
               ]
             })().map((item, idx) => (
@@ -707,20 +890,20 @@ export function DashboardClient({
           </div>
           <div className="space-y-3 pt-2">
             {products && products.length > 0 ? (
-              products.slice(0, 3).map((p, idx) => {
-                const simulatedViews = Math.max(10, Math.floor(simulatedVisitors * (0.4 - idx * 0.1)))
-                const simulatedSales = Math.max(0, orders.filter(o => o.line_items?.some((li: any) => li.productId === p.id)).length || (orders.length > 0 ? 1 : 0))
-                const productRevenue = simulatedSales * p.retail_price
+              products.slice(0, 3).map((p) => {
+                // Real sales only — orders that actually contain this product
+                const realSales = orders.filter(o => o.line_items?.some((li: any) => li.productId === p.id)).length
+                const productRevenue = realSales * p.retail_price
                 return (
                   <div key={p.id} className="flex items-center justify-between border-b border-black/5 pb-3 last:border-0 last:pb-0">
                     <div className="min-w-0 flex-1 pr-2">
                       <p className="text-xs font-bold text-[var(--color-mark-ink)] truncate">{p.title}</p>
-                      <p className="text-[10px] text-[var(--color-mark-secondary)] font-medium mt-0.5">
-                        {simulatedViews} views • {simulatedSales} sales
+                      <p className="text-[11px] text-[var(--color-mark-secondary)] font-medium mt-0.5">
+                        {realSales > 0 ? `${realSales} ${realSales === 1 ? 'sale' : 'sales'}` : 'No sales yet'} · ₹{Number(p.retail_price).toLocaleString('en-IN')}
                       </p>
                     </div>
                     <span className="text-xs font-bold text-[var(--color-mark-ink)] whitespace-nowrap">
-                      ₹{productRevenue.toLocaleString('en-IN')}
+                      {realSales > 0 ? `₹${productRevenue.toLocaleString('en-IN')}` : '—'}
                     </span>
                   </div>
                 )
@@ -734,6 +917,8 @@ export function DashboardClient({
           </div>
         </div>
       </div>
+      </>
+      )}
 
       {/* ── BOTTOM ROW ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 font-inter">

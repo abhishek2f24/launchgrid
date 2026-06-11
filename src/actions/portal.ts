@@ -25,6 +25,8 @@ export async function saveStoreDetailsAction(formData: FormData) {
   const gstRate = formData.get('gstRate') ? Number(formData.get('gstRate')) : null
   const metaTitle = formData.get('metaTitle') as string
   const metaDescription = formData.get('metaDescription') as string
+  const metaPixelId = formData.get('metaPixelId') as string | null
+  const ga4MeasurementId = formData.get('ga4MeasurementId') as string | null
 
   const { data: tenant } = await supabase
     .from('tenants')
@@ -53,6 +55,16 @@ export async function saveStoreDetailsAction(formData: FormData) {
   if (gstRate !== null) configUpdate.gst_rate = gstRate
   if (metaTitle !== null) configUpdate.meta_title = metaTitle.trim() || null
   if (metaDescription !== null) configUpdate.meta_description = metaDescription.trim() || null
+  if (metaPixelId !== null) {
+    const v = metaPixelId.trim()
+    // Meta Pixel IDs are numeric, typically 15-16 digits
+    configUpdate.meta_pixel_id = v && /^\d{5,20}$/.test(v) ? v : null
+  }
+  if (ga4MeasurementId !== null) {
+    const v = ga4MeasurementId.trim().toUpperCase()
+    // GA4 measurement IDs look like G-XXXXXXXXXX
+    configUpdate.ga4_measurement_id = v && /^G-[A-Z0-9]{4,16}$/.test(v) ? v : null
+  }
 
   if (Object.keys(configUpdate).length > 0) {
     await supabase

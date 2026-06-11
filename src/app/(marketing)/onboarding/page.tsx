@@ -31,6 +31,15 @@ export default function OnboardingPage() {
     }
   }, [])
 
+  // Prefill from the landing-page hero input (?idea=...) — momentum carries over
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const ideaParam = new URLSearchParams(window.location.search).get('idea')
+    if (ideaParam) {
+      setBusinessName(prev => prev || ideaParam.slice(0, 60))
+    }
+  }, [])
+
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()
     setSubdomain(val)
@@ -97,7 +106,7 @@ export default function OnboardingPage() {
         <div className="relative z-10">
           <h1 className="font-playfair text-3xl font-bold text-[var(--color-mark-ink)] mb-2">Build your business.</h1>
           <p className="font-inter text-sm font-medium text-[var(--color-mark-secondary)]/60 mb-8">
-            Your store goes live in 60 seconds. Free for 24 hours. No credit card needed.
+            Your store goes live in 60 seconds. Free for 7 days. No credit card needed.
           </p>
           
           {errorMessage && (
@@ -177,7 +186,7 @@ export default function OnboardingPage() {
                 disabled={loading || subdomainStatus !== 'available'} 
                 className="w-full bg-[var(--color-mark-ink)] text-[var(--color-mark-inverse)] font-inter font-bold text-sm py-3.5 rounded-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
-                {loading ? 'Setting up your store...' : 'Start Free — 24 Hours, No Card Required'} <ArrowRight className="w-4 h-4" />
+                {loading ? 'Setting up your store...' : 'Start Free — 7 Days, No Card Required'} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </form>

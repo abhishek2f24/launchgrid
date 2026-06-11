@@ -7,6 +7,7 @@ import { JourneyNav } from '@/components/signup-journey/JourneyNav';
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay';
 import { Footer } from '@/components/signup-journey/Footer';
 import { Flame, Check, ArrowRight, X } from 'lucide-react';
+import { platformEvent } from '@/lib/pixel';
 
 interface Plan {
   id: string;
@@ -27,7 +28,7 @@ const plans: Plan[] = [
     tagline: 'Your store. Your brand. Live in 15 minutes.',
     monthlyPrice: 1999,
     annualPrice: 1399,
-    originalPrice: 4999,
+    originalPrice: 9999,
     features: [
       'AI-generated store',
       'Dropship catalog (50 items)',
@@ -94,7 +95,8 @@ const competitorMatrix = [
 ];
 
 export default function PricingPage() {
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
+  // Default to annual: anchors the lower price and drives prepaid commitment
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('annual');
 
   return (
     <div className="theme-marketing min-h-screen bg-[var(--color-mark-base)] text-[var(--color-mark-primary)] flex flex-col antialiased relative selection:bg-[var(--color-mark-ink)] selection:text-[var(--color-mark-inverse)]">
@@ -152,9 +154,9 @@ export default function PricingPage() {
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
               <div className="max-w-2xl text-left space-y-6">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest bg-amber-500/10 text-amber-700 border border-amber-500/15">
-                  <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 animate-pulse" />
-                  <span>SPECIAL OFFER</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] uppercase font-bold tracking-widest bg-emerald-500/10 text-emerald-700 border border-emerald-500/15">
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Free Trial — Every Feature Included</span>
                 </div>
 
                 <div className="space-y-3">
@@ -233,15 +235,15 @@ export default function PricingPage() {
 
                     <div className="mb-8 border-b border-[var(--color-mark-default)] pb-6">
                       <div className="flex items-baseline gap-2 flex-wrap">
-                        {plan.originalPrice && (
-                          <span className="font-inter text-sm text-red-500 line-through opacity-75 mr-1">
-                            ₹{(billingPeriod === 'monthly' ? plan.originalPrice : Math.round(plan.originalPrice * 0.7)).toLocaleString('en-IN')}
-                          </span>
-                        )}
                         <span className="font-inter font-bold text-4xl text-[var(--color-mark-ink)]">
                           ₹{price.toLocaleString('en-IN')}
                         </span>
                         <span className="font-inter text-xs text-[var(--color-mark-secondary)]">/ month</span>
+                        {billingPeriod === 'annual' && plan.monthlyPrice > price && (
+                          <span className="font-inter text-[11px] font-bold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
+                            Save ₹{((plan.monthlyPrice - price) * 12).toLocaleString('en-IN')}/yr
+                          </span>
+                        )}
                       </div>
                       {billingPeriod === 'annual' && (
                         <span className="text-[10px] font-mono text-green-600 block mt-1.5">
@@ -264,6 +266,7 @@ export default function PricingPage() {
 
                   <Link
                     href={`/signup?plan=${plan.id}&billing=${billingPeriod}`}
+                    onClick={() => platformEvent('select_plan', { plan: plan.id, billing: billingPeriod, value: price, currency: 'INR' })}
                     className={`w-full text-center font-inter text-xs font-bold py-4 px-6 rounded-full transition-all ${
                       plan.popular
                         ? 'bg-[var(--color-mark-ink)] text-white hover:bg-black shadow-lg shadow-black/5'
@@ -275,6 +278,21 @@ export default function PricingPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Trust / risk-reversal strip */}
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 -mt-12 mb-24">
+            {[
+              '7-day free trial — no credit card',
+              '0% platform transaction fees',
+              'Cancel anytime, keep your data',
+              'GST-compliant invoices included',
+            ].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-[var(--color-mark-secondary)]">
+                <Check className="w-3.5 h-3.5 text-green-600" />
+                {item}
+              </span>
+            ))}
           </div>
 
           {/* Competitor Matrix Section */}
@@ -339,5 +357,18 @@ export default function PricingPage() {
               {[
                 { q: 'Can I change my plan or cancel at any time?', a: 'Yes. You can upgrade, downgrade, or cancel your subscription directly from your settings dashboard. There are zero lock-in contracts.' },
                 { q: 'Are there payment setup or activation fees?', a: 'No. Setting up UPI checkout is completely free. If you use your own Razorpay credentials, Razorpay may charge standard transaction fees, but LaunchGrid takes 0% commission.' },
-                { q: 'What happens if my 24-hour trial ends?', a: 'Once your 24-hour trial finishes, storefront order checkouts are disabled to prevent service interruption. You can reactivate by picking any of the plans above.' }
-     
+                { q: 'What happens when my 7-day trial ends?', a: 'Once your trial finishes, storefront checkouts pause so customers never hit a broken store. Your data and products stay intact — pick any plan above to go live again instantly.' },
+              ].map((faq, i) => (
+                <div key={i} className="pt-6 first:pt-0">
+                  <h3 className="font-inter font-bold text-sm text-[var(--color-mark-ink)] mb-2">{faq.q}</h3>
+                  <p className="font-inter text-xs md:text-sm text-[var(--color-mark-secondary)] leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
