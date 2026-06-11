@@ -1,0 +1,33 @@
+# Task Checklist for LaunchGrid Initialization
+
+- `[x]` Initialize Next.js 15 Application
+- `[x]` Install UI dependencies (shadcn/ui, Radix UI, Framer Motion, Lucide React)
+- `[x]` Configure Design System in `tailwind.config.ts` and `globals.css`
+- `[x]` Scaffold multi-tenant wildcard `middleware.ts`
+- `[x]` Scaffold base App Router folders (`app/(marketing)`, `app/(portal)`, `app/store/[slug]`)
+- `[x]` Initialize Supabase client and Database Schema (tenants, subscriptions, products, orders, referral, compliance)
+- `[x]` Build Marketing Pages (Hero, Features, Pricing, Testimonials)
+- `[x]` Build Customer Portal Dashboard (First Sale Mission, Health Score, Referral Widget, Analytics)
+- `[x]` Build Multi-tenant Storefront (Product Catalog, Product Detail, Cart, Checkout)
+- `[x]` Implement 3-Tier Payment Configuration (UPI, BYOK, Razorpay Route)
+- `[x]` Implement Compliance Tracker (Revenue thresholds, GST warnings)
+- `[x]` Set up Global Margin Slider and Dropshipping catalog architecture
+- `[x]` Implement Supabase Realtime Magic Loading Screen (/onboarding/provisioning)
+- `[x]` Configure On-Demand Edge Caching for storefronts
+- `[x]` Implement Mobile-first Bottom Navigation Bar for Portal Layout
+- `[x]` Add AI Strategy Call integration to Dashboard and Marketing Page
+- `[x]` Implement JIT Checkout Server Action (`initiateCheckout`)
+- `[x]` Implement Idempotent Razorpay Webhook (`/api/webhooks/razorpay`)
+- `[x]` Add Dashboard Defensive UI (UPI Verification, Working Capital Warning, COD Notice)
+- `[x]` Implement Panic State UI Modal
+- `[x]` Implement Immediate Win Card UI on Dashboard
+- `[x]` Implement Async Provisioning Queue (`/api/provision`)
+- `[x]` Refactor Checkout Action to use Local Inventory Locks (`reserved_quantity`)
+- `[x]` Patch Database RLS Policies (Tenants, Products, Business Configs)
+- `[x]` Implement Webhook Concurrency Race Condition Fix
+- `[x]` Implement Subdomain Availability & Locking Action
+- `[x]` Handle Async Provisioning Timeout Fallbacks (GPT-4o Resiliency)
+- `[x]` Add Dashboard Gamification UI & Compliance warnings
+- `[x]` Write Automated Testing Scripts in `scratch/`
+- `[x]` Run Automated & Destructive Tests and Document Results
+- `[x]` Create Walkthrough Artifact

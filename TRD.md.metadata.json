@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "TRD v2.0 with multi-tenant architecture, Razorpay Route integration (auto-split 85/15), subdomain provisioning system, referral system database schema and real-time WebSocket logic, step journey state machine, GA4 per-customer property API automation, monthly/annual billing via Razorpay Subscriptions, animation tech stack (Framer Motion + GSAP + Three.js), and SaaS-level design system specifications.",
+  "updatedAt":  "2026-06-07T07:25:26.658572400Z",
+  "requestFeedback":  true
+}

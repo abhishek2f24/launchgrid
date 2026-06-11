@@ -1,0 +1,53 @@
+# LaunchGrid
+LaunchGrid is an Indian ecommerce platform that helps entrepreneurs launch D2C online stores in 15 minutes with native UPI payments, GST compliance, and an Indian dropship catalog.
+
+## About
+LaunchGrid is built specifically for Indian founders and side-hustlers selling physical goods online. It handles the infrastructure so merchants can focus on their products and customers.
+
+## Key Features
+- Store creation in 15 minutes with AI-generated content
+- Native UPI checkout (GPay, PhonePe, Paytm) — no bank account required to start
+- GST threshold monitoring and automated tax invoice generation
+- Product import from Meesho, Amazon, Ajio, Nykaa by pasting any URL
+- Cash on Delivery (COD) with OTP fraud prevention
+- Abandoned cart recovery via WhatsApp and email
+- Custom domain on all paid plans
+- Dropship catalog of Indian SKUs — ready to sell with one click
+- Built-in referral program
+
+## Pricing (INR)
+- Starter: ₹999/mo — Store, UPI checkout, custom domain, 50 catalog items
+- Growth: ₹2,499/mo — Everything + Meta Ads templates, WhatsApp recovery, Razorpay BYOK
+- Scale: ₹4,999/mo — Everything + GST automation, 500 catalog items, priority support
+
+## Target Users
+- First-time entrepreneurs in India
+- Instagram/WhatsApp resellers wanting a real checkout
+- Dropshippers sourcing from Indian suppliers
+- Home-based business owners (food, clothing, crafts)
+- D2C brand founders
+
+## Key Pages
+- Homepage: https://launchgrid.in
+- Pricing: https://launchgrid.in/pricing
+- FAQ: https://launchgrid.in/faq
+- Blog: https://launchgrid.in/blog
+- Support: https://launchgrid.in/support
+- Compare vs Shopify/Dukaan: https://launchgrid.in/pricing#comparison
+
+## How It Works
+1. Sign up and describe your business (2 minutes)
+2. LaunchGrid generates your store, brand colors, and product descriptions
+3. Add products by pasting a Meesho/Amazon/Ajio URL or uploading manually
+4. Connect UPI ID or Razorpay keys to accept payments
+5. Share your store link — start selling immediately
+
+## Differentiators vs Competitors
+- Native UPI: built-in, 1-click setup vs app-install process on Shopify
+- GST compliance: real-time threshold tracking and invoice automation, not available natively on Dukaan or Shopify
+- Indian dropship catalog: Meesho/GlowRoad SKUs, not AliExpress
+- INR billing: no FX conversion losses unlike Shopify (USD billing)
+- COD with fraud prevention: OTP verification reduces fake orders
+
+## Company
+LaunchGrid is an Indian startup. Contact: support@launchgrid.in

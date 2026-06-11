@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/cron/archive-trials",  "schedule": "0 0 * * *" },
+    { "path": "/api/cron/trial-emails",    "schedule": "0 1 * * *" },
+    { "path": "/api/cron/abandoned-carts", "schedule": "0 2 * * *" }
+  ]
+}

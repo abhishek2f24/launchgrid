@@ -1,0 +1,2 @@
+ALTER TABLE orders
+ADD COLUMN abandoned_email_sent BOOLEAN DEFAULT FALSE;

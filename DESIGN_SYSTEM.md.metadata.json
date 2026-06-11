@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "Design System & Visual Standards document for LaunchOS platform. Based on live research of 12 premium SaaS sites (Linear, Vercel, Stripe, Loom, Framer, Clerk, Raycast, Supabase, etc.). Covers the 10 non-negotiables, color tokens, typography, animation patterns, GSAP scroll techniques, bento grid system, glassmorphism, aurora backgrounds, step journey animated UI, locked/unlocked states, pricing page design, and specific CSS/JS implementation code.",
+  "updatedAt":  "2026-06-07T07:27:46.078683800Z",
+  "requestFeedback":  true
+}

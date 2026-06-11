@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "LaunchGrid — Add to Store",
+  "short_name": "LaunchGrid",
+  "version": "1.0.0",
+  "description": "Add products from Amazon, Flipkart, Meesho & any site to your LaunchGrid store in one click.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://launchgrid.in/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.in/*",
+        "https://www.flipkart.com/*",
+        "https://www.meesho.com/*",
+        "https://www.myntra.com/*",
+        "https://www.nykaa.com/*",
+        "https://www.ajio.com/*",
+        "https://www.snapdeal.com/*",
+        "https://www.glowroad.com/*",
+        "https://www.roposo.com/*",
+        "https://*/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LaunchGrid — Add to Store"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["auth-callback.html"],
+      "matches": ["http://localhost:3000/*", "https://launchgrid.in/*"]
+    }
+  ]
+}

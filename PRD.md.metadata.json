@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "PRD v2.0 with all founder decisions incorporated: multi-tenant architecture, subdomain-first hosting, analytics shared infrastructure model, dual Razorpay options (BYOK + Razorpay Route), live referral/affiliate system with day-credit logic, gamified step-by-step UI with locked/unlocked states, monthly + yearly billing, tech enabler legal model, SaaS-level visual and animation requirements, brand name shortlist, and updated pricing structure.",
+  "updatedAt":  "2026-06-07T07:22:51.192648100Z",
+  "requestFeedback":  true
+}

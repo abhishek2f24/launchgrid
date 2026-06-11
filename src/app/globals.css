@@ -1,0 +1,203 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  
+  --color-border: var(--border-default);
+  --color-input: var(--border-default);
+  --color-ring: var(--accent-primary);
+  
+  --color-primary: var(--accent-primary);
+  --color-primary-foreground: var(--text-inverse);
+  
+  --color-secondary: var(--bg-surface-2);
+  --color-secondary-foreground: var(--text-primary);
+  
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--text-inverse);
+  
+  --color-muted: var(--bg-surface-2);
+  --color-muted-foreground: var(--text-muted);
+  
+  --color-accent: var(--bg-surface-3);
+  --color-accent-foreground: var(--text-primary);
+  
+  --color-popover: var(--bg-surface-2);
+  --color-popover-foreground: var(--text-primary);
+  
+  --color-card: var(--bg-surface-1);
+  --color-card-foreground: var(--text-primary);
+  
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+
+  /* Marketing Theme Colors */
+  --color-mark-base: #FAFAF8;
+  --color-mark-surface: #FFFFFF;
+  --color-mark-subtle: #F5F4F0;
+  --color-mark-muted: #EEECE8;
+  --color-mark-primary: #1A1A18;
+  --color-mark-secondary: #4A4A44;
+  --color-mark-inverse: #FAFAF8;
+  --color-mark-ink: #1A1A18;
+  --color-mark-amber: #D97706;
+  --color-mark-green: #16A34A;
+  --color-mark-red: #DC2626;
+  
+  --color-mark-default: rgba(26, 26, 24, 0.12);
+  --color-mark-strong: rgba(26, 26, 24, 0.25);
+}
+
+:root {
+  /* ─── BACKGROUNDS ─── */
+  --bg-base: #050505;
+  --bg-surface-1: #0A0A0C;
+  --bg-surface-2: #0F0F12;
+  --bg-surface-3: #141418;
+  
+  /* ─── BORDERS ─── */
+  --border-subtle: rgba(255, 255, 255, 0.03);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --border-accent: rgba(139, 92, 246, 0.3); /* Electric Violet */
+  
+  /* ─── ACCENT (CYAN / VIOLET) ─── */
+  --accent-primary: #8b5cf6; /* violet-500 */
+  --accent-secondary: #06b6d4; /* cyan-500 */
+  --accent-muted: rgba(139, 92, 246, 0.1);
+  --accent-glow: rgba(139, 92, 246, 0.2);
+  
+  /* ─── TEXT ─── */
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #475569;
+  --text-inverse: #050505;
+  
+  /* ─── SEMANTIC ─── */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #06B6D4;
+  
+  /* SHADCN MAPPINGS */
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --radius: 0.75rem;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+}
+
+/* Glassmorphism Styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: border-color 300ms ease, background-color 300ms ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.glass-card-glow {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.02);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* CSS Noise Overlay */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+}
+
+/* Shimmer Sweep Animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 70%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 6s infinite ease-in-out;
+}
+
+/* Border Gradient Animation */
+@keyframes rotate-gradient {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  position: relative;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  background: conic-gradient(from var(--angle), #8b5cf6, #06b6d4, #8b5cf6);
+  border-radius: inherit;
+  z-index: -1;
+  animation: rotate-gradient 6s linear infinite;
+}
+
+/* ─── MARKETING TYPOGRAPHY CLASSES ─── */
+.display-xl  { font-size: clamp(2.5rem, 6.5vw, 5.5rem); line-height: 1.05; letter-spacing: -0.03em; font-family: var(--font-playfair), serif; }
+.display-lg  { font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1.05; letter-spacing: -0.025em; font-family: var(--font-playfair), serif; }
+.display-md  { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; letter-spacing: -0.02em; font-family: var(--font-playfair), serif; }
+.body-lg     { font-size: 1.125rem; line-height: 1.75; letter-spacing: -0.01em; font-family: var(--font-inter), sans-serif; }
+.body-sm     { font-size: 0.875rem; line-height: 1.6; font-family: var(--font-inter), sans-serif; }
+.caption     { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--font-inter), sans-serif; }
