@@ -18,6 +18,7 @@ export async function proxy(request: NextRequest) {
 
   const isMainDomain = 
     hostname === 'localhost:3000' || 
+    hostname.endsWith('.vercel.app') ||
     hostname === 'launchgrid.in' || 
     hostname === 'www.launchgrid.in' || 
     subdomain === 'www' || 
