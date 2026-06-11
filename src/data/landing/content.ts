@@ -62,7 +62,7 @@ export const pricingMissions = [
     id: '01',
     name: 'Get Online',
     tagline: 'Your store. Your brand. Live in 15 minutes.',
-    price: '₹4,999 / month',
+    price: '₹1,999 / month',
     features: [
       'AI-generated store',
       'Dropship catalog (50 items)',
@@ -92,7 +92,7 @@ export const pricingMissions = [
     id: '03',
     name: 'Scale Revenue',
     tagline: "For founders who've tasted success and want more.",
-    price: '₹19,999 / month',
+    price: '₹24,999 / month',
     features: [
       'GST compliance automation',
       'Multi-product catalog (500 items)',

@@ -4,6 +4,7 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
 import { EASE_EDITORIAL } from '@/lib/motion';
+import { LaunchGridLogo } from '@/components/ui/LaunchGridLogo';
 
 export function JourneyNav() {
   const { scrollY } = useScroll();
@@ -24,9 +25,8 @@ export function JourneyNav() {
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: EASE_EDITORIAL }}
     >
-      <Link href="/" className="flex items-center gap-2 group outline-none">
-        <div className="w-8 h-8 rounded bg-[var(--color-mark-ink)] text-[var(--color-mark-inverse)] flex items-center justify-center font-inter font-bold text-xs shadow-md transition-transform group-hover:scale-105">LG</div>
-        <span className="font-playfair font-bold tracking-widest text-[11px] uppercase text-[var(--color-mark-ink)]">LaunchGrid</span>
+      <Link href="/" className="flex items-center group outline-none transition-opacity hover:opacity-80">
+        <LaunchGridLogo size={28} variant="dark" />
       </Link>
 
       <div className="flex items-center gap-4">

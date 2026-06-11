@@ -144,7 +144,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
               <h1 className="font-playfair text-3xl md:text-5xl font-bold text-[var(--color-mark-ink)] leading-tight">
                 {post.title}
               </h1>
-              <div className="flex items-center gap-3 text-xs text-[var(--color-mark-muted)]">
+              <div className="flex items-center gap-3 text-xs text-[var(--color-mark-subtle-text)]">
                 <span>Published on {post.date}</span>
                 <span>•</span>
                 <span>{post.readTime}</span>

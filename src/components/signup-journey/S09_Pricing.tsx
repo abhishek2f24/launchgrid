@@ -15,10 +15,10 @@ const planMap: Record<string, string> = {
   "Scale Revenue": "premium"
 };
 
-const priceMap: Record<string, { monthly: string; annualRate: string; annualTotal: string }> = {
-  "Get Online": { monthly: "₹4,999", annualRate: "₹3,499", annualTotal: "₹41,988" },
-  "Get Customers": { monthly: "₹9,999", annualRate: "₹6,999", annualTotal: "₹83,988" },
-  "Scale Revenue": { monthly: "₹19,999", annualRate: "₹13,999", annualTotal: "₹1,67,988" }
+const priceMap: Record<string, { monthly: string; annualRate: string; annualTotal: string; originalMonthly: string; originalAnnualRate: string }> = {
+  "Get Online": { monthly: "₹1,999", annualRate: "₹1,399", annualTotal: "₹16,788", originalMonthly: "₹4,999", originalAnnualRate: "₹3,499" },
+  "Get Customers": { monthly: "₹9,999", annualRate: "₹6,999", annualTotal: "₹83,988", originalMonthly: "₹19,999", originalAnnualRate: "₹13,999" },
+  "Scale Revenue": { monthly: "₹24,999", annualRate: "₹17,999", annualTotal: "₹2,15,888", originalMonthly: "₹49,999", originalAnnualRate: "₹34,999" }
 };
 
 export default function S09_Pricing() {
@@ -159,15 +159,20 @@ function MissionCard({
       </div>
 
       <div className="mb-8 relative z-10">
-        <span className="font-inter text-[10px] font-bold text-[var(--color-mark-muted)] tracking-widest uppercase block mb-4">
+        <span className="font-inter text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-4">
           Mission {mission.id}
         </span>
         <h3 className="font-playfair text-3xl font-bold text-[var(--color-mark-ink)] mb-2">{mission.name}</h3>
         <p className="font-inter italic text-[var(--color-mark-secondary)] text-sm mb-6 min-h-[40px]">{mission.tagline}</p>
 
         <div>
-          <div className="font-inter font-bold text-3xl text-[var(--color-mark-ink)] flex items-baseline">
-            {isAnnual ? pricingDetail.annualRate : pricingDetail.monthly}
+          <div className="font-inter font-bold text-3xl text-[var(--color-mark-ink)] flex items-baseline flex-wrap gap-x-2">
+            {pricingDetail.originalMonthly && (
+              <span className="font-inter text-sm text-red-500 line-through opacity-75">
+                {isAnnual ? pricingDetail.originalAnnualRate : pricingDetail.originalMonthly}
+              </span>
+            )}
+            <span>{isAnnual ? pricingDetail.annualRate : pricingDetail.monthly}</span>
             <span className="text-xs font-semibold text-[var(--color-mark-secondary)]/60 ml-1">/ month</span>
           </div>
           {isAnnual && (
@@ -194,17 +199,4 @@ function MissionCard({
       {/* CTA: click to select plan and expand inline form */}
       <button
         onClick={onSelect}
-        className={`w-full py-4 rounded-xl font-inter text-sm font-bold transition-all text-center ${
-          isSelected
-            ? 'bg-green-500 text-white shadow-md shadow-green-500/20'
-            : isPopular
-            ? 'bg-[var(--color-mark-ink)] text-white hover:bg-black/90 shadow-md'
-            : 'bg-transparent border-2 border-[var(--color-mark-ink)] text-[var(--color-mark-ink)] hover:bg-[var(--color-mark-subtle)]'
-        }`}
-      >
-        {isSelected ? 'Plan Selected ✓' : mission.cta}
-      </button>
-
-    </motion.div>
-  );
-}
+        classNa

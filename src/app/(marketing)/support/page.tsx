@@ -53,7 +53,7 @@ export default function SupportPage() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-muted)] mb-3 block">
+            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-subtle-text)] mb-3 block">
               Help Center
             </span>
             <h1 className="font-playfair text-4xl font-bold text-[var(--color-mark-ink)] leading-tight mb-4">

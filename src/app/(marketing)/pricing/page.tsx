@@ -14,6 +14,7 @@ interface Plan {
   tagline: string;
   monthlyPrice: number;
   annualPrice: number;
+  originalPrice: number;
   features: string[];
   cta: string;
   popular: boolean;
@@ -24,8 +25,9 @@ const plans: Plan[] = [
     id: 'starter',
     name: 'Get Online',
     tagline: 'Your store. Your brand. Live in 15 minutes.',
-    monthlyPrice: 999,
-    annualPrice: 799,
+    monthlyPrice: 1999,
+    annualPrice: 1399,
+    originalPrice: 4999,
     features: [
       'AI-generated store',
       'Dropship catalog (50 items)',
@@ -42,8 +44,9 @@ const plans: Plan[] = [
     id: 'growth',
     name: 'Get Customers',
     tagline: 'Traffic. Ads. Conversions. Everything you need for your first ₹1 Lakh.',
-    monthlyPrice: 2499,
-    annualPrice: 1999,
+    monthlyPrice: 9999,
+    annualPrice: 6999,
+    originalPrice: 19999,
     features: [
       'Everything in Starter',
       'Meta Ads campaign templates',
@@ -60,8 +63,9 @@ const plans: Plan[] = [
     id: 'scale',
     name: 'Scale Revenue',
     tagline: 'For founders who have tasted success and want to scale.',
-    monthlyPrice: 4999,
-    annualPrice: 3999,
+    monthlyPrice: 24999,
+    annualPrice: 17999,
+    originalPrice: 49999,
     features: [
       'Everything in Growth',
       'Automated GST compliance (CGST/SGST/IGST)',
@@ -102,7 +106,7 @@ export default function PricingPage() {
           
           {/* Page Header */}
           <div className="text-center mb-16">
-            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-muted)] mb-3 block">
+            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-subtle-text)] mb-3 block">
               Pricing Plans
             </span>
             <h1 className="font-playfair text-4xl md:text-5xl font-bold text-[var(--color-mark-ink)] leading-tight mb-4">
@@ -219,7 +223,7 @@ export default function PricingPage() {
                   
                   <div>
                     <div className="mb-6">
-                      <span className="font-mono text-[10px] font-bold tracking-wider text-[var(--color-mark-muted)] uppercase">
+                      <span className="font-mono text-[10px] font-bold tracking-wider text-[var(--color-mark-subtle-text)] uppercase">
                         {plan.name}
                       </span>
                       <h3 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mt-2">
@@ -228,7 +232,12 @@ export default function PricingPage() {
                     </div>
 
                     <div className="mb-8 border-b border-[var(--color-mark-default)] pb-6">
-                      <div className="flex items-baseline gap-2">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        {plan.originalPrice && (
+                          <span className="font-inter text-sm text-red-500 line-through opacity-75 mr-1">
+                            ₹{(billingPeriod === 'monthly' ? plan.originalPrice : Math.round(plan.originalPrice * 0.7)).toLocaleString('en-IN')}
+                          </span>
+                        )}
                         <span className="font-inter font-bold text-4xl text-[var(--color-mark-ink)]">
                           ₹{price.toLocaleString('en-IN')}
                         </span>
@@ -271,7 +280,7 @@ export default function PricingPage() {
           {/* Competitor Matrix Section */}
           <div id="comparison" className="mb-24 bg-white border border-[var(--color-mark-default)] rounded-[2.5rem] p-8 md:p-12 shadow-[0_16px_48px_rgba(26,26,24,0.03)] overflow-hidden">
             <div className="text-center mb-12">
-              <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-muted)] mb-2 block">
+              <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-subtle-text)] mb-2 block">
                 LaunchGrid vs Shopify vs Dukaan
               </span>
               <h2 className="font-playfair text-3xl font-bold text-[var(--color-mark-ink)]">
@@ -286,7 +295,7 @@ export default function PricingPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-[var(--color-mark-default)]">
-                    <th className="py-4 pr-4 font-inter font-bold text-xs uppercase text-[var(--color-mark-muted)] w-1/3">Feature</th>
+                    <th className="py-4 pr-4 font-inter font-bold text-xs uppercase text-[var(--color-mark-subtle-text)] w-1/3">Feature</th>
                     <th className="py-4 px-3 font-inter font-bold text-xs uppercase text-green-700 bg-green-50/60 rounded-t-lg">LaunchGrid ✓</th>
                     <th className="py-4 px-3 font-inter font-bold text-xs uppercase text-[var(--color-mark-secondary)]">Dukaan</th>
                     <th className="py-4 px-3 font-inter font-bold text-xs uppercase text-[var(--color-mark-secondary)]">Shopify Basic</th>
@@ -331,19 +340,4 @@ export default function PricingPage() {
                 { q: 'Can I change my plan or cancel at any time?', a: 'Yes. You can upgrade, downgrade, or cancel your subscription directly from your settings dashboard. There are zero lock-in contracts.' },
                 { q: 'Are there payment setup or activation fees?', a: 'No. Setting up UPI checkout is completely free. If you use your own Razorpay credentials, Razorpay may charge standard transaction fees, but LaunchGrid takes 0% commission.' },
                 { q: 'What happens if my 24-hour trial ends?', a: 'Once your 24-hour trial finishes, storefront order checkouts are disabled to prevent service interruption. You can reactivate by picking any of the plans above.' }
-              ].map((faq, i) => (
-                <div key={i} className="pt-6 first:pt-0">
-                  <h4 className="font-inter font-bold text-sm md:text-base text-[var(--color-mark-ink)] mb-2">{faq.q}</h4>
-                  <p className="font-inter text-xs md:text-sm text-[var(--color-mark-secondary)] leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
+     

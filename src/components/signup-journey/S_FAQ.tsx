@@ -38,7 +38,7 @@ export default function S_FAQ() {
     <section className="w-full px-6 py-24">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-muted)] mb-3 block">
+          <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-subtle-text)] mb-3 block">
             FAQ
           </span>
           <h2 className="font-playfair text-3xl md:text-4xl font-bold text-[var(--color-mark-ink)] leading-tight">

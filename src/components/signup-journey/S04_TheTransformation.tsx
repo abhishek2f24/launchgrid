@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChapterLabel } from '../ui-landing/ChapterLabel';
 import { EditorialHeadline } from '../ui-landing/EditorialHeadline';
@@ -98,10 +99,13 @@ function Card({ day, headline, sub, bg, border, highlight, premium, index }: any
     <div className={`shrink-0 w-[380px] h-[480px] rounded-[2rem] flex flex-col overflow-hidden transition-all duration-300 hover:shadow-[0_24px_64px_rgba(26,26,24,0.12)] bg-white ${border} border`}>
       {/* Top Visual Area */}
       <div className="h-[200px] w-full relative overflow-hidden bg-black/5 group">
-        <img
+        <Image
           src={imgPath}
           alt={headline}
-          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          fill
+          sizes="380px"
+          className="object-cover transition-transform duration-700 hover:scale-105"
+          loading="lazy"
         />
         {/* Subtle dark gradient overlay at the bottom of the image for better blend */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
@@ -128,7 +132,7 @@ function Card({ day, headline, sub, bg, border, highlight, premium, index }: any
 
       {/* Content Area */}
       <div className={`flex-1 p-8 flex flex-col justify-end ${premium ? 'bg-[var(--color-mark-ink)] text-white' : 'bg-white text-[var(--color-mark-ink)]'}`}>
-        <span className={`text-[10px] font-bold tracking-widest uppercase mb-4 ${premium ? 'text-white/60' : 'text-[var(--color-mark-muted)]'}`}>
+        <span className={`text-[10px] font-bold tracking-widest uppercase mb-4 ${premium ? 'text-white/60' : 'text-[var(--color-mark-subtle-text)]'}`}>
           {day}
         </span>
         <h3 className="font-playfair text-2xl md:text-3xl font-bold mb-3 leading-tight">

@@ -212,7 +212,7 @@ export default async function StoreHomePage(props: { params: Promise<{ slug: str
   // ── DYNAMIC LAYOUT TEMPLATE SWITCH (H-07 / T-02) ───────────────────────────
   const templateConfig = getTemplateConfig(config.template_style || 'minimal', config.theme_color || 'purple')
 
-  const logoUrl = (tenant as any)?.logo_url || `https://${params.slug}.launchgrid.in/favicon.ico`
+  const logoUrl = (tenant as any)?.logo_url || 'https://launchgrid.in/logo.svg'
   const schemaJson = {
     "@context": "https://schema.org",
     "@graph": [

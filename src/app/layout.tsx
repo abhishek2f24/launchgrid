@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
+  // swap ensures text renders in fallback font immediately (LCP fires on fallback,
+  // not gated on font download). next/font defaults to swap but being explicit is safer.
+  display: 'swap',
 });
 
 const inter = Inter({
@@ -76,7 +79,7 @@ export default function RootLayout({
         "@id": "https://launchgrid.in/#organization",
         "name": "LaunchGrid",
         "url": "https://launchgrid.in",
-        "logo": "https://launchgrid.in/logo.png",
+        "logo": "https://launchgrid.in/logo.svg",
         "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in" },
         "sameAs": ["https://twitter.com/launchgrid_in", "https://instagram.com/launchgrid.in"]
       },

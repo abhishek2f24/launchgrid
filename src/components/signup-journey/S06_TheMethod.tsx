@@ -72,9 +72,9 @@ function StepCard({ step, isLeft, index }: any) {
         className="bg-white border border-[var(--color-mark-default)] shadow-[0_1px_3px_rgba(26,26,24,0.06)] rounded-2xl w-full md:max-w-[320px] overflow-hidden cursor-pointer hover:border-[var(--color-mark-strong)] transition-colors"
       >
         <div className="p-5 flex items-center gap-4">
-          <span className="font-inter text-xs font-bold text-[var(--color-mark-muted)] tracking-widest">{step.id}</span>
+          <span className="font-inter text-xs font-bold text-[var(--color-mark-subtle-text)] tracking-widest">{step.id}</span>
           <span className="font-inter font-bold text-[var(--color-mark-ink)] flex-1">{step.mission}</span>
-          <svg className={`w-4 h-4 text-[var(--color-mark-muted)] transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className={`w-4 h-4 text-[var(--color-mark-subtle-text)] transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
@@ -89,15 +89,15 @@ function StepCard({ step, isLeft, index }: any) {
             >
               <div className="pt-4 border-t border-[var(--color-mark-default)] flex flex-col gap-4">
                 <div className="border-l-2 border-[var(--color-mark-red)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-muted)] tracking-widest uppercase block mb-1">Pain</span>
+                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Pain</span>
                   <span className="text-[var(--color-mark-secondary)]">{step.pain}</span>
                 </div>
                 <div className="border-l-2 border-[var(--color-mark-ink)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-muted)] tracking-widest uppercase block mb-1">Solution</span>
+                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Solution</span>
                   <span className="text-[var(--color-mark-ink)] font-medium">{step.solution}</span>
                 </div>
                 <div className="border-l-2 border-[var(--color-mark-green)] pl-3">
-                  <span className="text-[10px] font-bold text-[var(--color-mark-muted)] tracking-widest uppercase block mb-1">Outcome</span>
+                  <span className="text-[10px] font-bold text-[var(--color-mark-subtle-text)] tracking-widest uppercase block mb-1">Outcome</span>
                   <span className="text-[var(--color-mark-green)] font-medium">{step.outcome}</span>
                 </div>
               </div>

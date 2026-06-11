@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { founderStories } from '@/data/landing/content';
 import { ChapterLabel } from '../ui-landing/ChapterLabel';
@@ -78,9 +79,9 @@ export default function S08_SocialProof() {
             <div className="flex items-center gap-4 mb-10">
               <div className="w-14 h-14 rounded-full bg-[var(--color-mark-subtle)] flex items-center justify-center font-playfair italic text-xl text-[var(--color-mark-secondary)]">R</div>
               <div>
-                <h4 className="font-inter font-bold text-lg text-[var(--color-mark-ink)]">{largeStory.name}</h4>
+                <p className="font-inter font-bold text-lg text-[var(--color-mark-ink)]">{largeStory.name}</p>
                 <p className="font-inter text-xs text-[var(--color-mark-secondary)]">{largeStory.location}</p>
-                <p className="font-inter text-[10px] text-[var(--color-mark-muted)] mt-1 tracking-widest uppercase">Started: {largeStory.started}</p>
+                <p className="font-inter text-[10px] text-[var(--color-mark-subtle-text)] mt-1 tracking-widest uppercase">Started: {largeStory.started}</p>
               </div>
             </div>
 
@@ -89,7 +90,7 @@ export default function S08_SocialProof() {
                 {largeStory.timeline?.map((item, i) => (
                   <div key={i} className="relative">
                     <div className={`absolute -left-[28.5px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${item.highlight ? 'bg-[var(--color-mark-green)] scale-125 shadow-sm' : 'bg-[var(--color-mark-muted)]'}`} />
-                    <span className="font-inter text-xs font-bold text-[var(--color-mark-muted)] w-16 inline-block">{item.date}</span>
+                    <span className="font-inter text-xs font-bold text-[var(--color-mark-subtle-text)] w-16 inline-block">{item.date}</span>
                     <span className={`font-inter text-sm ${item.highlight ? 'text-[var(--color-mark-green)] font-bold' : 'text-[var(--color-mark-secondary)]'}`}>{item.event}</span>
                   </div>
                 ))}
@@ -133,10 +134,13 @@ export default function S08_SocialProof() {
               >
                 {/* Visual Thumbnail */}
                 <div className="h-48 relative overflow-hidden bg-black/5">
-                  <img
+                  <Image
                     src={video.thumbnail}
                     alt={video.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/35 flex items-center justify-center transition-opacity duration-300 group-hover:bg-black/45">
                     {/* Play Button Icon */}
@@ -155,10 +159,10 @@ export default function S08_SocialProof() {
                 {/* Text Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <h4 className="font-inter font-bold text-sm text-[var(--color-mark-ink)] mb-1">
+                    <p className="font-inter font-bold text-sm text-[var(--color-mark-ink)] mb-1">
                       {video.name} · <span className="font-normal text-[var(--color-mark-secondary)]">{video.niche}</span>
-                    </h4>
-                    <p className="font-inter text-[10px] text-[var(--color-mark-muted)] tracking-wider uppercase mb-3">
+                    </p>
+                    <p className="font-inter text-[10px] text-[var(--color-mark-subtle-text)] tracking-wider uppercase mb-3">
                       {video.location}
                     </p>
                     <p className="font-inter text-xs text-[var(--color-mark-secondary)] leading-relaxed mb-4">
@@ -206,9 +210,9 @@ export default function S08_SocialProof() {
                 <span className="font-mono text-[10px] tracking-wider text-green-400 uppercase font-bold">
                   Live Merchant Recording
                 </span>
-                <h4 className="font-playfair text-xl font-bold mt-1">
+                <p className="font-playfair text-xl font-bold mt-1">
                   {activeVideo.name} — {activeVideo.metric}
-                </h4>
+                </p>
               </div>
 
               {/* Live Simulated Walkthrough Dashboard */}
@@ -270,7 +274,7 @@ function SmallCard({ story, delay }: any) {
       className="bg-white rounded-[2rem] border border-[var(--color-mark-default)] p-8 shadow-[0_4px_16px_rgba(26,26,24,0.06)] flex-1 flex flex-col hover:shadow-[0_12px_36px_rgba(26,26,24,0.08)] transition-all"
     >
       <div className="mb-6">
-        <h4 className="font-inter font-bold text-[var(--color-mark-ink)]">{story.name}</h4>
+        <p className="font-inter font-bold text-[var(--color-mark-ink)]">{story.name}</p>
         <p className="font-inter text-xs text-[var(--color-mark-secondary)]">{story.location} · {story.niche}</p>
       </div>
       

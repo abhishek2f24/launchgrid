@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 74" fill="none">
+  <!-- Full horizontal logo — transparent background version (for light backgrounds: invert text) -->
+
+  <!-- ── Icon mark: 2×2 grid (56×56), origin at 10,9 ── -->
+
+  <!-- Top-left circle -->
+  <circle cx="24" cy="23" r="11" fill="#84CC16"/>
+
+  <!-- Bottom-left circle -->
+  <circle cx="24" cy="51" r="11" fill="#84CC16"/>
+
+  <!-- Bottom-right circle -->
+  <circle cx="52" cy="51" r="11" fill="#84CC16"/>
+
+  <!-- Top-right: cursor arrow + leaf -->
+  <g transform="translate(42,13)">
+    <path d="M0 0 L0 13 L3.5 10 L5.5 16 L8.5 14.5 L6.5 8.5 L12 8.5 Z" fill="#84CC16"/>
+    <path d="M7 -2 C7 -2 18 2 14.5 10 C14.5 10 5 8 7 -2 Z" fill="#84CC16"/>
+  </g>
+
+  <!-- ── Wordmark (dark, for light backgrounds) ── -->
+  <text
+    x="76"
+    y="49"
+    font-family="'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-weight="800"
+    font-size="38"
+    letter-spacing="-1"
+    fill="#0A0A0A"
+  >LaunchGrid</text>
+</svg>

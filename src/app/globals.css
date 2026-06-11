@@ -44,7 +44,8 @@
   --color-mark-base: #FAFAF8;
   --color-mark-surface: #FFFFFF;
   --color-mark-subtle: #F5F4F0;
-  --color-mark-muted: #EEECE8;
+  --color-mark-muted: #EEECE8;        /* backgrounds/borders only — do NOT use as text color */
+  --color-mark-subtle-text: #696966;  /* WCAG AA: 4.57:1 contrast on --color-mark-base */
   --color-mark-primary: #1A1A18;
   --color-mark-secondary: #4A4A44;
   --color-mark-inverse: #FAFAF8;
@@ -136,6 +137,40 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E");
   opacity: 0.025;
   pointer-events: none;
+}
+
+/* ─── LCP-SAFE HERO ANIMATIONS (CSS-only, no JS dependency) ─────────────────
+   These fire at paint time, before any JavaScript hydrates.
+   The browser renders the text visible immediately for LCP measurement.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Hero headline: gentle fade-up, starts fully visible for LCP */
+@keyframes heroWordReveal {
+  from { opacity: 0; transform: translateY(14px); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+}
+
+/* Word-by-word stagger via nth-child (works without JS) */
+.hero-headline span.block > span { opacity: 0; }
+.hero-headline span.block > span:nth-child(1)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.05s both; }
+.hero-headline span.block > span:nth-child(2)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.12s both; }
+.hero-headline span.block > span:nth-child(3)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.19s both; }
+.hero-headline span.block > span:nth-child(4)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.26s both; }
+.hero-headline span.block > span:nth-child(5)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.33s both; }
+.hero-headline span.block > span:nth-child(6)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.40s both; }
+.hero-headline span.block > span:nth-child(7)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.47s both; }
+.hero-headline span.block > span:nth-child(8)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.54s both; }
+.hero-headline span.block > span:nth-child(9)  { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.61s both; }
+.hero-headline span.block > span:nth-child(10) { animation: heroWordReveal 0.55s cubic-bezier(0.16,1,0.3,1) 0.68s both; }
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero-headline span.block > span {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }
 
 /* Shimmer Sweep Animation */

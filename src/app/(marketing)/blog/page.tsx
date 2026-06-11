@@ -52,7 +52,7 @@ export default function BlogPage() {
           
           {/* Header */}
           <div className="text-center mb-16 border-b border-[var(--color-mark-default)] pb-12">
-            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-muted)] mb-3 block">
+            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-mark-subtle-text)] mb-3 block">
               The LaunchGrid Blog
             </span>
             <h1 className="font-playfair text-4xl md:text-5xl font-bold text-[var(--color-mark-ink)] leading-tight mb-4">
@@ -75,9 +75,9 @@ export default function BlogPage() {
                     <span className="bg-[var(--color-mark-subtle)] text-[var(--color-mark-ink)] text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                       {post.category}
                     </span>
-                    <span className="font-inter text-xs text-[var(--color-mark-muted)]">{post.date}</span>
+                    <span className="font-inter text-xs text-[var(--color-mark-subtle-text)]">{post.date}</span>
                     <span className="text-[var(--color-mark-default)]">•</span>
-                    <span className="font-inter text-xs text-[var(--color-mark-muted)]">{post.readTime}</span>
+                    <span className="font-inter text-xs text-[var(--color-mark-subtle-text)]">{post.readTime}</span>
                   </div>
 
                   <h2 className="font-playfair text-xl md:text-2xl font-bold text-[var(--color-mark-ink)] mb-3 leading-snug hover:text-black transition-colors">

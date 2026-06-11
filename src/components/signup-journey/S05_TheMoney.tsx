@@ -27,7 +27,7 @@ export default function S05_TheMoney() {
             Here's what your first month could actually look like.
           </p>
           
-          <p className="font-inter text-xs text-[var(--color-mark-muted)]">
+          <p className="font-inter text-xs text-[var(--color-mark-subtle-text)]">
             * Based on typical LaunchGrid merchant performance.<br/>
             Results vary. Not a guarantee.
           </p>
@@ -41,12 +41,14 @@ export default function S05_TheMoney() {
               {/* Slider 1: Orders */}
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <label className="font-inter font-bold text-xs tracking-widest uppercase text-[var(--color-mark-secondary)]">Orders Per Month</label>
+                  <label htmlFor="slider-orders" className="font-inter font-bold text-xs tracking-widest uppercase text-[var(--color-mark-secondary)]">Orders Per Month</label>
                   <span className="font-inter font-bold text-[var(--color-mark-ink)]">{orders}</span>
                 </div>
-                <input 
-                  type="range" min="10" max="1000" step="10" 
+                <input
+                  id="slider-orders"
+                  type="range" min="10" max="1000" step="10"
                   value={orders} onChange={(e) => setOrders(Number(e.target.value))}
+                  aria-label="Orders per month"
                   className="w-full accent-[var(--color-mark-ink)] h-1 bg-[var(--color-mark-muted)] rounded-lg appearance-none cursor-pointer"
                 />
               </div>
@@ -54,12 +56,14 @@ export default function S05_TheMoney() {
               {/* Slider 2: Revenue Per Order */}
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <label className="font-inter font-bold text-xs tracking-widest uppercase text-[var(--color-mark-secondary)]">Revenue Per Order</label>
+                  <label htmlFor="slider-revenue" className="font-inter font-bold text-xs tracking-widest uppercase text-[var(--color-mark-secondary)]">Revenue Per Order</label>
                   <span className="font-inter font-bold text-[var(--color-mark-ink)]">₹{revenuePerOrder}</span>
                 </div>
-                <input 
-                  type="range" min="100" max="1000" step="50" 
+                <input
+                  id="slider-revenue"
+                  type="range" min="100" max="1000" step="50"
                   value={revenuePerOrder} onChange={(e) => setRevenuePerOrder(Number(e.target.value))}
+                  aria-label="Revenue per order in rupees"
                   className="w-full accent-[var(--color-mark-ink)] h-1 bg-[var(--color-mark-muted)] rounded-lg appearance-none cursor-pointer"
                 />
               </div>

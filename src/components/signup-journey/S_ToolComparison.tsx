@@ -66,7 +66,7 @@ const tools = [
 
 // 2500+1000+2499+1500+999+1080+2000+5000 = 16578
 const TOTAL_OTHERS = 16578;
-const LG_PRICE = 4999;
+const LG_PRICE = 1999;
 
 export default function S_ToolComparison() {
   return (
@@ -105,7 +105,7 @@ export default function S_ToolComparison() {
             >
               <span className="text-2xl shrink-0 mt-0.5">{tool.icon}</span>
               <div className="flex-1 min-w-0">
-                <h4 className="font-inter font-bold text-sm text-white mb-1">{tool.category}</h4>
+                <p className="font-inter font-bold text-sm text-white mb-1">{tool.category}</p>
                 <p className="font-inter text-xs text-white/40 mb-2 truncate">{tool.competitors}</p>
                 <div className="flex items-center gap-3">
                   <span className="font-inter text-xs font-bold text-red-400 line-through opacity-70">{tool.cost}</span>

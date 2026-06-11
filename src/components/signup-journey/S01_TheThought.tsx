@@ -54,17 +54,22 @@ export default function S01_TheThought() {
       {/* Sticky container that holds the content in viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6 pt-28">
         
-        <motion.div 
+        {/* opacity removed from initial — text must be visible on first paint for LCP.
+            y-only transform is fine (doesn't block LCP measurement). */}
+        <motion.div
           className="max-w-4xl mx-auto text-center relative z-10"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ y: 20 }}
+          animate={{ y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
           <ChapterLabel chapter="Chapter 01" label="The Thought" />
-          
-          <EditorialHeadline 
-            text={"I've been thinking about\nstarting a business\nfor two years."} 
+
+          {/* priority=true → CSS-animated static render, LCP-safe (no JS opacity gate) */}
+          <EditorialHeadline
+            text={"I've been thinking about\nstarting a business\nfor two years."}
             size="xl"
+            priority
+            as="h1"
             className="mb-8"
           />
 
@@ -101,7 +106,7 @@ export default function S01_TheThought() {
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
           >
-            <span className="caption text-[var(--color-mark-muted)]">Scroll</span>
+            <span className="caption text-[var(--color-mark-subtle-text)]">Scroll</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="stroke-[var(--color-mark-muted)]">
               <path d="M6 9L12 15L18 9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -134,12 +139,4 @@ function MorphTextInner({ indexMotionValue }: { indexMotionValue: any }) {
         key={currentIndex}
         className="absolute w-full font-playfair text-2xl md:text-4xl text-[var(--color-mark-ink)] italic"
         initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, y: -16, filter: 'blur(2px)' }}
-        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-      >
-        "{phrases[Math.min(currentIndex, phrases.length - 1)]}"
-      </motion.div>
-    </AnimatePresence>
-  );
-}
+        animate={{ opacity: 1, y: 0, filter: 'bl

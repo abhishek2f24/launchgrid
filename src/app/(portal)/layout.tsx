@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOutAction } from '@/actions/portal'
 import { SidebarNavClient, MobileNavClient } from '@/components/dashboard/SidebarNavClient'
+import { LaunchGridLogo } from '@/components/ui/LaunchGridLogo'
 
 export default async function PortalLayout({
   children,
@@ -25,10 +26,7 @@ export default async function PortalLayout({
       {/* Desktop Sidebar (Hidden on Mobile) */}
       <aside className="hidden md:flex w-64 border-r border-black/5 bg-white/80 backdrop-blur-xl flex-col h-full z-20 shrink-0 relative shadow-sm">
         <div className="h-16 flex items-center px-6 border-b border-black/5">
-          <div className="w-8 h-8 rounded bg-[var(--color-mark-ink)] text-white flex items-center justify-center mr-3 shadow-md">
-            <span className="font-inter font-bold text-xs">LG</span>
-          </div>
-          <span className="font-inter font-bold text-lg tracking-tight text-[var(--color-mark-ink)]">LaunchGrid</span>
+          <LaunchGridLogo size={26} variant="light" />
         </div>
         
         <SidebarNavClient />

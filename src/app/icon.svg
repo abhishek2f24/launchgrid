@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+  <!-- LaunchGrid favicon — icon mark only -->
+  <rect width="56" height="56" rx="10" fill="#0A0A0A"/>
+
+  <!-- Top-left circle -->
+  <circle cx="14" cy="14" r="11" fill="#84CC16"/>
+
+  <!-- Bottom-left circle -->
+  <circle cx="14" cy="42" r="11" fill="#84CC16"/>
+
+  <!-- Bottom-right circle -->
+  <circle cx="42" cy="42" r="11" fill="#84CC16"/>
+
+  <!-- Top-right: cursor arrow + leaf -->
+  <g transform="translate(32,4)">
+    <path d="M0 0 L0 13 L3.5 10 L5.5 16 L8.5 14.5 L6.5 8.5 L12 8.5 Z" fill="#84CC16"/>
+    <path d="M7 -2 C7 -2 18 2 14.5 10 C14.5 10 5 8 7 -2 Z" fill="#84CC16"/>
+  </g>
+</svg>
