@@ -4,7 +4,7 @@ import { GrainOverlay } from '@/components/ui-landing/GrainOverlay'
 
 // Set this to the founder's WhatsApp Business number (country code, no +) to enable
 // the "WhatsApp me" CTA, e.g. '919876543210'. Empty string hides the button.
-const FOUNDER_WHATSAPP = ''
+const FOUNDER_WHATSAPP = '919506212886'
 
 const WA_MESSAGE = encodeURIComponent(
   'STORE — mujhe apni dukaan ka free online store setup chahiye. Shop ka naam: '
