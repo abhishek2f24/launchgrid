@@ -12,7 +12,7 @@ export async function GET() {
       latest_version: '1.0.0',
       store_urls: {
         ios: 'https://apps.apple.com/app/launchgrid',
-        android: 'https://play.google.com/store/apps/details?id=in.launchgrid.app',
+        android: 'https://play.google.com/store/apps/details?id=in.launchgrid.mobile',
       },
     },
     error: null,
