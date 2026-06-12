@@ -95,6 +95,7 @@ export default function RootLayout({
         "applicationCategory": "BusinessApplication",
         "description": "India-first ecommerce platform with native UPI payments, GST compliance, and an Indian dropship catalog. Launch your online store in 15 minutes.",
         "offers": [
+          { "@type": "Offer", "name": "Free Starter",            "price": "0",     "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
           { "@type": "Offer", "name": "Get Online (Starter)",    "price": "1999",  "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
           { "@type": "Offer", "name": "Get Customers (Growth)",  "price": "9999",  "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
           { "@type": "Offer", "name": "Scale Revenue (Scale)",   "price": "24999", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } }

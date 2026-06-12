@@ -23,6 +23,24 @@ interface Plan {
 
 const plans: Plan[] = [
   {
+    id: 'free',
+    name: 'Free Starter',
+    tagline: 'Get online today. Free, forever. No card needed.',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    originalPrice: 0,
+    features: [
+      'Live store in 15 minutes',
+      'Up to 3 products',
+      'COD + UPI payments',
+      'GST-ready invoices',
+      'Order alerts on your phone',
+      '"Made with LaunchGrid" badge',
+    ],
+    cta: 'Start Free →',
+    popular: false,
+  },
+  {
     id: 'starter',
     name: 'Get Online',
     tagline: 'Your store. Your brand. Live in 15 minutes.',
@@ -236,16 +254,18 @@ export default function PricingPage() {
                     <div className="mb-8 border-b border-[var(--color-mark-default)] pb-6">
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-inter font-bold text-4xl text-[var(--color-mark-ink)]">
-                          ₹{price.toLocaleString('en-IN')}
+                          {price === 0 ? 'Free' : `₹${price.toLocaleString('en-IN')}`}
                         </span>
-                        <span className="font-inter text-xs text-[var(--color-mark-secondary)]">/ month</span>
-                        {billingPeriod === 'annual' && plan.monthlyPrice > price && (
+                        {price > 0 && (
+                          <span className="font-inter text-xs text-[var(--color-mark-secondary)]">/ month</span>
+                        )}
+                        {price > 0 && billingPeriod === 'annual' && plan.monthlyPrice > price && (
                           <span className="font-inter text-[11px] font-bold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
                             Save ₹{((plan.monthlyPrice - price) * 12).toLocaleString('en-IN')}/yr
                           </span>
                         )}
                       </div>
-                      {billingPeriod === 'annual' && (
+                      {price > 0 && billingPeriod === 'annual' && (
                         <span className="text-[10px] font-mono text-green-600 block mt-1.5">
                           Billed annually (₹{(price * 12).toLocaleString('en-IN')})
                         </span>

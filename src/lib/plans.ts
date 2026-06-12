@@ -3,11 +3,14 @@
  * Used by /api/v1/entitlements (mobile + web). Migrate scattered
  * `plan === 'pro'` checks to readFeature() over time.
  *
- * DB enum values: 'starter' | 'pro' | 'premium' (legacy naming)
- * Public names:   Get Online | Get Customers | Scale Revenue
+ * DB enum values: 'free' | 'starter' | 'pro' | 'premium' (legacy naming)
+ * Public names:   Free Starter | Get Online | Get Customers | Scale Revenue
+ *
+ * 'free' is the default for any store without a paid subscription:
+ * basic store, 3-product cap, "Made with LaunchGrid" badge shown.
  */
 
-export type PlanTier = 'starter' | 'pro' | 'premium'
+export type PlanTier = 'free' | 'starter' | 'pro' | 'premium'
 
 export interface PlanFeatures {
   max_products: number
@@ -23,6 +26,22 @@ export interface PlanFeatures {
 }
 
 export const PLANS: Record<PlanTier, { publicName: string; priceMonthly: number; features: PlanFeatures }> = {
+  free: {
+    publicName: 'Free Starter',
+    priceMonthly: 0,
+    features: {
+      max_products: 3,
+      custom_domain: false,
+      whatsapp_recovery: false,
+      email_recovery: false,
+      razorpay_byok: false,
+      gst_automation: false,
+      meta_ads_templates: false,
+      advanced_analytics: false,
+      priority_support: false,
+      hide_powered_by: false,
+    },
+  },
   starter: {
     publicName: 'Get Online',
     priceMonthly: 1999,
@@ -74,5 +93,5 @@ export const PLANS: Record<PlanTier, { publicName: string; priceMonthly: number;
 }
 
 export function getPlan(tier: string | null | undefined) {
-  return PLANS[(tier as PlanTier) || 'starter'] ?? PLANS.starter
+  return PLANS[(tier as PlanTier) || 'free'] ?? PLANS.free
 }

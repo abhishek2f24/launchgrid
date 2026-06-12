@@ -70,7 +70,7 @@ function ActionBanner({ productCount, plan, storeUrl, businessName, tenantId }: 
     )
   }
 
-  if (plan === 'starter') {
+  if ((plan !== 'pro' && plan !== 'premium')) {
     const shareMessage = `Hey! I just launched my new online store "${businessName}". Check out our catalog and order directly on our website: https://${storeUrl}`
     return (
       <div className="p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-[1.5rem] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm relative z-10">
@@ -126,11 +126,11 @@ function getMissionSteps(tenant: any, orders: any[], productCount: number, plan:
     { num: 5,  title: 'Launch Store',         outcome: 'Live to customers',         done: !!missions.step_3_launch,   locked: false, href: null },
     { num: 6,  title: 'Drive First Traffic',  outcome: 'First visitor arrived',     done: orders.length > 0,         locked: false, href: null },
     { num: 7,  title: 'Get First Order',      outcome: 'Phone buzzed',              done: orders.length > 0,         locked: false, href: null },
-    { num: 8,  title: 'Fulfill the Order',    outcome: 'Customer happy',            done: false,                     locked: plan === 'starter', href: null },
-    { num: 9,  title: 'Track Revenue',        outcome: 'Every rupee tracked',       done: false,                     locked: plan === 'starter', href: null },
-    { num: 10, title: 'Handle GST',           outcome: 'No penalties',              done: false,                     locked: plan === 'starter', href: null },
-    { num: 11, title: 'Scale With Ads',       outcome: 'Profitable growth begins',  done: false,                     locked: plan === 'starter', href: null },
-    { num: 12, title: 'Earn First Month',     outcome: '₹30K gross',               done: false,                     locked: plan === 'starter', href: null },
+    { num: 8,  title: 'Fulfill the Order',    outcome: 'Customer happy',            done: false,                     locked: (plan !== 'pro' && plan !== 'premium'), href: null },
+    { num: 9,  title: 'Track Revenue',        outcome: 'Every rupee tracked',       done: false,                     locked: (plan !== 'pro' && plan !== 'premium'), href: null },
+    { num: 10, title: 'Handle GST',           outcome: 'No penalties',              done: false,                     locked: (plan !== 'pro' && plan !== 'premium'), href: null },
+    { num: 11, title: 'Scale With Ads',       outcome: 'Profitable growth begins',  done: false,                     locked: (plan !== 'pro' && plan !== 'premium'), href: null },
+    { num: 12, title: 'Earn First Month',     outcome: '₹30K gross',               done: false,                     locked: (plan !== 'pro' && plan !== 'premium'), href: null },
   ]
 }
 
@@ -405,7 +405,7 @@ export function DashboardClient({
   }, [])
 
   const subRecord = tenant.subscriptions?.[0] || {}
-  const plan = subRecord.plan_tier || 'starter'
+  const plan = subRecord.plan_tier || 'free'
   const subStatus = subRecord.status || 'active'
   const currentPeriodEnd = subRecord.current_period_end
 
@@ -605,7 +605,7 @@ export function DashboardClient({
       )}
 
       {/* ── FIRST ORDER CELEBRATION UPSELL NUDGE (R-03) ── */}
-      {orders.length > 0 && plan === 'starter' && (
+      {orders.length > 0 && (plan !== 'pro' && plan !== 'premium') && (
         <div className="p-6 bg-gradient-to-r from-purple-900 to-indigo-950 border border-purple-500/30 rounded-[2rem] text-white shadow-xl relative overflow-hidden z-10 font-inter">
           {/* Decorative radial gradients */}
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
@@ -673,7 +673,7 @@ export function DashboardClient({
         </div>
 
         {/* Locked Steps CTA */}
-        {plan === 'starter' && (
+        {(plan !== 'pro' && plan !== 'premium') && (
           <div className="mt-5 p-4 bg-black/[0.02] border border-black/5 rounded-2xl flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Lock className="w-4 h-4 text-[var(--color-mark-secondary)] shrink-0" />

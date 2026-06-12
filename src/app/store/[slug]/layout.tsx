@@ -39,7 +39,7 @@ export default async function StoreLayout(props: {
     .limit(1)
     .single()
 
-  const plan = sub?.plan_tier || 'starter'
+  const plan = sub?.plan_tier || 'free'
   // Hide footer for pro and premium plans
   const hidePoweredBy = plan === 'pro' || plan === 'premium'
 

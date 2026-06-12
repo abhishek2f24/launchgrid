@@ -106,7 +106,7 @@ export default function OnboardingPage() {
         <div className="relative z-10">
           <h1 className="font-playfair text-3xl font-bold text-[var(--color-mark-ink)] mb-2">Build your business.</h1>
           <p className="font-inter text-sm font-medium text-[var(--color-mark-secondary)]/60 mb-8">
-            Your store goes live in 60 seconds. Free for 7 days. No credit card needed.
+            Your store goes live in 60 seconds. Free to start. No credit card needed.
           </p>
           
           {errorMessage && (

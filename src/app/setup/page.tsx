@@ -8,7 +8,7 @@ import { Sparkles, AlertCircle, CheckCircle, ChevronRight, Store, Palette, Phone
 function SetupPageClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const urlPlan = searchParams.get('plan') || 'starter'
+  const urlPlan = searchParams.get('plan') || 'free'
   const urlBilling = searchParams.get('billing') || 'monthly'
 
   const [step, setStep] = useState(1)

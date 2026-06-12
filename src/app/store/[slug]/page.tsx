@@ -205,7 +205,7 @@ export default async function StoreHomePage(props: { params: Promise<{ slug: str
       .order('created_at', { ascending: false })
       .limit(1)
       .single()
-    const plan = sub?.plan_tier || 'starter'
+    const plan = sub?.plan_tier || 'free'
     hidePoweredBy = plan === 'pro' || plan === 'premium'
   }
 

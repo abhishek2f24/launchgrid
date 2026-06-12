@@ -40,7 +40,7 @@ export async function GET(req: Request) {
       store_name: tenant.business_name,
       subdomain: tenant.subdomain,
       plan: {
-        tier: sub.plan_tier || 'starter',
+        tier: sub.plan_tier || 'free',
         public_name: plan.publicName,
         status: sub.status || 'active',
         current_period_end: sub.current_period_end || null,
