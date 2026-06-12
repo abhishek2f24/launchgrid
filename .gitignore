@@ -49,3 +49,6 @@ launchgrid-mobile/.expo/
 launchgrid-mobile/.env
 *.tsbuildinfo
 launchgrid-mobile/tsconfig.check*.json
+
+# build runner logs (read by Claude, not for the repo)
+build-logs/
