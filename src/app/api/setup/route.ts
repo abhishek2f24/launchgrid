@@ -58,7 +58,11 @@ export async function POST(request: Request) {
     const privacyPolicy = `At ${businessName}, we take your privacy seriously. We collect your shipping and billing details solely for fulfilling your orders. We will not sell your personal data to third parties. Contact us at ${whatsappNumber} for data removal requests.`
     const refundPolicy = `We offer a 7-day return policy for unused items in their original packaging. Please contact our support team at ${whatsappNumber} to initiate a return. Refunds will be processed to the original payment method.`
 
-    // Insert Business Configs
+    // Insert Business Configs.
+    // COD on by default: a brand-new store has no UPI/Razorpay configured yet, so
+    // without COD the checkout's payment section renders empty and the customer
+    // cannot pay at all. COD is also the most-trusted method for first-time Indian
+    // buyers — it's what makes a fresh store able to take its first order.
     await supabase.from('business_configs').insert({
       tenant_id: tenant.id,
       whatsapp_number: whatsappNumber,
@@ -67,7 +71,8 @@ export async function POST(request: Request) {
       template_style: templateStyle,
       terms_of_service: termsOfService,
       privacy_policy: privacyPolicy,
-      refund_policy: refundPolicy
+      refund_policy: refundPolicy,
+      cod_enabled: true,
     })
 
     // Subscription record. Two paths:
