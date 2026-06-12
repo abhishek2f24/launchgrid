@@ -70,21 +70,24 @@ export async function POST(request: Request) {
       refund_policy: refundPolicy
     })
 
-    // Insert Subscription record with 7-day Free Trial (clock starts on first product add)
-    // We set trial_started_at now but current_period_end to 7 days from first product action.
-    // The archive-trials cron uses current_period_end, so we give 7 days from signup as a
-    // conservative baseline. The dashboard resets this on first product creation.
+    // Subscription record. Two paths:
+    //  - Free tier (default, no paid plan selected): status 'active', no expiry.
+    //    This is genuinely free-forever — checkout must never be disabled by the
+    //    archive-trials cron (which only touches 'trialing' subs).
+    //  - A paid plan was chosen: start a 7-day trial of that plan (existing behaviour;
+    //    starts as 'starter' to keep within the historical trial flow).
+    const isFreeSignup = !plan || plan === 'free'
     const trialStarted = new Date()
     const trialExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
     await supabase.from('subscriptions').insert({
       tenant_id: tenant.id,
-      plan_tier: 'starter',        // all trials start as starter
-      billing_cycle: 'monthly',
-      status: 'trialing',
-      trial_started_at: trialStarted.toISOString(),
-      trial_expires_at: trialExpires.toISOString(),
-      current_period_end: trialExpires.toISOString(),
+      plan_tier: isFreeSignup ? 'free' : 'starter',
+      billing_cycle: billing === 'annual' ? 'annual' : 'monthly',
+      status: isFreeSignup ? 'active' : 'trialing',
+      trial_started_at: isFreeSignup ? null : trialStarted.toISOString(),
+      trial_expires_at: isFreeSignup ? null : trialExpires.toISOString(),
+      current_period_end: isFreeSignup ? null : trialExpires.toISOString(),
     })
 
     // Also set featured_until on the tenant (System 3: Discover Feed)
