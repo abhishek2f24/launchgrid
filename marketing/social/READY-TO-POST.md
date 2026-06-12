@@ -28,7 +28,14 @@ Your dukaan, online in 15 minutes:
 
 Pehle 10 stores ka setup MAIN KHUD free karunga. DM "STORE" and send 5 product photos. That's it.
 
-#SmallBusinessIndia #DukaanOnline #SellOnline #KiranaStore #BoutiqueIndia #HomeBaker #UPIPayments #GSTBilling #WhatsAppBusiness #VocalForLocal #IndianEntrepreneur #OnlineStoreIndia #SmallBusinessOwner #DigitalIndia #ShopLocal
+#SmallBusinessIndia #DukaanOnline #VocalForLocal #OnlineStoreIndia #ChhotaBusiness
+
+<!-- Updated to 5 hashtags per REACH-PLAYBOOK.md — Instagram's 2026 algorithm
+     favours 3-5 niche tags; the old 15-tag block hurt reach. Swap in Set B
+     (#HomeBakerIndia #BoutiqueIndia #InstaShopIndia #MadeInIndia #SmallBusinessOwner)
+     for bakers/boutiques, or Set C (#ResellerIndia #KiranaStore #OnlineDukaan
+     #StartupIndia #SmallBizIndia) for resellers/kirana. -->
+
 
 ---
 
