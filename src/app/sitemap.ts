@@ -6,6 +6,7 @@ const BLOG_SLUGS = [
   'start-dropshipping-india',
   'gst-compliance-ecommerce',
   'what-is-abandoned-cart-recovery',
+  'best-dukaan-alternatives-india',
 ];
 
 const FEATURE_SLUGS = [

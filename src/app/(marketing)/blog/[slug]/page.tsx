@@ -85,6 +85,42 @@ const blogPosts: Record<string, BlogPostData> = {
         answer: 'Yes, merchants can configure recovery message templates and discounts inside the dashboard settings.'
       }
     ]
+  },
+  'best-dukaan-alternatives-india': {
+    title: 'Best Dukaan Alternatives in India (2026): An Honest Comparison',
+    category: 'Comparisons',
+    date: 'June 13, 2026',
+    readTime: '9 min read',
+    content: [
+      'If you built your store on Dukaan and you are now looking for an alternative, you are not alone. Many Indian sellers who started on app-only store builders have run into the same walls: an app-only storefront that does not feel like a real website, limited control over checkout, and pricing that climbs as soon as you want features that should be standard. This guide compares the genuine alternatives available to Indian sellers in 2026 — honestly, including where each one is weaker — so you can pick the right home for your business.',
+      'What to actually look for in a Dukaan alternative:',
+      '1. A real storefront, not just an app link. Your customers should land on a clean, mobile-fast website at your own subdomain (or custom domain) — something you can share on WhatsApp status, Instagram bio, and Google. A store that only lives inside an app is harder to share and harder to trust.',
+      '2. Payments that fit India. UPI and Cash on Delivery (COD) are non-negotiable for most Indian buyers. COD in particular is what converts first-time customers who do not yet trust your brand. If a platform makes COD hard to enable, that is a red flag.',
+      '3. GST-ready invoicing built in. The moment your sales grow, GST compliance becomes real work. A good platform splits CGST/SGST/IGST automatically based on the buyer state and generates a clean invoice on every order — so you are not paying an accountant for something software should do.',
+      '4. WhatsApp-native selling. In India, the order conversation happens on WhatsApp. Order alerts, shipping updates, and a one-tap "share this product" link matter more here than anywhere else.',
+      '5. Honest, predictable pricing. Watch for the gap between the headline "free" and what you actually pay to keep a working store. A genuinely free tier — even a capped one — lets you test before you commit a single rupee.',
+      'The main options for Indian sellers in 2026:',
+      'Shopify — the global heavyweight. Shopify is powerful and reliable, but it is priced in USD (effectively ₹2,000+/month before apps), and GST, COD, and UPI all require extra apps or configuration. It is a strong choice once you are doing serious volume and can absorb the app stack; it is overkill and overpriced for a seller taking their first orders.',
+      'Instamojo / other payment-first tools — these started as payment links and bolted on stores. Fine for a quick link-in-bio sale, but the storefront experience is thin and they are not built around a full catalog, GST invoicing, or fulfilment workflow.',
+      'LaunchGrid — built for exactly this seller. LaunchGrid gives you a full storefront at yourname.launchgrid.in in about 15 minutes, with UPI and COD checkout, automatic GST invoices, WhatsApp selling tools, and order alerts on your phone — on a genuinely free tier (up to 3 products, with a small "Made with LaunchGrid" badge) so you can launch and test before paying anything. You upgrade only when you want more products and advanced features. The honest trade-off: LaunchGrid is India-focused and newer than Shopify, so if you need a huge third-party app ecosystem or international-first features, Shopify still wins there.',
+      'How to switch without losing momentum:',
+      'Switching is simpler than most sellers expect, because the assets you care about — your product photos, your prices, and your customer list — are yours. Export your product list and images, set up your new store (LaunchGrid can have you live in 15 minutes), point your WhatsApp status and Instagram bio at the new link, and run a short "we moved — same products, faster checkout" message to your existing customers. Keep the old store live for a week so no in-flight orders are lost, then retire it.',
+      'The bottom line: the best Dukaan alternative is the one that gives your customers a real, trustworthy storefront with UPI + COD checkout and GST invoicing, without pricing you out before you have made your first sale. For most Indian sellers taking early orders, that means starting free, proving the model, and only paying once the store is genuinely growing.'
+    ],
+    faqs: [
+      {
+        question: 'Is there a genuinely free Dukaan alternative in India?',
+        answer: 'Yes. LaunchGrid offers a free-forever tier — a live store with up to 3 products, UPI and Cash on Delivery checkout, and GST-ready invoices, with a small "Made with LaunchGrid" badge. You only pay if you upgrade for more products or advanced features, so you can launch and take your first orders without spending anything.'
+      },
+      {
+        question: 'Can I move my products from Dukaan to a new platform?',
+        answer: 'Your product photos, descriptions, prices, and customer list belong to you. Export them, recreate your catalog on the new platform (LaunchGrid lets you add products from your phone or import from a link), and repoint your WhatsApp and Instagram links. Keep the old store live for a few days so no in-flight orders are lost.'
+      },
+      {
+        question: 'Which platform is best for Cash on Delivery (COD) in India?',
+        answer: 'COD is essential for converting first-time Indian buyers. Choose a platform where COD is on by default or trivial to enable. On LaunchGrid, COD is enabled by default for new stores, so a brand-new store can accept its first COD order immediately, with the merchant confirming by phone.'
+      }
+    ]
   }
 }
 
