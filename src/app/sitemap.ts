@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/support',       priority: 0.4, freq: 'yearly'  },
     { path: '/vs-shopify',    priority: 0.8, freq: 'monthly' },
     { path: '/vs-dukaan',     priority: 0.8, freq: 'monthly' },
+    { path: '/vs-bikayi',     priority: 0.8, freq: 'monthly' },
     { path: '/legal/terms',   priority: 0.3, freq: 'yearly'  },
     { path: '/legal/privacy', priority: 0.3, freq: 'yearly'  },
     { path: '/legal/refund',  priority: 0.3, freq: 'yearly'  },
