@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { ALL_SEO_PAGES } from '@/lib/seo-pages';
 
 // Keep these in sync with src/app/(marketing)/blog and src/app/(marketing)/features/[slug]
 const BLOG_SLUGS = [
@@ -34,6 +35,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/legal/contact', priority: 0.4, freq: 'yearly'  },
     ...BLOG_SLUGS.map(slug => ({ path: `/blog/${slug}`, priority: 0.7, freq: 'monthly' as const })),
     ...FEATURE_SLUGS.map(slug => ({ path: `/features/${slug}`, priority: 0.8, freq: 'monthly' as const })),
+    { path: '/sell-online', priority: 0.8, freq: 'monthly' as const },
+    ...ALL_SEO_PAGES.map(p => ({ path: `/sell-online/${p.slug}`, priority: 0.7, freq: 'monthly' as const })),
   ];
 
   return routes.map(({ path, priority, freq }) => ({

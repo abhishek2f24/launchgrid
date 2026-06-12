@@ -101,7 +101,8 @@ export default async function StoreLayout(props: {
           </div>
         </footer>
 
-        {/* Powered-by footer — hidden on premium & enterprise plans */}
+        {/* Powered-by footer — hidden on premium & enterprise plans.
+            This is the viral loop: every shared store page advertises the platform. */}
         {!hidePoweredBy && (
           <div className="w-full border-t py-2.5 text-center bg-black/80" style={{ borderColor: 'var(--color-mark-default)' }}>
             <p className="text-[11px] text-slate-300 font-medium tracking-wide">
@@ -116,6 +117,17 @@ export default async function StoreLayout(props: {
               >
                 LaunchGrid
               </a>
+              <span className="hidden sm:inline">
+                {' '}—{' '}
+                <a
+                  href={`https://launchgrid.in/onboarding?utm_source=storefront&utm_medium=powered_by_cta&utm_campaign=${encodeURIComponent(params.slug)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white font-bold underline underline-offset-2 decoration-white/30 hover:decoration-white transition-colors"
+                >
+                  create your own store free →
+                </a>
+              </span>
             </p>
           </div>
         )}

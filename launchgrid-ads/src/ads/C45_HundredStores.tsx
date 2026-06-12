@@ -47,38 +47,40 @@ const END = 308
 
 // Simplified India outline (stylized constellation map), 600×700 space
 const OUTLINE: [number, number][] = [
-  [200, 30], [250, 60], [230, 110], [290, 150], [370, 190], [430, 200],
-  [470, 180], [560, 170], [545, 215], [555, 270], [495, 250], [470, 290],
-  [430, 330], [390, 400], [350, 470], [330, 540], [310, 600], [300, 640],
-  [285, 600], [270, 520], [255, 450], [240, 390], [220, 350], [175, 320],
-  [120, 300], [90, 270], [130, 250], [110, 220], [150, 190], [160, 120],
-  [180, 70],
+  // Kashmir → Himalaya east → Northeast arm → east coast → southern tip →
+  // west coast → Gujarat/Kutch → Rajasthan → Punjab → back to Kashmir
+  [255, 25], [290, 60], [265, 95], [300, 130], [350, 160], [415, 195],
+  [440, 175], [480, 185], [560, 205], [545, 245], [500, 285], [470, 250],
+  [430, 265], [415, 310], [370, 380], [345, 460], [320, 560], [295, 655],
+  [270, 600], [250, 520], [225, 430], [205, 350], [185, 300], [150, 290],
+  [120, 320], [95, 285], [75, 250], [110, 225], [150, 215], [185, 140],
+  [225, 90],
 ]
 const OUTLINE_PATH = OUTLINE.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`).join(' ') + ' Z'
 
 // Named cities — pop in with gaps shrinking 14→3 frames (musical accelerando)
 const CITY_GAPS = [14, 12, 11, 10, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3]
 const CITY_POS: [number, number][] = [
-  [230, 160], // Delhi
-  [215, 350], // Mumbai
+  [255, 150], // Delhi
+  [195, 310], // Mumbai
   [290, 500], // Bengaluru
-  [300, 400], // Hyderabad
-  [340, 490], // Chennai
-  [455, 280], // Kolkata
-  [235, 380], // Pune
-  [160, 280], // Ahmedabad
-  [200, 200], // Jaipur
-  [300, 210], // Lucknow
-  [180, 310], // Surat
-  [240, 270], // Indore
-  [300, 310], // Nagpur
-  [370, 230], // Patna
-  [280, 570], // Kochi
-  [500, 220], // Guwahati
-  [260, 250], // Bhopal
-  [290, 540], // Coimbatore
-  [380, 370], // Visakhapatnam
-  [210, 110], // Ludhiana
+  [300, 390], // Hyderabad
+  [340, 470], // Chennai
+  [430, 270], // Kolkata
+  [220, 330], // Pune
+  [140, 265], // Ahmedabad
+  [215, 185], // Jaipur
+  [310, 195], // Lucknow
+  [155, 295], // Surat
+  [230, 270], // Indore
+  [300, 300], // Nagpur
+  [375, 215], // Patna
+  [275, 590], // Kochi
+  [490, 225], // Guwahati
+  [255, 265], // Bhopal
+  [290, 545], // Coimbatore
+  [370, 350], // Visakhapatnam
+  [230, 115], // Ludhiana
 ]
 const CITIES = CITY_POS.map((p, i) => ({
   x: p[0], y: p[1],

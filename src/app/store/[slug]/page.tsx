@@ -326,7 +326,7 @@ export default async function StoreHomePage(props: { params: Promise<{ slug: str
             {!hidePoweredBy && (
               <> Powered by{' '}
                 <a
-                  href="https://launchgrid.in/join"
+                  href={`https://launchgrid.in/join?utm_source=storefront&utm_medium=home_footer&utm_campaign=${encodeURIComponent(params.slug)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline underline-offset-2 hover:opacity-100 transition-opacity"
