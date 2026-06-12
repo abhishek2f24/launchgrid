@@ -328,13 +328,10 @@ export function CheckoutForm({ config }: { config: Config }) {
       return
     }
 
-    // COD guard: OTP must be verified before placing COD order
-    if (selectedMethod === 'cod' && config.codEnabled) {
-      if (!codOtpVerified) {
-        setError('Please verify your phone number via OTP before placing a COD order.')
-        return
-      }
-    }
+    // COD OTP is OPTIONAL, not a hard gate. OTP delivery is email-only (no SMS
+    // gateway configured), so phone-only customers — the majority for COD — can
+    // never receive it. Blocking on it would kill every phone-only COD order.
+    // The merchant confirms COD orders by phone, as is standard for Indian D2C.
 
     setLoading(true)
     try {
@@ -559,10 +556,11 @@ export function CheckoutForm({ config }: { config: Config }) {
                 </div>
               </button>
 
-              {/* COD OTP verification section */}
-              {selectedMethod === 'cod' && (
+              {/* COD email verification (optional) — only offered when an email is
+                  given, since OTP delivery is email-only. Never blocks the order. */}
+              {selectedMethod === 'cod' && form.email && (
                 <div className="mt-3 p-4 bg-orange-50 border border-orange-200 space-y-3">
-                  <p className="text-xs font-bold text-orange-900">Phone Verification Required for COD</p>
+                  <p className="text-xs font-bold text-orange-900">Verify your email (optional)</p>
                   {!codOtpSent ? (
                     <button
                       type="button"
