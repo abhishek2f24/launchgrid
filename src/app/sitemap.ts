@@ -7,6 +7,7 @@ const BLOG_SLUGS = [
   'gst-compliance-ecommerce',
   'what-is-abandoned-cart-recovery',
   'best-dukaan-alternatives-india',
+  'how-to-sell-on-whatsapp-india',
 ];
 
 const FEATURE_SLUGS = [

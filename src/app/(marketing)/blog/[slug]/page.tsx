@@ -121,6 +121,40 @@ const blogPosts: Record<string, BlogPostData> = {
         answer: 'COD is essential for converting first-time Indian buyers. Choose a platform where COD is on by default or trivial to enable. On LaunchGrid, COD is enabled by default for new stores, so a brand-new store can accept its first COD order immediately, with the merchant confirming by phone.'
       }
     ]
+  },
+  'how-to-sell-on-whatsapp-india': {
+    title: 'How to Sell on WhatsApp in India (2026): From DMs to a Real Store',
+    category: 'Guides',
+    date: 'June 13, 2026',
+    readTime: '8 min read',
+    content: [
+      'WhatsApp is where Indian commerce actually happens. Customers ask "price kya hai?", you send photos one by one, you confirm the order in chat, and you chase the payment over UPI. It works — until it does not scale. If you are spending hours every day copy-pasting prices, re-sending the same product photos, and losing track of which order is paid, this guide is for you. Here is how to go from selling in WhatsApp DMs to running a real store that still uses WhatsApp, but stops the chaos.',
+      'Stage 1 — Why pure-DM selling hits a ceiling:',
+      'Selling entirely through WhatsApp chats breaks down in predictable ways: you cannot show a full catalog cleanly, every customer needs the same questions answered manually, there is no proper order record, payments are unverified until you check your UPI app, and you have no idea which products people actually look at most. None of this means you should leave WhatsApp — it means WhatsApp should be the conversation layer, not your entire shop.',
+      'Stage 2 — Give customers one link instead of twelve photos:',
+      'The single biggest upgrade is replacing "let me send you photos" with one storefront link. When a customer asks for options, you send your store link — they browse the full catalog, see clear prices, and check out themselves. With LaunchGrid you can have this live at yourname.launchgrid.in in about 15 minutes, then drop the link in your WhatsApp status, your bio, and every chat. The order conversation still happens on WhatsApp; the browsing and payment just stop eating your day.',
+      'Stage 3 — Make payment effortless (and trustworthy):',
+      'Indian buyers want UPI and Cash on Delivery. UPI gives instant prepaid orders; COD converts first-time buyers who do not yet trust you. A good store offers both at checkout, so the customer picks what they are comfortable with. COD especially is what gets you that crucial first order from a stranger — they pay when the product arrives, so there is no risk on their side.',
+      'Stage 4 — Stop manually tracking orders:',
+      'Once orders come through a store instead of scattered chats, every order has a record: customer name, items, amount, payment status, and shipping address in one place. You get a notification the moment an order is placed, mark it fulfilled with one tap, and send the customer a clean order confirmation — instead of scrolling fourteen chats at midnight trying to remember who paid.',
+      'Stage 5 — Use WhatsApp for what it is great at:',
+      'With the store handling catalog and checkout, WhatsApp becomes your growth and retention channel: post your store link to your status whenever you add stock, send order-shipped updates, and message past buyers when something they liked is back. This is where WhatsApp genuinely outperforms email in India — open rates are far higher and the relationship is personal.',
+      'The honest summary: you do not have to choose between WhatsApp and a "proper website." The winning setup for Indian sellers in 2026 is both — a real storefront that takes the catalog, payment, and order admin off your plate, with WhatsApp as the human layer for conversation, status updates, and repeat sales. Start with a free store, move your next "send me photos" customer to your link, and take it from there.'
+    ],
+    faqs: [
+      {
+        question: 'Can I keep using my personal WhatsApp to sell?',
+        answer: 'Yes. The goal is not to leave WhatsApp — it is to stop using it as your entire shop. You keep chatting with customers on WhatsApp, but send them a store link for browsing and checkout instead of photos and manual price quotes. Order alerts and shipping updates can still flow through WhatsApp.'
+      },
+      {
+        question: 'How do I take payments when selling on WhatsApp?',
+        answer: 'The cleanest way is a storefront with UPI and Cash on Delivery at checkout, so payment is verified and recorded automatically instead of you checking your UPI app. On LaunchGrid, UPI and COD are built in, and COD is enabled by default so you can take your first order immediately.'
+      },
+      {
+        question: 'Do I need to pay to start selling on WhatsApp with a store?',
+        answer: 'No. You can start on a free tier — LaunchGrid gives you a live store with up to 3 products, UPI and COD checkout, and GST-ready invoices for free, so you can move your WhatsApp orders to a real store and take your first sale without spending anything.'
+      }
+    ]
   }
 }
 
