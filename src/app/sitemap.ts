@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...BLOG_SLUGS.map(slug => ({ path: `/blog/${slug}`, priority: 0.7, freq: 'monthly' as const })),
     ...FEATURE_SLUGS.map(slug => ({ path: `/features/${slug}`, priority: 0.8, freq: 'monthly' as const })),
     { path: '/sell-online', priority: 0.8, freq: 'monthly' as const },
+    { path: '/free-setup', priority: 0.8, freq: 'monthly' as const },
     ...ALL_SEO_PAGES.map(p => ({ path: `/sell-online/${p.slug}`, priority: 0.7, freq: 'monthly' as const })),
   ];
 

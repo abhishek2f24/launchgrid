@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     description: 'Your online store with UPI, COD, GST invoices and WhatsApp selling built in.',
     url: 'https://launchgrid.in/sell-online',
     type: 'website',
+    images: [{ url: 'https://launchgrid.in/og/sell-online.png', width: 1024, height: 1024 }],
   },
 }
 

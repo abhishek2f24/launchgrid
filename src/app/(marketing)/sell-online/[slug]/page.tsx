@@ -39,7 +39,13 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: 'website' },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      images: [{ url: 'https://launchgrid.in/og/sell-online.png', width: 1024, height: 1024 }],
+    },
   }
 }
 
