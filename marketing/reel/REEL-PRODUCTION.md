@@ -1,5 +1,31 @@
 # LaunchGrid 30-sec Reel — production package
 
+## 🚀 SHIP A FULL REEL TODAY (no waiting for Gemini quota)
+
+You have everything for a complete 30s reel right now. Clip 2 (solution) and Clip 3 (CTA)
+don't need a person on screen, so we use branded cards instead — zero consistency problem.
+
+**Assets in this folder:**
+- `clip1.mp4` — 10s real video (Priya closing shop, WhatsApp flood) → the HOOK
+- `card-solution-1080x1920.png` — "Sirf online nahi. Poora business." + 5 features → SOLUTION
+- `card-cta-1080x1920.png` — FREE SETUP / DM "STORE" → CTA
+- `voiceover-anika.mp3` — full Hindi VO (Indian female)
+- (optional) `../images/post-1-dukaan-online.png` — extra brand shot if you want a 4th beat
+
+**Canva recipe (1080×1920, ~30s):**
+1. 0–10s: `clip1.mp4` (the hook). Add the text overlay "POV: 11 PM. Shutter down. Order aa gaya."
+2. 10–23s: `card-solution` — apply a slow zoom (Ken Burns) + reveal the 5 ticks one by one
+   with Canva's animate. Optionally cut in 2–3s of `post-1-dukaan-online.png`.
+3. 23–30s: `card-cta` — pop it in with a scale animation; pulse the "DM STORE" button.
+4. Audio: drop `voiceover-anika.mp3` at 0:00. It's ~43s — **speed it to ~1.4× to fit 30s**, or
+   trim the gaps. Add a trending/royalty-free track at ~15% under the VO.
+5. Export 1080p MP4 → post as a Reel.
+
+Result: a complete, on-brand 30s reel **today**. Tomorrow, when Gemini's video quota resets,
+you can regenerate Clip 2 + Clip 3 as live footage (prompts below) and swap them in for a v2.
+
+---
+
 ## ✅ PRODUCTION STATUS (updated)
 
 **Done & in this folder:**
