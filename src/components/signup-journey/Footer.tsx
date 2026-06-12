@@ -31,6 +31,7 @@ export function Footer() {
           <ul className="space-y-3.5">
             {[
               { label: 'Discover Featured Stores', href: '/discover' },
+              { label: 'Sell Online in Your City', href: '/sell-online' },
               { label: 'Pricing Plan Comparison', href: '/pricing' },
               { label: 'Frequently Asked Questions (FAQ)', href: '/faq' },
               { label: 'Ecommerce Growth Blog', href: '/blog' },
