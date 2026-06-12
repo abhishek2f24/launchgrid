@@ -49,6 +49,14 @@ export default function MarketingPage() {
   return (
     <div className="theme-marketing min-h-screen bg-[var(--color-mark-base)] text-[var(--color-mark-primary)] flex flex-col antialiased relative selection:bg-[var(--color-mark-ink)] selection:text-[var(--color-mark-inverse)]">
       <GrainOverlay />
+      {/* Launch offer bar — first-10 concierge setup (drives /free-setup WhatsApp funnel) */}
+      <a
+        href="/free-setup?utm_source=homepage&utm_medium=announcement_bar"
+        className="relative z-20 block w-full bg-[var(--color-mark-ink)] text-center py-2 px-4 text-[11px] sm:text-xs font-bold tracking-wide text-white hover:bg-neutral-800 transition-colors"
+      >
+        🆓 First 10 businesses: we set up your entire store for you — free.{' '}
+        <span className="underline underline-offset-2 decoration-white/40">Claim your spot →</span>
+      </a>
       <ProgressBar />
       <JourneyNav />
 
