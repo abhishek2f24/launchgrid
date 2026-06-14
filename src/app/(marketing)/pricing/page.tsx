@@ -24,7 +24,7 @@ interface Plan {
 const plans: Plan[] = [
   {
     id: 'free',
-    name: 'Free Starter',
+    name: 'Basic',
     tagline: 'Get online today. Free, forever. No card needed.',
     monthlyPrice: 0,
     annualPrice: 0,
@@ -42,7 +42,7 @@ const plans: Plan[] = [
   },
   {
     id: 'starter',
-    name: 'Get Online',
+    name: 'Pro',
     tagline: 'Your store. Your brand. Live in 15 minutes.',
     monthlyPrice: 1999,
     annualPrice: 1399,
@@ -61,13 +61,13 @@ const plans: Plan[] = [
   },
   {
     id: 'growth',
-    name: 'Get Customers',
+    name: 'Max',
     tagline: 'Traffic. Ads. Conversions. Everything you need for your first ₹1 Lakh.',
     monthlyPrice: 9999,
     annualPrice: 6999,
     originalPrice: 19999,
     features: [
-      'Everything in Starter',
+      'Everything in Pro',
       'Meta Ads campaign templates',
       'Google Shopping setup',
       'WhatsApp abandoned cart recovery',
@@ -80,13 +80,13 @@ const plans: Plan[] = [
   },
   {
     id: 'scale',
-    name: 'Scale Revenue',
+    name: 'Ultra',
     tagline: 'For founders who have tasted success and want to scale.',
     monthlyPrice: 24999,
     annualPrice: 17999,
     originalPrice: 49999,
     features: [
-      'Everything in Growth',
+      'Everything in Max',
       'Automated GST compliance (CGST/SGST/IGST)',
       'Expanded catalog (500 items)',
       'Email abandoned cart sequences',
@@ -223,7 +223,7 @@ export default function PricingPage() {
           </div>
 
           {/* Pricing Grids */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
             {plans.map((plan) => {
               const price = billingPeriod === 'monthly' ? plan.monthlyPrice : plan.annualPrice;
               return (

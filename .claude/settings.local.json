@@ -5,7 +5,9 @@
       "Bash(Select-Object FullName)",
       "Bash(Format-Table -AutoSize)",
       "Bash(Out-String -Width 250)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "PowerShell(winget install --id GitHub.cli --silent --accept-package-agreements --accept-source-agreements 2>&1)",
+      "PowerShell($gh = \"$env:ProgramFiles\\\\GitHub CLI\\\\gh.exe\"; if \\(-not \\(Test-Path $gh\\)\\) { $gh = \\(Get-ChildItem \"$env:LOCALAPPDATA\\\\Microsoft\\\\WinGet\\\\Packages\" -Recurse -Filter gh.exe -ErrorAction SilentlyContinue | Select-Object -First 1\\).FullName }; \"gh at: $gh\"; & $gh --version)"
     ]
   }
 }

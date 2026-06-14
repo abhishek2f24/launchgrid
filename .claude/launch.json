@@ -78,6 +78,18 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8749", "--directory", "C:/Users/Abhishek/Desktop/ghd/personal/apps/clinicfront"],
       "port": 8749
+    },
+    {
+      "name": "controltower-dashboard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:/Users/Abhishek/Desktop/ghd/personal/hackathon/09-ms-build-ai/dashboard"],
+      "port": 3100
+    },
+    {
+      "name": "childhoodwish",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:/Users/Abhishek/Desktop/ghd/personal/Childhoodwish/childhoodwish", "--", "--port", "3900"],
+      "port": 3900
     }
   ]
 }

@@ -163,6 +163,48 @@ class Repo(private val auth: AuthClient, private val client: OkHttpClient) {
     suspend fun entitlements(): Result<Entitlements> = apiCall("GET", "/api/v1/entitlements")
         .mapCatching { json.decodeFromJsonElement(Entitlements.serializer(), it) }
 
+    /**
+     * Create a product via the shared API (enforces tenant + slug). The endpoint
+     * doesn't take stock, so callers set the starting stock with [setProductStock]
+     * on the returned id. Returns the new product's id.
+     */
+    suspend fun addProduct(title: String, retailPrice: Double, costPrice: Double?): Result<String> =
+        apiCall(
+            "POST", "/api/products/add",
+            body = buildJsonObject {
+                put("title", title)
+                put("retail_price", retailPrice)
+                if (costPrice != null) put("cost_price", costPrice)
+            },
+        ).mapCatching { el ->
+            val product = (el as? JsonObject)?.get("product")?.jsonObject
+                ?: throw BackendException("Product created but response was unexpected")
+            product["id"]?.jsonPrimitive?.content
+                ?: throw BackendException("Product created but no id returned")
+        }
+
+    /**
+     * Set a product's stock. Direct PostgREST PATCH under RLS — the products
+     * policy only lets a tenant owner update their own rows, so this is safe
+     * without a dedicated API endpoint (stock is a simple owner-scoped field,
+     * not a cross-tenant business action like checkout/fulfilment).
+     */
+    suspend fun setProductStock(productId: String, newStock: Int): Result<Unit> = runCatching {
+        val token = auth.validToken() ?: throw BackendException("Signed out")
+        val body = buildJsonObject { put("stock", newStock) }
+        val req = Request.Builder()
+            .url("$SUPABASE/rest/v1/products?id=eq.$productId")
+            .header("apikey", ANON_KEY)
+            .header("Authorization", "Bearer $token")
+            .header("Content-Type", "application/json")
+            .header("Prefer", "return=minimal")
+            .patch(body.toString().toRequestBody(JSON_MEDIA))
+            .build()
+        executeIo(req).use {
+            if (!it.isSuccessful) throw BackendException("Could not update stock (HTTP ${it.code})")
+        }
+    }
+
     suspend fun updateOrderStatus(orderId: String, fulfillmentStatus: String): Result<Unit> =
         apiCall(
             "POST", "/api/orders/update-status",

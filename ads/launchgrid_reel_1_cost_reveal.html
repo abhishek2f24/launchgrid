@@ -1,0 +1,327 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1rem 0;max-width:680px}
+.score-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;padding:1rem 1.25rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)}
+.score-num{font-size:36px;font-weight:500;color:#1D9E75;min-width:60px}
+.score-label{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.score-label strong{display:block;font-size:15px;color:var(--color-text-primary);font-weight:500}
+.badge-publish{background:#EAF3DE;color:#3B6D11;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500;margin-left:auto}
+.section-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin:1.5rem 0 .75rem}
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:1.5rem}
+.phase-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.75rem 1rem}
+.phase-name{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px}
+.phase-val{font-size:13px;color:var(--color-text-primary)}
+.pass{color:#1D9E75;font-size:12px;margin-top:4px}
+.scenes{display:flex;flex-direction:column;gap:10px}
+.scene{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.scene-header{display:flex;align-items:center;gap:10px;padding:.85rem 1.1rem;cursor:pointer;user-select:none}
+.scene-time{background:#E6F1FB;color:#185FA5;font-size:11px;font-weight:500;padding:3px 9px;border-radius:12px;white-space:nowrap}
+.scene-title{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1}
+.scene-toggle{font-size:16px;color:var(--color-text-secondary);transition:transform .2s}
+.scene-body{padding:0 1.1rem 1.1rem;display:none;flex-direction:column;gap:10px}
+.scene-body.open{display:flex}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cell{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.65rem .85rem}
+.cell-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.cell-val{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.full-cell{grid-column:1/-1}
+.script-box{background:#FAEEDA;border-left:3px solid #BA7517;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem}
+.script-box .cell-label{color:#854F0B}
+.script-text{font-size:13px;color:#412402;line-height:1.7;white-space:pre-wrap}
+.cta-strip{background:#E1F5EE;border-radius:var(--border-radius-md);padding:.75rem 1rem;border:0.5px solid #9FE1CB}
+.cta-strip .cell-label{color:#0F6E56}
+.cta-text{font-size:13px;color:#04342C;font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem}
+.tag{font-size:11px;padding:3px 10px;border-radius:12px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.weight-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.wcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.5rem .6rem;text-align:center}
+.wcard-cat{font-size:10px;color:var(--color-text-secondary)}
+.wcard-score{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.wcard-bar{height:3px;border-radius:2px;margin-top:4px;background:#1D9E75}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:.5rem 0}
+</style>
+<h2 class="sr-only">LaunchGrid Reel 1 — Cost Reveal format, full scene-by-scene breakdown with 15-phase check and priority score</h2>
+<div class="wrap">
+
+<div class="score-bar">
+  <div class="score-num">94</div>
+  <div class="score-label">
+    <strong>Reel 1 — Cost Reveal / Myth Bust</strong>
+    Priority Score · Ready to Publish
+  </div>
+  <div class="badge-publish">✅ Publish</div>
+</div>
+
+<div class="weight-grid" style="margin-bottom:1.5rem">
+  <div class="wcard"><div class="wcard-cat">Hook 25%</div><div class="wcard-score">24</div><div class="wcard-bar" style="width:96%"></div></div>
+  <div class="wcard"><div class="wcard-cat">Retention 20%</div><div class="wcard-score">19</div><div class="wcard-bar" style="width:95%"></div></div>
+  <div class="wcard"><div class="wcard-cat">Emotion 15%</div><div class="wcard-score">14</div><div class="wcard-bar" style="width:93%"></div></div>
+  <div class="wcard"><div class="wcard-cat">Visuals 10%</div><div class="wcard-score">10</div><div class="wcard-bar" style="width:100%"></div></div>
+  <div class="wcard"><div class="wcard-cat">SEO 10%</div><div class="wcard-score">10</div><div class="wcard-bar" style="width:100%"></div></div>
+  <div class="wcard"><div class="wcard-cat">Shares 10%</div><div class="wcard-score">9</div><div class="wcard-bar" style="width:90%"></div></div>
+  <div class="wcard"><div class="wcard-cat">CTA 5%</div><div class="wcard-score">5</div><div class="wcard-bar" style="width:100%"></div></div>
+  <div class="wcard"><div class="wcard-cat">Audio 5%</div><div class="wcard-score">3</div><div class="wcard-bar" style="width:60%"></div></div>
+</div>
+
+<div class="section-title">15-phase quick check</div>
+<div class="phase-grid">
+  <div class="phase-card"><div class="phase-name">Phase 1 · Viral Trigger</div><div class="phase-val">Shock + Money + FOMO</div><div class="pass">✅ 3 triggers active</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 2 · Hook</div><div class="phase-val">Pattern interrupt — price reveal</div><div class="pass">✅ Under 1.5s, no greeting</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 3 · Retention</div><div class="phase-val">Cut every 1.5–2s, caption + zoom</div><div class="pass">✅ No static shot &gt;4s</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 4 · Shareability</div><div class="phase-val">Useful + Impressive + Relatable</div><div class="pass">✅ Business owners will share</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 5 · Business Value</div><div class="phase-val">Website + Online Store + Payments</div><div class="pass">✅ 3 features highlighted</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 6 · Proof</div><div class="phase-val">LaunchGrid dashboard on screen &lt;5s</div><div class="pass">✅ Real UI proof</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 7 · Script PAS</div><div class="phase-val">Pain → Agitate → Solution</div><div class="pass">✅ PAS with 30s structure</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 8 · Visual Safe Zone</div><div class="phase-val">All text centered, middle 60%</div><div class="pass">✅ Edge-safe</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 9 · Caption Keyword</div><div class="phase-val">Spoken + Shown + In Caption</div><div class="pass">✅ "Website" triple-placed</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 10 · Audio</div><div class="phase-val">VO first, low-fi music BG, SFX cuts</div><div class="pass">✅ Voice leads</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 11 · CTA</div><div class="phase-val">"Comment WEBSITE"</div><div class="pass">✅ Specific, no "follow only"</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 12 · SEO</div><div class="phase-val">"Website" spoken in first 4s</div><div class="pass">✅ Keyword in first 5s</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 13 · Hashtags</div><div class="phase-val">5 tags (1 mega, 2 niche, 1 kw)</div><div class="pass">✅ Correct formula</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 14 · Viral Format</div><div class="phase-val">Cost Reveal + Myth Bust combo</div><div class="pass">✅ Top-2 performing formats</div></div>
+  <div class="phase-card"><div class="phase-name">Phase 15 · LG Boosters</div><div class="phase-val">Indian biz + real dashboard + price comparison</div><div class="pass">✅ 5 boosters active</div></div>
+</div>
+
+<div class="section-title">Scene-by-scene breakdown — click each scene to expand</div>
+<div class="scenes">
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">0 – 1.5s</span>
+    <span class="scene-title">Scene 1 · Hook — The Price Slap</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script (voice-over)</div>
+      <div class="script-text">"Website banane ke liye ₹50,000 kharcha kiya? Galti ho gayi."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual — what's on screen</div><div class="cell-val">Big white text on dark BG: <strong>₹50,000</strong> with a red strikethrough appearing in real-time. Camera is slightly handheld/shaky for authenticity.</div></div>
+      <div class="cell"><div class="cell-label">On-screen caption text</div><div class="cell-val">"WEBSITE ₹50,000?! 😱" — Bold, center frame, safe zone.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Camera / edit style</div><div class="cell-val">Jump cut from black to text card in 0.3s. No logo. No music intro. Hit the word immediately.</div></div>
+      <div class="cell"><div class="cell-label">Audio</div><div class="cell-val">SFX: cash register sound or error buzzer at "₹50,000". Voice-over starts instantly, no silence.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Pattern interrupt</span><span class="tag">Shock trigger</span><span class="tag">Money trigger</span><span class="tag">No greeting</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">1.5 – 3s</span>
+    <span class="scene-title">Scene 2 · Hook Payoff — Identify the Problem</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Agency ne sirf ek website di — aur kuch nahi. Orders? Zero. Leads? Zero."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Cut to: a person (Indian small shop owner, could be you talking to camera) looking frustrated. OR a WhatsApp chat showing "0 orders" message thread — screen recording style.</div></div>
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">"No orders. No leads. Just a website." — appearing word by word.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual change at 2s</div><div class="cell-val">Zoom into the WhatsApp screen at the 2s mark for retention. Caption flips to new text simultaneously.</div></div>
+      <div class="cell"><div class="cell-label">Emotion target</div><div class="cell-val">Relatability — every local business owner has felt this exact pain.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Problem clear in &lt;3s</span><span class="tag">Relatability</span><span class="tag">FOMO trigger</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">3 – 7s</span>
+    <span class="scene-title">Scene 3 · Agitate — Make the Pain Worse</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Aur agency boli — Google Ads ke liye alag paisa do. SEO ke liye alag. WhatsApp ke liye alag setup. Sab kuch alag alag."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Rapid-fire text cards flashing one by one:
+— "Google Ads: ₹10,000/mo"
+— "SEO: ₹8,000/mo"
+— "WhatsApp Setup: ₹5,000"
+Each one slams into frame with a SFX hit.</div></div>
+      <div class="cell"><div class="cell-label">Edit technique</div><div class="cell-val">Each price card: hard cut every 1.2s. Add shake/vibrate effect on each card to amplify shock. Running total counter climbing in corner.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">"₹73,000+ just to START?" — shown as the running total hits the number. Red color. Bold.</div></div>
+      <div class="cell"><div class="cell-label">Emotion</div><div class="cell-val">Outrage + Shock. Business owner should feel validated in their frustration.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Agitate phase</span><span class="tag">Visual change every 1.2s</span><span class="tag">Shock + Money</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">7 – 10s</span>
+    <span class="scene-title">Scene 4 · Bridge — The Contrast Setup</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Toh fir kya karna chahiye? Ek platform mein sab kuch — website, store, payments, WhatsApp, SEO — woh bhi Indian price mein."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Transition from red/dark agitation cards to a clean, bright LaunchGrid dashboard — green tones. The mood lifts visually. Like sunlight after darkness.</div></div>
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">"Ek platform. Sab kuch." (center frame, clean white text on brand color BG)</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Audio shift</div><div class="cell-val">Music rises slightly here — uplifting. The tone flip is intentional. Viewer should feel relief.</div></div>
+      <div class="cell"><div class="cell-label">SEO note</div><div class="cell-val">Keyword "website" spoken again here. Second SEO hit within 10s.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Bridge / pivot moment</span><span class="tag">Aspiration trigger</span><span class="tag">Transformation setup</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">10 – 18s</span>
+    <span class="scene-title">Scene 5 · Solution Demo — LaunchGrid Dashboard</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"LaunchGrid se — professional website ready in minutes. Online store with payment gateway built-in. WhatsApp Business connected. GST billing automatic. Sab ek jagah."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual — screen recording</div><div class="cell-val">Mobile screen recording of LaunchGrid dashboard. Rapid demo scroll — show:
+1. Website preview (2s)
+2. Products/store section (2s)
+3. Payment toggle ON (1.5s)
+4. WhatsApp icon connected (1.5s)
+5. GST billing panel (1s)</div></div>
+      <div class="cell"><div class="cell-label">Caption animations</div><div class="cell-val">Each feature gets a label that pops up as you swipe to it:
+— "✅ Website"
+— "✅ Online Store"
+— "✅ Payment Gateway"
+— "✅ WhatsApp"
+— "✅ GST Billing"</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Edit — visual change rule</div><div class="cell-val">Screen changes every 1.5–2s by scrolling or tapping in the demo. No static shot held &gt;2s during demo section.</div></div>
+      <div class="cell"><div class="cell-label">Emotion</div><div class="cell-val">Aspiration + Convenience. Each checkmark is satisfying. Viewer imagines their own business with this.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Real dashboard proof</span><span class="tag">Feature reveal</span><span class="tag">Indian business owner context</span><span class="tag">Convenience trigger</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">18 – 23s</span>
+    <span class="scene-title">Scene 6 · Price Reveal — The Punchline</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Aur yeh sab milta hai — agency wali price se 10 guna sasta. Sirf LaunchGrid.in par."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Split screen or before/after:
+LEFT — Agency: "₹73,000+" in red
+RIGHT — LaunchGrid: actual plan price in bold green
+
+OR: Single card showing the LaunchGrid pricing with a big green ✅ and "Start Today"</div></div>
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">"Agency: ₹73,000+" crossed out in red
+"LaunchGrid: [your plan price]" in green
+Bold, center frame, held for 2.5s so viewer can read both.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Audio at price reveal</div><div class="cell-val">SFX: satisfying "ding" or coins sound at the LaunchGrid price reveal. Immediate positive emotional hit.</div></div>
+      <div class="cell"><div class="cell-label">Emotion</div><div class="cell-val">Relief + Status ("I know something others don't"). Viewer feels smart for watching.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Pricing comparison</span><span class="tag">Money trigger</span><span class="tag">Status trigger</span><span class="tag">LG Booster active</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">23 – 27s</span>
+    <span class="scene-title">Scene 7 · Social Proof Moment</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Surat ke ek kapda merchant ne 3 din mein online store launch kiya — pehle hafte mein 40 orders aaye WhatsApp pe."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Screen recording: WhatsApp Business notification panel showing incoming order messages. 40+ unread notifications flooding in — the green bubbles keep popping. Optionally: store dashboard showing "Orders: 40" counter.</div></div>
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">"40 orders. 3 din. LaunchGrid." — appearing line by line with a 0.3s delay between each.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">LG Booster</div><div class="cell-val">Gujarati local business context (kapda merchant, Surat). Hyper-relevant to Vadodara/Gujarat audience. They will tag their shopkeeper friends.</div></div>
+      <div class="cell"><div class="cell-label">Share trigger</div><div class="cell-val">This scene is the "forward to a friend" moment. Business owners will screenshot this or share the reel to their WhatsApp groups.</div></div>
+    </div>
+    <div class="tags"><span class="tag">WhatsApp lead proof</span><span class="tag">Gujarati context</span><span class="tag">Real result</span><span class="tag">Shareability peak</span></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-header" onclick="toggle(this)">
+    <span class="scene-time">27 – 30s</span>
+    <span class="scene-title">Scene 8 · CTA — Comment WEBSITE</span>
+    <span class="scene-toggle">▼</span>
+  </div>
+  <div class="scene-body">
+    <div class="script-box">
+      <div class="cell-label">Spoken script</div>
+      <div class="script-text">"Apna business online laana hai? Comment karo WEBSITE — aur hum aapko free demo denge. LaunchGrid.in — India ka apna business platform."</div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">Visual</div><div class="cell-val">Face to camera (founder or team member) — direct eye contact. OR: Clean brand card with LaunchGrid logo + URL + animated arrow pointing to comment section below.</div></div>
+      <div class="cell"><div class="cell-label">On-screen text</div><div class="cell-val">Line 1: "Comment 👇 WEBSITE"
+Line 2: "Free Demo milega"
+Line 3: "LaunchGrid.in"
+Each line appears with 0.4s delay for read-ability.</div></div>
+    </div>
+    <div class="row">
+      <div class="cell"><div class="cell-label">CTA check</div><div class="cell-val">Specific action: "Comment WEBSITE". Specific reward: "free demo". Specific destination: LaunchGrid.in. No generic "Follow for more".</div></div>
+      <div class="cell"><div class="cell-label">Audio at CTA</div><div class="cell-val">Music slightly louder for last 3s. Confident, upbeat ending. No fade-out — cut hard to black for drama.</div></div>
+    </div>
+    <div class="tags"><span class="tag">Specific CTA</span><span class="tag">Free demo offer</span><span class="tag">URL spoken + shown</span><span class="tag">Brand closing</span></div>
+  </div>
+</div>
+
+</div>
+
+<div class="section-title" style="margin-top:1.5rem">Caption to post</div>
+<div class="cell" style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem">
+<div class="script-text">Website banane ke liye ₹50,000 waste mat karo 🚫
+
+Indian businesses ke liye ek complete platform — website, online store, payment gateway, WhatsApp Business, GST billing — sab ek jagah, Indian price mein.
+
+LaunchGrid.in pe aaj hi launch karo 🚀
+
+Comment karo WEBSITE — free demo milega!
+
+#BusinessGrowth #OnlineStoreIndia #LaunchGrid #WebsiteBuilder #SmallBusinessIndia</div>
+</div>
+
+<div class="cta-strip" style="margin-top:1rem">
+  <div class="cell-label">Hashtag formula check ✅</div>
+  <div class="cta-text">#BusinessGrowth (mega) · #OnlineStoreIndia + #SmallBusinessIndia (niche) · #LaunchGrid (brand) · #WebsiteBuilder (keyword)</div>
+</div>
+
+</div>
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const arrow=header.querySelector('.scene-toggle');
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.scene-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.scene-toggle').forEach(a=>a.style.transform='');
+  if(!isOpen){body.classList.add('open');arrow.style.transform='rotate(180deg)';}
+}
+</script>

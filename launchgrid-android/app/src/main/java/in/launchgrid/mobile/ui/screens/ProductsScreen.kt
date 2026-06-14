@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,17 +23,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,17 +54,45 @@ import `in`.launchgrid.mobile.ui.theme.Brand
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductsScreen(vm: AppViewModel) {
+fun ProductsScreen(vm: AppViewModel, refreshSignal: Int = 0, onAddClick: () -> Unit) {
     val ent by vm.entitlements.collectAsState()
     val tenantId = ent?.tenant_id
     var refresh by remember { mutableIntStateOf(0) }
     var refreshing by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val uriHandler = LocalUriHandler.current
+    val scope = rememberCoroutineScope()
+
+    // A product was just added on the add screen → refresh list + plan usage count.
+    LaunchedEffect(refreshSignal) {
+        if (refreshSignal > 0) {
+            vm.loadEntitlements()
+            refresh++
+        }
+    }
+
+    // Local optimistic overrides for stock edits (id -> stock). A successful
+    // PATCH means the server already matches; on failure we drop the override
+    // so the card falls back to the loaded value.
+    val stockOverrides = remember { mutableStateMapOf<String, Int>() }
+    var stockError by remember { mutableStateOf<String?>(null) }
 
     val products by rememberLoad(tenantId, refresh) {
         val id = tenantId ?: return@rememberLoad Result.success(emptyList<Product>())
         Graph.repo.products(id)
+    }
+
+    fun adjustStock(p: Product, delta: Int) {
+        val current = stockOverrides[p.id] ?: p.stock
+        val next = (current + delta).coerceAtLeast(0)
+        if (next == current) return
+        stockOverrides[p.id] = next // optimistic
+        stockError = null
+        scope.launch {
+            Graph.repo.setProductStock(p.id, next).onFailure {
+                stockOverrides[p.id] = current // revert
+                stockError = it.message ?: "Couldn't update stock"
+            }
+        }
     }
 
     fun shareProduct(p: Product) {
@@ -107,8 +140,8 @@ fun ProductsScreen(vm: AppViewModel) {
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(Brand.Ink)
-                                // Product creation stays on the web for v1 (camera flow comes later)
-                                .clickable { uriHandler.openUri("https://launchgrid.in/dashboard/products?utm_source=mobile_app") }
+                                // Native quick-add (title/price/stock). Photos still on web for now.
+                                .clickable(onClick = onAddClick)
                                 .padding(horizontal = 14.dp, vertical = 8.dp),
                         )
                     }
@@ -144,6 +177,13 @@ fun ProductsScreen(vm: AppViewModel) {
                 }
             }
 
+            stockError?.let { msg ->
+                item {
+                    ErrorBanner(msg)
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+
             when (val p = products) {
                 is Load.Loading -> item { EmptyState("Loading…") }
                 is Load.Error -> item { ErrorBanner(p.message) }
@@ -158,7 +198,13 @@ fun ProductsScreen(vm: AppViewModel) {
                         }
                     } else {
                         items(p.value, key = { it.id }) { product ->
-                            ProductCard(product, onShare = { shareProduct(product) })
+                            ProductCard(
+                                p = product,
+                                stock = stockOverrides[product.id] ?: product.stock,
+                                onShare = { shareProduct(product) },
+                                onIncrement = { adjustStock(product, +1) },
+                                onDecrement = { adjustStock(product, -1) },
+                            )
                             Spacer(Modifier.height(8.dp))
                         }
                     }
@@ -169,69 +215,113 @@ fun ProductsScreen(vm: AppViewModel) {
 }
 
 @Composable
-private fun ProductCard(p: Product, onShare: () -> Unit) {
-    Row(
+private fun ProductCard(
+    p: Product,
+    stock: Int,
+    onShare: () -> Unit,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
+) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
             .background(Brand.Card)
             .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        val image = p.image_urls?.firstOrNull()
-        if (image != null) {
-            AsyncImage(
-                model = image,
-                contentDescription = p.title,
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            val image = p.image_urls?.firstOrNull()
+            if (image != null) {
+                AsyncImage(
+                    model = image,
+                    contentDescription = p.title,
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Brand.Base),
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Brand.Base),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("📦", fontSize = 18.sp)
+                }
+            }
+            Column(Modifier.weight(1f)) {
+                Text(
+                    p.title,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Brand.Ink,
+                    lineHeight = 18.sp,
+                    maxLines = 2,
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    buildString {
+                        append(formatInr(p.retail_price))
+                        if (!p.is_active) append(" · Hidden")
+                    },
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Brand.Secondary,
+                )
+            }
+            Text(
+                "Share",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Brand.Ink,
                 modifier = Modifier
-                    .size(52.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Brand.Base),
+                    .background(Brand.Base)
+                    .clickable(onClick = onShare)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
             )
-        } else {
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        // Inline stock control — merchants adjust inventory without the website
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            StepButton("−", enabled = stock > 0, onClick = onDecrement)
             Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Brand.Base),
+                modifier = Modifier.widthIn(min = 46.dp).padding(horizontal = 6.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("📦", fontSize = 18.sp)
+                Text("$stock", fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, color = Brand.Ink)
             }
-        }
-        Column(Modifier.weight(1f)) {
+            StepButton("+", enabled = true, onClick = onIncrement)
+            Spacer(Modifier.width(10.dp))
             Text(
-                p.title,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Brand.Ink,
-                lineHeight = 18.sp,
-                maxLines = 2,
-            )
-            Spacer(Modifier.height(3.dp))
-            Text(
-                buildString {
-                    append(formatInr(p.retail_price))
-                    append(" · ")
-                    append(if (p.stock > 0) "${p.stock} in stock" else "Out of stock")
-                    if (!p.is_active) append(" · Hidden")
-                },
-                fontSize = 11.sp,
+                if (stock > 0) "in stock" else "Out of stock",
+                fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Brand.Secondary,
+                color = if (stock > 0) Brand.Secondary else Brand.Red,
             )
         }
-        Text(
-            "Share",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Brand.Ink,
-            modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .background(Brand.Base)
-                .clickable(onClick = onShare)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-        )
+    }
+}
+
+@Composable
+private fun StepButton(symbol: String, enabled: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(34.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Brand.Base)
+            .alpha(if (enabled) 1f else 0.4f)
+            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(symbol, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = Brand.Ink)
     }
 }

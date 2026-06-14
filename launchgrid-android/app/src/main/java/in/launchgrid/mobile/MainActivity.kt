@@ -38,6 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import `in`.launchgrid.mobile.ui.screens.AddProductScreen
 import `in`.launchgrid.mobile.ui.screens.HomeScreen
 import `in`.launchgrid.mobile.ui.screens.LoginScreen
 import `in`.launchgrid.mobile.ui.screens.OrderDetailScreen
@@ -85,13 +86,21 @@ private fun MainScaffold(vm: AppViewModel) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val isOrderDetail = currentRoute?.startsWith("order/") == true
+    val isAddProduct = currentRoute == "products/add"
+    val showBackBar = isOrderDetail || isAddProduct
 
     Scaffold(
         containerColor = Brand.Base,
         topBar = {
-            if (isOrderDetail) {
+            if (showBackBar) {
                 CenterAlignedTopAppBar(
-                    title = { Text("Order", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp) },
+                    title = {
+                        Text(
+                            if (isAddProduct) "Add product" else "Order",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 16.sp,
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -106,7 +115,7 @@ private fun MainScaffold(vm: AppViewModel) {
             }
         },
         bottomBar = {
-            if (!isOrderDetail) {
+            if (!showBackBar) {
                 NavigationBar(containerColor = Brand.Card) {
                     tabs.forEach { tab ->
                         val selected = currentRoute == tab.route
@@ -154,11 +163,30 @@ private fun MainScaffold(vm: AppViewModel) {
             composable("orders") {
                 OrdersScreen(vm, onOrderClick = { navController.navigate("order/$it") })
             }
-            composable("products") { ProductsScreen(vm) }
+            composable("products") { entry ->
+                val added by entry.savedStateHandle
+                    .getStateFlow("product_added", 0)
+                    .collectAsState()
+                ProductsScreen(
+                    vm,
+                    refreshSignal = added,
+                    onAddClick = { navController.navigate("products/add") },
+                )
+            }
             composable("settings") { SettingsScreen(vm) }
             composable("order/{id}") { entry ->
                 val id = entry.arguments?.getString("id").orEmpty()
                 OrderDetailScreen(orderId = id)
+            }
+            composable("products/add") {
+                AddProductScreen(onAdded = {
+                    val prev = navController.previousBackStackEntry
+                    prev?.savedStateHandle?.set(
+                        "product_added",
+                        (prev.savedStateHandle.get<Int>("product_added") ?: 0) + 1,
+                    )
+                    navController.popBackStack()
+                })
             }
         }
     }

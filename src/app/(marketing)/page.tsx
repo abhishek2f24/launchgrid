@@ -71,7 +71,7 @@ export default function MarketingPage() {
         <S07_LiveDemo />
         {/* Movement 4 — The Money, proven by real stores */}
         <S05_TheMoney />
-        <RealStoresGallery />
+        {/* <RealStoresGallery /> */}
         {/* Movement 5 — The Door */}
         <S_FAQ />
         <S10_FinalCTA />
