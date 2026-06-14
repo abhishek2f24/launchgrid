@@ -20,6 +20,7 @@ import { RealStoresGallery } from '@/components/signup-journey/RealStoresGallery
 import S08_SocialProof from '@/components/signup-journey/S08_SocialProof';
 import S_FAQ from '@/components/signup-journey/S_FAQ';
 import S10_FinalCTA from '@/components/signup-journey/S10_FinalCTA';
+import S_ToolsPreview from '@/components/signup-journey/S_ToolsPreview';
 
 // ISR: gallery data refreshes hourly without making the page request-dynamic
 export const revalidate = 3600;
@@ -406,6 +407,7 @@ export default function MarketingPage() {
         <S05_TheMoney />
         <S08_SocialProof />
         {/* <RealStoresGallery /> */}
+        <S_ToolsPreview />
         {/* Movement 5 — The Door */}
         <S_FAQ />
         <S10_FinalCTA />

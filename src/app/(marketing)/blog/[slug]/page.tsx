@@ -155,6 +155,95 @@ const blogPosts: Record<string, BlogPostData> = {
         answer: 'No. You can start on a free tier — LaunchGrid gives you a live store with up to 3 products, UPI and COD checkout, and GST-ready invoices for free, so you can move your WhatsApp orders to a real store and take your first sale without spending anything.'
       }
     ]
+  },
+  'how-to-start-online-store-india-2026': {
+    title: 'How to Start an Online Store in India (2026 Guide)',
+    category: 'Guides',
+    date: 'June 14, 2026',
+    readTime: '7 min read',
+    content: [
+      'Starting an online store in India has never been more accessible, yet the D2C landscape in 2026 demands strategic execution. Sourcing products, setting up checkouts, and configuring logistics require clear planning.',
+      '<strong>Step 1: Choose Your Niche and Brand Name</strong><br/>Select a brand name that resonates with Indian buyers. Use our <a href="/tools/store-name-generator" class="text-black font-bold underline">Store Name Generator</a> to generate catchy names and instantly check domain name availability.',
+      '<strong>Step 2: Source Products and Calculate Margins</strong><br/>Ensure your pricing factors in hidden costs. Sourcing costs, packaging fees, and logistics will eat into your earnings. Use the <a href="/tools/profit-margin-calculator" class="text-black font-bold underline">Profit Margin Calculator</a> to set profitable listing prices.',
+      '<strong>Step 3: Setup Automated Logistics</strong><br/>Partner with aggregators like Shiprocket or Delhivery. Enable automatic COD validation via OTPs to reduce return-to-origin (RTO) charges.',
+      '<strong>Step 4: Launch and Scale Ad Spend</strong><br/>Deploy Meta pixel conversion events on your storefront to feed the attribution algorithm. Once campaigns go live, track margins to ensure ad budgets generate a positive multiplier.'
+    ],
+    faqs: [
+      {
+        question: 'What is the most popular payment method for Indian buyers?',
+        answer: 'UPI (Unified Payments Interface) commands over 70% of online retail transaction volume in India, followed closely by Cash on Delivery (COD) for first-time brand buyers.'
+      },
+      {
+        question: 'How much budget do I need to start marketing?',
+        answer: 'We recommend starting with a daily budget of ₹500 to ₹1,000 on Meta conversion campaigns to gather initial performance data.'
+      }
+    ]
+  },
+  'shopify-vs-woocommerce-vs-launchgrid': {
+    title: 'Shopify vs WooCommerce vs LaunchGrid: Which is Best in 2026?',
+    category: 'Comparisons',
+    date: 'June 14, 2026',
+    readTime: '9 min read',
+    content: [
+      'Choosing the right ecommerce software determines your store speed, operational costs, and checkout conversion rates. Let\'s evaluate how the leading options compare for Indian D2C brands.',
+      '<strong>1. Shopify (The Global Heavyweight)</strong><br/>Shopify is highly reliable, but costs are billed in USD (starting at $25/mo) which introduces foreign exchange fees. Additionally, standard Indian requirements like native UPI, local COD filters, and GST compliance require installing multiple paid third-party apps.',
+      '<strong>2. WooCommerce (The Open Source Option)</strong><br/>WooCommerce offers maximum customization, but requires manual hosting setup, security updates, and plugin management. Slow loading speeds can hurt checkouts if servers are poorly configured.',
+      '<strong>3. LaunchGrid (The India-First Solution)</strong><br/>LaunchGrid is built specifically for Indian merchants. It features built-in CGST/SGST/IGST tax splits, 0% transaction fees, and native UPI + COD checkouts. Calculate your exact channel costs with our <a href="/tools/ecommerce-pricing-calculator" class="text-black font-bold underline">Ecommerce Pricing Calculator</a> to compare platforms.'
+    ],
+    faqs: [
+      {
+        question: 'Which platform is best for dropshipping in India?',
+        answer: 'LaunchGrid offers a direct 500+ Indian dropship catalog integration with local suppliers, making it faster to deploy without monthly integration plugins.'
+      },
+      {
+        question: 'Are there hidden transaction fees on LaunchGrid?',
+        answer: 'No. LaunchGrid charges 0% transaction commission fees. You only pay for your payment gateway fees (Razorpay/Paytm) directly.'
+      }
+    ]
+  },
+  'complete-gst-guide-small-businesses': {
+    title: 'The Complete GST Guide for Small Online Businesses in India',
+    category: 'Compliance',
+    date: 'June 14, 2026',
+    readTime: '10 min read',
+    content: [
+      'Tax compliance is vital for scaling online businesses. Under current Indian regulations, online portals require a GSTIN. However, direct selling via subdomains offers flexible threshold limits.',
+      '<strong>Understanding GST Threshold Limits</strong><br/>For standard sales within your home state, registration is required once cumulative sales cross ₹40 Lakhs for goods (₹20 Lakhs for services). For interstate trade, standard CGST rules apply.',
+      '<strong>How to Calculate CGST, SGST, and IGST</strong><br/>Sales within your state split tax equally between Central (CGST) and State (SGST) allocations. Sales to other states require Integrated GST (IGST). Use our <a href="/tools/gst-calculator" class="text-black font-bold underline">GST Calculator India</a> to get instant calculations.',
+      '<strong>Failing to file GSTR Returns</strong><br/>Once registered, you must file monthly or quarterly returns (GSTR-1 and GSTR-3B) even if you had zero transactions. Failing to file nil returns triggers daily penalties.'
+    ],
+    faqs: [
+      {
+        question: 'Do I need a GSTIN to start selling on LaunchGrid?',
+        answer: 'No. LaunchGrid allows you to test your market and take early orders without a GSTIN. You should register for GST once your sales approach threshold limits.'
+      },
+      {
+        question: 'How does LaunchGrid help with GST invoicing?',
+        answer: 'LaunchGrid automatically generates compliant invoices, splits CGST/SGST/IGST based on client shipping addresses, and sends PDF copies to buyers.'
+      }
+    ]
+  },
+  'case-study-local-clothing-store-launchgrid': {
+    title: 'Case Study: How Aanya Ethnic Wear Increased Orders 3x Using LaunchGrid',
+    category: 'Case Studies',
+    date: 'June 14, 2026',
+    readTime: '6 min read',
+    content: [
+      'Aanya Ethnic Wear is a growing fashion label that originally sold products entirely through Instagram DMs and manual WhatsApp chats. In this case study, we look at how they automated their operations and tripled order volumes.',
+      '<strong>The Challenge: Manual DM Bottlenecks</strong><br/>Sharing individual photo files, quoting prices, sharing UPI QR codes, and confirming payments manually took hours. High cart abandonment occurred when customers had to wait for replies.',
+      '<strong>The Solution: Streamlined Checkout</strong><br/>They built a storefront on LaunchGrid, letting customers tap bio links to view the entire catalog and checkout immediately. They used our <a href="/tools/whatsapp-message-generator" class="text-black font-bold underline">WhatsApp Message Generator</a> to customize quick chat CTAs for campaigns.',
+      '<strong>The Result: 3x Order Growth</strong><br/>Conversion rates climbed from 1.2% to 3.8%. Automatic WhatsApp reminders recovered 28% of abandoned checkouts. Check your own ad potential with our <a href="/tools/roas-calculator" class="text-black font-bold underline">Meta Ads ROAS Calculator</a>.'
+    ],
+    faqs: [
+      {
+        question: 'How did Aanya Ethnic Wear manage logistics?',
+        answer: 'They connected Delhivery shipping APIs natively to their storefront, printing shipping labels with a single tap.'
+      },
+      {
+        question: 'What was their cart recovery rate?',
+        answer: 'Using LaunchGrid\'s automated WhatsApp recovery loops, they recovered 28% of checkouts that had entered shipping details but left before paying.'
+      }
+    ]
   }
 }
 
@@ -164,7 +253,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   if (!post) return {}
   return {
     title: `${post.title} | LaunchGrid Blog`,
-    description: post.content[0],
+    description: post.content[0].replace(/<[^>]*>/g, ''),
   }
 }
 
@@ -225,7 +314,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
 
             <div className="space-y-6 font-inter text-sm md:text-base text-[var(--color-mark-secondary)] leading-relaxed">
               {post.content.map((p, i) => (
-                <p key={i}>{p}</p>
+                <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
               ))}
             </div>
 

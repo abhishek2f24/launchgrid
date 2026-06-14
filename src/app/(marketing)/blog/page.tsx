@@ -39,6 +39,38 @@ const posts: BlogPost[] = [
     readTime: '5 min read',
     category: 'Optimization',
   },
+  {
+    title: 'How to Start an Online Store in India (2026 Guide)',
+    slug: 'how-to-start-online-store-india-2026',
+    description: 'The complete step-by-step roadmap to launching a successful D2C brand in India, from name generation to logistics configurations.',
+    date: 'June 14, 2026',
+    readTime: '7 min read',
+    category: 'Guides',
+  },
+  {
+    title: 'Shopify vs WooCommerce vs LaunchGrid: Which is Best in 2026?',
+    slug: 'shopify-vs-woocommerce-vs-launchgrid',
+    description: 'An honest comparison of pricing, transaction fees, speed, payment gateways, and compliance tools for Indian D2C merchants.',
+    date: 'June 14, 2026',
+    readTime: '9 min read',
+    category: 'Comparisons',
+  },
+  {
+    title: 'The Complete GST Guide for Small Online Businesses in India',
+    slug: 'complete-gst-guide-small-businesses',
+    description: 'Understand threshold limits, CGST/SGST/IGST splits, GSTR filing rules, and how to automate invoicing without high accounting costs.',
+    date: 'June 14, 2026',
+    readTime: '10 min read',
+    category: 'Compliance',
+  },
+  {
+    title: 'Case Study: How Aanya Ethnic Wear Increased Orders 3x Using LaunchGrid',
+    slug: 'case-study-local-clothing-store-launchgrid',
+    description: 'How a local Indian fashion retailer replaced manual Instagram DMs with streamlined one-tap checkouts and recovered 28% of abandoned carts.',
+    date: 'June 14, 2026',
+    readTime: '6 min read',
+    category: 'Case Studies',
+  },
 ];
 
 export default function BlogPage() {

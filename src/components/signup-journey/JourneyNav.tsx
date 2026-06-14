@@ -10,6 +10,7 @@ import { Menu, X } from 'lucide-react';
 const NAV_LINKS = [
   { href: '/pricing', label: 'Pricing' },
   { href: '/vs-shopify', label: 'Compare' },
+  { href: '/tools', label: 'Tools' },
   { href: '/blog', label: 'Blog' },
 ];
 
