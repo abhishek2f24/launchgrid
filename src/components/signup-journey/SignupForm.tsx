@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { platformEvent } from '@/lib/pixel';
+import { platformEvent, trackLead } from '@/lib/pixel';
 
 export function SignupForm() {
   const [email, setEmail]       = useState('');
@@ -57,6 +57,7 @@ export function SignupForm() {
 
     // Conversion event → GTM dataLayer (wire Google Ads / Meta tags in GTM)
     platformEvent('sign_up', { method: 'email', referred: !!trimmedRef });
+    trackLead();
 
     if (data.session) {
       router.push('/dashboard');

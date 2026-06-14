@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, AlertCircle, CheckCircle, ChevronRight, Store, Palette, PhoneCall, Loader2 } from 'lucide-react'
+import { trackSubscribe } from '@/lib/pixel'
 
 function SetupPageClient() {
   const router = useRouter()
@@ -55,6 +56,17 @@ function SetupPageClient() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to setup store')
       
+      // Fire subscribe event if it's a paid plan
+      if (urlPlan !== 'free') {
+        let price = 0
+        if (urlPlan === 'starter') price = urlBilling === 'annual' ? 1399 : 1999
+        if (urlPlan === 'growth') price = urlBilling === 'annual' ? 6999 : 9999
+        if (urlPlan === 'scale') price = urlBilling === 'annual' ? 17999 : 24999
+        if (price > 0) {
+          trackSubscribe(urlPlan, price)
+        }
+      }
+
       // Hard redirect to dashboard to clear layout cache and fetch new tenant
       router.push('/dashboard')
     } catch (err: any) {

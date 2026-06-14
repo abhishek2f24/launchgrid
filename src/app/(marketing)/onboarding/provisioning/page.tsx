@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { CheckCircle2, Loader2, Sparkles } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { DriftingOrb } from '@/components/animations/DriftingOrb'
+import { trackCompleteRegistration } from '@/lib/pixel'
 
 function ProvisioningTerminal() {
   const router = useRouter()
@@ -41,6 +42,7 @@ function ProvisioningTerminal() {
       if (currentStep >= logs.length) {
         clearInterval(interval)
         setTimeout(async () => {
+          trackCompleteRegistration()
           // Check auth state — if logged in go to /setup, otherwise go to /signup
           const { data: { session } } = await supabase.auth.getSession()
           const params = new URLSearchParams()

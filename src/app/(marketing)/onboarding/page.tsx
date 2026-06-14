@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowRight, Sparkles, AlertCircle, CheckCircle } from 'lucide-react'
 import { checkSubdomainAvailability, reserveSubdomain } from '@/actions/onboarding'
 import { DriftingOrb } from '@/components/animations/DriftingOrb'
+import { trackLead } from '@/lib/pixel'
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -80,6 +81,8 @@ export default function OnboardingPage() {
         setLoading(false)
         return
       }
+
+      trackLead()
 
       // 2. Route to provisioning with details in query parameters (simulating payment success check)
       setTimeout(() => {

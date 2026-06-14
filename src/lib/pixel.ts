@@ -105,3 +105,38 @@ export function platformEvent(event: string, params: Record<string, any> = {}) {
     try { window.dataLayer.push({ event, ...params }) } catch { /* noop */ }
   }
 }
+
+// ============================================================================
+// LaunchGrid Meta Ads Tracking Helpers
+// Used to fire standard conversion events directly to LaunchGrid's own Pixel
+// ============================================================================
+
+export function trackLead() {
+  fbq('track', 'Lead', { currency: 'INR', value: 0 });
+}
+
+export function trackCompleteRegistration() {
+  fbq('track', 'CompleteRegistration');
+}
+
+export function trackViewContent(contentName: string, category: string = 'marketing') {
+  fbq('track', 'ViewContent', { content_name: contentName, content_category: category });
+}
+
+export function trackInitiateCheckout(planName: string, price: number) {
+  fbq('track', 'InitiateCheckout', {
+    content_ids: [planName],
+    content_type: 'product',
+    value: price,
+    currency: 'INR'
+  });
+}
+
+export function trackSubscribe(planName: string, price: number) {
+  fbq('track', 'Subscribe', {
+    content_name: planName,
+    value: price,
+    currency: 'INR',
+    predicted_ltv: price * 12
+  });
+}

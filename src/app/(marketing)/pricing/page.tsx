@@ -7,7 +7,8 @@ import { JourneyNav } from '@/components/signup-journey/JourneyNav';
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay';
 import { Footer } from '@/components/signup-journey/Footer';
 import { Flame, Check, ArrowRight, X } from 'lucide-react';
-import { platformEvent } from '@/lib/pixel';
+import { platformEvent, trackViewContent, trackInitiateCheckout } from '@/lib/pixel';
+import { useEffect } from 'react';
 
 interface Plan {
   id: string;
@@ -115,6 +116,10 @@ const competitorMatrix = [
 export default function PricingPage() {
   // Default to annual: anchors the lower price and drives prepaid commitment
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('annual');
+
+  useEffect(() => {
+    trackViewContent('pricing_page');
+  }, []);
 
   return (
     <div className="theme-marketing min-h-screen bg-[var(--color-mark-base)] text-[var(--color-mark-primary)] flex flex-col antialiased relative selection:bg-[var(--color-mark-ink)] selection:text-[var(--color-mark-inverse)]">
@@ -286,7 +291,10 @@ export default function PricingPage() {
 
                   <Link
                     href={`/signup?plan=${plan.id}&billing=${billingPeriod}`}
-                    onClick={() => platformEvent('select_plan', { plan: plan.id, billing: billingPeriod, value: price, currency: 'INR' })}
+                    onClick={() => {
+                      platformEvent('select_plan', { plan: plan.id, billing: billingPeriod, value: price, currency: 'INR' });
+                      trackInitiateCheckout(plan.id, price);
+                    }}
                     className={`w-full text-center font-inter text-xs font-bold py-4 px-6 rounded-full transition-all ${
                       plan.popular
                         ? 'bg-[var(--color-mark-ink)] text-white hover:bg-black shadow-lg shadow-black/5'

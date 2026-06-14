@@ -103,8 +103,14 @@ export default function S01_TheThought() {
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
           </form>
-          <p className="font-inter text-xs font-medium text-[var(--color-mark-secondary)]">
-            Free for 7 days · No credit card · Your store stays yours
+          <p className="font-inter text-[11px] sm:text-xs font-medium text-[var(--color-mark-secondary)] flex flex-wrap justify-center items-center gap-x-2 gap-y-1 mt-2">
+            <span>Free starter plan available</span>
+            <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
+            <span>Plans from ₹1,399/mo</span>
+            <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
+            <span>No GSTIN needed to start</span>
+            <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
+            <span>Cancel anytime, keep your data</span>
           </p>
         </div>
 
