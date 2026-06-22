@@ -1,6 +1,6 @@
 import { serve } from "inngest/next";
 import { inngest } from "../../../inngest/client";
-import { provisionTenantStore, syncDropshipCatalog, handleAbandonedCart } from "../../../inngest/functions";
+import { provisionTenantStore, syncDropshipCatalog, handleAbandonedCart, webhookDispatch } from "../../../inngest/functions";
 
 // Next.js API route that Vercel exposes to the Inngest execution engine.
 export const { GET, POST, PUT } = serve({
@@ -9,5 +9,7 @@ export const { GET, POST, PUT } = serve({
     provisionTenantStore,
     syncDropshipCatalog,
     handleAbandonedCart,
+    webhookDispatch,
   ],
 });
+

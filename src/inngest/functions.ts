@@ -1,4 +1,6 @@
 import { inngest } from "./client";
+import { createServiceClient } from "@/utils/supabase/service";
+import { calculateWebhookSignature } from "@/lib/webhooks";
 
 /**
  * Queue 1: High-Priority Store Generation
@@ -126,3 +128,72 @@ export const handleAbandonedCart = inngest.createFunction(
     });
   }
 );
+
+/**
+ * Queue 4: Asynchronous Webhook Event Dispatcher
+ * Triggered on events like order.paid, order.created.
+ */
+export const webhookDispatch = inngest.createFunction(
+  {
+    id: "webhook-dispatch",
+    retries: 3,
+    triggers: [{ event: "webhook/dispatch" }]
+  },
+  async ({ event, step }) => {
+    const { tenantId, eventType, payload } = event.data;
+
+    const subscriptions = await step.run("fetch-subscriptions", async () => {
+      const supabase = createServiceClient();
+      const { data, error } = await supabase
+        .from("webhook_subscriptions")
+        .select("target_url, secret_key")
+        .eq("tenant_id", tenantId)
+        .eq("event_type", eventType)
+        .eq("is_active", true);
+
+      if (error) throw error;
+      return data || [];
+    });
+
+    if (subscriptions.length === 0) {
+      return { status: "no_subscriptions" };
+    }
+
+    const results = [];
+
+    for (let i = 0; i < subscriptions.length; i++) {
+      const sub = subscriptions[i];
+      const result = await step.run(`dispatch-to-${i}`, async () => {
+        const bodyStr = JSON.stringify(payload);
+        const signature = calculateWebhookSignature(bodyStr, sub.secret_key);
+
+        try {
+          const res = await fetch(sub.target_url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-launchgrid-signature": signature,
+              "x-launchgrid-event": eventType,
+            },
+            body: bodyStr,
+          });
+
+          return {
+            url: sub.target_url,
+            status: res.status,
+            ok: res.ok
+          };
+        } catch (err: any) {
+          return {
+            url: sub.target_url,
+            error: err.message || String(err)
+          };
+        }
+      });
+      results.push(result);
+    }
+
+    return { status: "completed", results };
+  }
+);
+

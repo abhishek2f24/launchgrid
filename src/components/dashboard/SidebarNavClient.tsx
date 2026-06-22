@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Store, Users, ShoppingBag, Settings, Palette, Puzzle, Ticket, Megaphone } from 'lucide-react'
+import { LayoutDashboard, Store, Users, ShoppingBag, Settings, Palette, Puzzle, Ticket, Megaphone, Sparkles, Search } from 'lucide-react'
 
 export function SidebarNavClient() {
   const pathname = usePathname()
@@ -43,6 +43,12 @@ export function SidebarNavClient() {
       </Link>
       <Link href="/dashboard/marketing" className={linkClass('/dashboard/marketing')}>
         <Megaphone className="w-4.5 h-4.5" /> Marketing
+      </Link>
+      <Link href="/dashboard/ads" className={linkClass('/dashboard/ads')}>
+        <Sparkles className="w-4.5 h-4.5" /> Ad Generator
+      </Link>
+      <Link href="/dashboard/seo" className={linkClass('/dashboard/seo')}>
+        <Search className="w-4.5 h-4.5" /> Visibility &amp; SEO
       </Link>
       
       <div className="mt-8 mb-4 px-2 text-xs font-bold text-[var(--color-mark-secondary)]/60 uppercase tracking-widest">Configuration</div>
@@ -91,6 +97,10 @@ export function MobileNavClient() {
       <Link href="/dashboard/orders" className={linkClass('/dashboard/orders')}>
         <Store className="w-5 h-5 mb-1" />
         <span className="text-[10px]">Orders</span>
+      </Link>
+      <Link href="/dashboard/seo" className={linkClass('/dashboard/seo')}>
+        <Search className="w-5 h-5 mb-1" />
+        <span className="text-[10px]">SEO</span>
       </Link>
       <Link href="/dashboard/settings" className={linkClass('/dashboard/settings')}>
         <Settings className="w-5 h-5 mb-1" />

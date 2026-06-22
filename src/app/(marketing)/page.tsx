@@ -20,7 +20,6 @@ import { RealStoresGallery } from '@/components/signup-journey/RealStoresGallery
 import S08_SocialProof from '@/components/signup-journey/S08_SocialProof';
 import S_FAQ from '@/components/signup-journey/S_FAQ';
 import S10_FinalCTA from '@/components/signup-journey/S10_FinalCTA';
-import S_ToolsPreview from '@/components/signup-journey/S_ToolsPreview';
 
 // ISR: gallery data refreshes hourly without making the page request-dynamic
 export const revalidate = 3600;
@@ -53,17 +52,17 @@ export default function MarketingPage() {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "@id": "https://www.launchgrid.in/#organization",
+      "@id": "https://launchgrid.in/#organization",
       "name": "LaunchGrid",
       "legalName": "Launchgrid LLP",
-      "url": "https://www.launchgrid.in",
+      "url": "https://launchgrid.in",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.launchgrid.in/images/launchgrid-logo.png",
+        "url": "https://launchgrid.in/images/launchgrid-logo.png",
         "width": 512,
         "height": 512
       },
-      "image": "https://www.launchgrid.in/images/launchgrid-og.png",
+      "image": "https://launchgrid.in/images/launchgrid-og.png",
       "description": "LaunchGrid is India's fastest ecommerce platform — launch your online store in 15 minutes with native UPI payments, COD support, automatic GST invoicing, WhatsApp abandoned cart recovery, and 0% transaction fees.",
       "foundingDate": "2023",
       "foundingLocation": {
@@ -83,13 +82,13 @@ export default function MarketingPage() {
           "contactType": "customer support",
           "availableLanguage": ["English", "Hindi"],
           "contactOption": "TollFree",
-          "url": "https://www.launchgrid.in/support"
+          "url": "https://launchgrid.in/support"
         },
         {
           "@type": "ContactPoint",
           "contactType": "sales",
           "availableLanguage": ["English", "Hindi"],
-          "url": "https://www.launchgrid.in/contact"
+          "url": "https://launchgrid.in/contact"
         }
       ],
       "sameAs": [
@@ -109,7 +108,7 @@ export default function MarketingPage() {
             "price": "0",
             "priceCurrency": "INR",
             "description": "Start with 3 products, branded storefront, UPI payments",
-            "url": "https://www.launchgrid.in/pricing"
+            "url": "https://launchgrid.in/pricing"
           },
           {
             "@type": "Offer",
@@ -117,7 +116,7 @@ export default function MarketingPage() {
             "price": "1399",
             "priceCurrency": "INR",
             "description": "Full store, custom domain, unlimited products, WhatsApp recovery",
-            "url": "https://www.launchgrid.in/pricing"
+            "url": "https://launchgrid.in/pricing"
           },
           {
             "@type": "Offer",
@@ -125,7 +124,7 @@ export default function MarketingPage() {
             "price": "6999",
             "priceCurrency": "INR",
             "description": "Priority support, advanced analytics, dropship catalog, Meta Ads tools",
-            "url": "https://www.launchgrid.in/pricing"
+            "url": "https://launchgrid.in/pricing"
           },
           {
             "@type": "Offer",
@@ -133,7 +132,7 @@ export default function MarketingPage() {
             "price": "17999",
             "priceCurrency": "INR",
             "description": "Enterprise-grade, dedicated manager, custom integrations",
-            "url": "https://www.launchgrid.in/pricing"
+            "url": "https://launchgrid.in/pricing"
           }
         ]
       }
@@ -142,19 +141,19 @@ export default function MarketingPage() {
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "@id": "https://www.launchgrid.in/#website",
+      "@id": "https://launchgrid.in/#website",
       "name": "LaunchGrid",
-      "url": "https://www.launchgrid.in",
+      "url": "https://launchgrid.in",
       "description": "India's fastest online store builder. Launch in 15 minutes. UPI, GST, WhatsApp, COD — all built in.",
       "inLanguage": ["en-IN", "hi"],
       "publisher": {
-        "@id": "https://www.launchgrid.in/#organization"
+        "@id": "https://launchgrid.in/#organization"
       },
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://www.launchgrid.in/search?q={search_term_string}"
+          "urlTemplate": "https://launchgrid.in/search?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
@@ -163,12 +162,12 @@ export default function MarketingPage() {
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "@id": "https://www.launchgrid.in/#software",
+      "@id": "https://launchgrid.in/#software",
       "name": "LaunchGrid",
       "applicationCategory": "BusinessApplication",
       "applicationSubCategory": "EcommerceApplication",
       "operatingSystem": "Web, iOS, Android",
-      "url": "https://www.launchgrid.in",
+      "url": "https://launchgrid.in",
       "description": "LaunchGrid is an Indian ecommerce SaaS platform that enables small businesses, Instagram sellers, WhatsApp sellers, and first-time entrepreneurs to launch a fully functional online store in 15 minutes. Features include AI-generated storefronts, native UPI and COD payments, automatic GST invoicing, WhatsApp abandoned cart recovery, SEO-optimized product pages, inventory management, and a 500+ product dropship catalog.",
       "featureList": [
         "AI-generated storefronts",
@@ -200,7 +199,7 @@ export default function MarketingPage() {
             "price": "0",
             "priceCurrency": "INR",
             "availability": "https://schema.org/InStock",
-            "url": "https://www.launchgrid.in/pricing"
+            "url": "https://launchgrid.in/pricing"
           },
           {
             "@type": "Offer",
@@ -209,7 +208,7 @@ export default function MarketingPage() {
             "priceCurrency": "INR",
             "billingIncrement": "P1M",
             "availability": "https://schema.org/InStock",
-            "url": "https://www.launchgrid.in/pricing",
+            "url": "https://launchgrid.in/pricing",
             "priceValidUntil": "2026-12-31"
           },
           {
@@ -219,7 +218,7 @@ export default function MarketingPage() {
             "priceCurrency": "INR",
             "billingIncrement": "P1M",
             "availability": "https://schema.org/InStock",
-            "url": "https://www.launchgrid.in/pricing",
+            "url": "https://launchgrid.in/pricing",
             "priceValidUntil": "2026-12-31"
           },
           {
@@ -229,7 +228,7 @@ export default function MarketingPage() {
             "priceCurrency": "INR",
             "billingIncrement": "P1M",
             "availability": "https://schema.org/InStock",
-            "url": "https://www.launchgrid.in/pricing",
+            "url": "https://launchgrid.in/pricing",
             "priceValidUntil": "2026-12-31"
           }
         ]
@@ -241,7 +240,7 @@ export default function MarketingPage() {
         "bestRating": "5",
         "worstRating": "1"
       },
-      "screenshot": "https://www.launchgrid.in/images/dashboard-screenshot.png",
+      "screenshot": "https://launchgrid.in/images/dashboard-screenshot.png",
       "softwareVersion": "1.2.0",
       "countriesSupported": "IN",
       "inLanguage": "en-IN"
@@ -337,8 +336,8 @@ export default function MarketingPage() {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "@id": "https://www.launchgrid.in/#webpage",
-      "url": "https://www.launchgrid.in",
+      "@id": "https://launchgrid.in/#webpage",
+      "url": "https://launchgrid.in",
       "name": "LaunchGrid — Your Store. Live in 15 Minutes.",
       "description": "LaunchGrid is India's fastest online store builder. Launch with UPI, COD, GST, and WhatsApp recovery — all built in. 0% transaction fees. Start free.",
       "speakable": {
@@ -356,19 +355,19 @@ export default function MarketingPage() {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://www.launchgrid.in"
+            "item": "https://launchgrid.in"
           }
         ]
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://www.launchgrid.in/images/launchgrid-og.png",
+        "url": "https://launchgrid.in/images/launchgrid-og.png",
         "width": 1200,
         "height": 630
       },
       "inLanguage": "en-IN",
       "publisher": {
-        "@id": "https://www.launchgrid.in/#organization"
+        "@id": "https://launchgrid.in/#organization"
       }
     }
   ];
@@ -407,7 +406,6 @@ export default function MarketingPage() {
         <S05_TheMoney />
         <S08_SocialProof />
         {/* <RealStoresGallery /> */}
-        <S_ToolsPreview />
         {/* Movement 5 — The Door */}
         <S_FAQ />
         <S10_FinalCTA />

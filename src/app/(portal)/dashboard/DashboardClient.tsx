@@ -393,6 +393,8 @@ export function DashboardClient({
 }: Props) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [unlockedStepAlert, setUnlockedStepAlert] = useState(false)
+  const [coachInsight, setCoachInsight] = useState<{ title: string; insight: string } | null>(null)
+  const [coachLoading, setCoachLoading] = useState(true)
 
   // Force re-renders every 60s for live ticking countdown
   const [, forceUpdate] = useState(0)
@@ -402,6 +404,29 @@ export function DashboardClient({
     }
     const interval = setInterval(() => forceUpdate(n => n + 1), 60000)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/coach/insights', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        revenue,
+        orders: orders.length,
+        productCount,
+        visitorCount,
+        trafficSources,
+        shippingScope: tenant.business_configs?.[0]?.shipping_scope,
+        plan: tenant.subscriptions?.[0]?.plan_tier || 'free',
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.title && data.insight) setCoachInsight(data)
+      })
+      .catch(() => {})
+      .finally(() => setCoachLoading(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const subRecord = tenant.subscriptions?.[0] || {}
@@ -1018,11 +1043,23 @@ export function DashboardClient({
                 <div className="w-10 h-10 rounded-full bg-[var(--color-mark-ink)] flex items-center justify-center shrink-0 shadow-md">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm text-[var(--color-mark-ink)]">Coach Insight: Ready for Ads</h4>
-                  <p className="text-xs text-[var(--color-mark-secondary)] font-medium mt-1.5 leading-relaxed max-w-xl">
-                    Your store looks elegant. You have products and your UPI is connected. Run a Meta conversion campaign targeting 25–34 year olds in Tier 1 cities to get your first sale.
-                  </p>
+                <div className="flex-1 min-w-0">
+                  {coachLoading ? (
+                    <>
+                      <div className="h-4 w-36 bg-black/5 animate-pulse rounded mb-2" />
+                      <div className="h-3 w-full max-w-xl bg-black/5 animate-pulse rounded mb-1.5" />
+                      <div className="h-3 w-3/4 max-w-md bg-black/5 animate-pulse rounded" />
+                    </>
+                  ) : (
+                    <>
+                      <h4 className="font-bold text-sm text-[var(--color-mark-ink)]">
+                        Coach Insight: {coachInsight?.title ?? 'Drive First Sale'}
+                      </h4>
+                      <p className="text-xs text-[var(--color-mark-secondary)] font-medium mt-1.5 leading-relaxed max-w-xl">
+                        {coachInsight?.insight ?? 'Your store is live but has no orders yet. Share your store link in 3 WhatsApp groups today — warm audiences convert at 8–15% vs cold traffic at 1–2%.'}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

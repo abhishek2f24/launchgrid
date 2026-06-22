@@ -78,6 +78,14 @@ export async function POST(req: Request) {
       console.error('[STOCK_DEDUCTION_ERROR]', stockErr)
     }
 
+    // Dispatch webhook event for e-commerce integrations
+    try {
+      const { dispatchWebhookEvent } = await import('@/lib/webhooks')
+      await dispatchWebhookEvent(paidOrder.tenant_id, 'order.paid', paidOrder)
+    } catch (whErr) {
+      console.error('[WEBHOOK_DISPATCH_TRIGGER_ERROR]', whErr)
+    }
+
     // Check compliance milestones (A-05)
     try {
       const { checkComplianceMilestones } = await import('@/utils/compliance')
