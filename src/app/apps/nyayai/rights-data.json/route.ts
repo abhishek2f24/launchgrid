@@ -13,7 +13,7 @@ import { NextResponse } from 'next/server'
  * but does not need to change for routine content fixes — those ship here instead.
  */
 const DATA = {
-  version: 2,
+  version: 3,
   lastUpdated: '2026-07-04',
   emergencyNumbers: [
     { name: 'Police / All Emergencies', number: '112', whenToUse: 'Any emergency — police, fire, ambulance' },
@@ -48,6 +48,7 @@ const DATA = {
       whereToGo: 'Nearest traffic police station, or state Traffic Police helpline / e-challan portal (state Parivahan site).',
       documentsToCarry: ['Driving licence', 'RC (registration certificate)', 'Insurance', 'PUC certificate'],
       emergency: false,
+      officialUrl: 'https://parivahan.gov.in/',
     },
     {
       id: 'police_stop_search', title: 'Police want to stop and search me', category: 'POLICE_SAFETY',
@@ -178,6 +179,7 @@ const DATA = {
       whereToGo: 'National Consumer Helpline (1915) or e-daakhil.nic.in, then the District Consumer Disputes Redressal Commission if unresolved.',
       documentsToCarry: ['Purchase invoice/receipt', 'Photos of the defect', 'Communication with seller'],
       emergency: false,
+      officialUrl: 'https://edaakhil.nic.in/',
     },
     {
       id: 'loan_recovery_harassment', title: 'Loan recovery agents are harassing me', category: 'MONEY_SHOPPING',
@@ -226,6 +228,7 @@ const DATA = {
       whereToGo: 'Cyber Crime Helpline 1930, cybercrime.gov.in, and your bank\'s fraud reporting line.',
       documentsToCarry: ['Transaction screenshots', 'Bank statements', 'Any communication with the fraudster'],
       emergency: true,
+      officialUrl: 'https://cybercrime.gov.in/',
     },
     {
       id: 'domestic_violence', title: "I'm facing domestic violence or family abuse", category: 'FAMILY_SAFETY',
@@ -275,6 +278,7 @@ const DATA = {
       whereToGo: "State RERA authority (search '[your state] RERA' for the official portal).",
       documentsToCarry: ['Agreement for Sale', 'Payment receipts', 'Builder communication'],
       emergency: false,
+      officialUrl: 'https://rera.gov.in/',
     },
     {
       id: 'hospital_negligence', title: 'I suspect medical/hospital negligence', category: 'MONEY_SHOPPING',
@@ -339,6 +343,7 @@ const DATA = {
       ],
       whereToGo: 'The Public Information Officer (PIO) of the relevant department; escalate to the Information Commission if needed.',
       documentsToCarry: ['Filled RTI application', 'Fee payment proof'],
+      officialUrl: 'https://rtionline.gov.in/',
       emergency: false,
     },
     {
@@ -356,6 +361,7 @@ const DATA = {
       whereToGo: "NALSA helpline 15100, or your District Legal Services Authority (DLSA) — search 'DLSA [your district]' for local contact.",
       documentsToCarry: ['Any ID proof', 'Income proof, if applicable', 'Brief written description of your issue'],
       emergency: false,
+      officialUrl: 'https://nalsa.gov.in/',
     },
     {
       id: 'new_passport', title: 'How to apply for a new passport', category: 'DOCUMENTS_ADMIN',
@@ -373,6 +379,7 @@ const DATA = {
       whereToGo: 'passportindia.gov.in — official Passport Seva portal.',
       documentsToCarry: ['Proof of address', 'Proof of date of birth', 'Identity proof', 'Old passport, if renewing'],
       emergency: false,
+      officialUrl: 'https://www.passportindia.gov.in/',
     },
     {
       id: 'new_pan_card', title: 'How to apply for a new PAN card', category: 'DOCUMENTS_ADMIN',
@@ -389,6 +396,7 @@ const DATA = {
       whereToGo: 'Protean (NSDL) or UTIITSL portal, or incometax.gov.in.',
       documentsToCarry: ['Identity proof', 'Address proof', 'Date of birth proof', 'Photograph'],
       emergency: false,
+      officialUrl: 'https://www.incometax.gov.in/',
     },
     {
       id: 'aadhaar_enrollment_update', title: 'Aadhaar enrollment or correction', category: 'DOCUMENTS_ADMIN',
@@ -405,6 +413,7 @@ const DATA = {
       whereToGo: 'uidai.gov.in, or your nearest Aadhaar Seva Kendra.',
       documentsToCarry: ['Proof of identity', 'Proof of address', 'Mobile number for OTP'],
       emergency: false,
+      officialUrl: 'https://uidai.gov.in/',
     },
     {
       id: 'voter_id_registration', title: 'How to register for a Voter ID / enroll to vote', category: 'DOCUMENTS_ADMIN',
@@ -421,6 +430,7 @@ const DATA = {
       whereToGo: 'voters.eci.gov.in or the Voter Helpline app.',
       documentsToCarry: ['Proof of age', 'Proof of address', 'Photograph'],
       emergency: false,
+      officialUrl: 'https://voters.eci.gov.in/',
     },
     {
       id: 'driving_licence_new', title: 'How to apply for a new driving licence', category: 'VEHICLES',
@@ -437,6 +447,7 @@ const DATA = {
       whereToGo: 'sarathi.parivahan.gov.in, or your nearest RTO.',
       documentsToCarry: ['Proof of age (18+ for most vehicle classes)', 'Proof of address', "Learner's Licence"],
       emergency: false,
+      officialUrl: 'https://sarathi.parivahan.gov.in/',
     },
     {
       id: 'driving_licence_renew_duplicate', title: 'Renew or get a duplicate driving licence', category: 'VEHICLES',
@@ -453,6 +464,7 @@ const DATA = {
       whereToGo: 'sarathi.parivahan.gov.in, or your nearest RTO.',
       documentsToCarry: ['Existing/expired DL details', 'Address proof', 'Medical certificate, if required by age', 'Police lost-report, if applicable'],
       emergency: false,
+      officialUrl: 'https://sarathi.parivahan.gov.in/',
     },
     {
       id: 'rc_transfer', title: 'Transferring vehicle ownership (RC transfer)', category: 'VEHICLES',
@@ -469,6 +481,7 @@ const DATA = {
       whereToGo: 'parivahan.gov.in, or your nearest RTO.',
       documentsToCarry: ['Original RC', 'Sale/purchase proof', 'Insurance', 'PUC certificate', 'ID/address proof of buyer and seller'],
       emergency: false,
+      officialUrl: 'https://parivahan.gov.in/',
     },
     {
       id: 'vehicle_accident_insurance_claim', title: 'My vehicle was in an accident — insurance claim', category: 'VEHICLES',
@@ -518,6 +531,7 @@ const DATA = {
       whereToGo: "echallan.parivahan.gov.in and your state traffic police's online grievance portal.",
       documentsToCarry: ['Challan details/number', 'Any evidence disputing the fine'],
       emergency: false,
+      officialUrl: 'https://echallan.parivahan.gov.in/',
     },
     {
       id: 'fastag_puc_issues', title: 'FASTag or PUC certificate issues', category: 'VEHICLES',
@@ -551,6 +565,7 @@ const DATA = {
       whereToGo: "Sub-Registrar's office for EC and registration; state RERA portal for under-construction projects; a property lawyer for title verification.",
       documentsToCarry: ['Sale deed chain / title documents', 'Encumbrance Certificate', 'Property tax receipts', 'Aadhaar, PAN'],
       emergency: false,
+      officialUrl: 'https://rera.gov.in/',
     },
     {
       id: 'selling_property', title: 'I want to sell my property', category: 'HOME_RENT',
@@ -647,6 +662,7 @@ const DATA = {
       whereToGo: 'EPFO member portal (epfindia.gov.in / unifiedportal-mem.epfindia.gov.in).',
       documentsToCarry: ['UAN', 'Aadhaar', 'PAN', 'Bank account details (linked to UAN)'],
       emergency: false,
+      officialUrl: 'https://unifiedportal-mem.epfindia.gov.in/',
     },
     {
       id: 'esic_benefits', title: 'ESIC — using my medical/insurance benefits', category: 'WORK',
@@ -663,6 +679,7 @@ const DATA = {
       whereToGo: 'esic.gov.in, or your nearest ESIC branch office/dispensary.',
       documentsToCarry: ['ESIC insurance number / e-Pehchan card', 'ID proof'],
       emergency: false,
+      officialUrl: 'https://www.esic.gov.in/',
     },
     {
       id: 'gratuity_claim', title: 'Claiming my gratuity after leaving a job', category: 'WORK',
@@ -743,6 +760,7 @@ const DATA = {
       whereToGo: "FSSAI's consumer complaint portal/toll-free line; National Consumer Helpline 1915 for refund/compensation.",
       documentsToCarry: ['Product/packaging with batch/expiry details', 'Purchase receipt', 'Photos', 'Medical records, if harmed'],
       emergency: false,
+      officialUrl: 'https://www.fssai.gov.in/',
     },
     {
       id: 'insurance_claim_rejected', title: 'My insurance claim was rejected or delayed', category: 'MONEY_SHOPPING',
@@ -759,6 +777,7 @@ const DATA = {
       whereToGo: "Insurer's Grievance Officer, then IRDAI (igms.irda.gov.in) or the Insurance Ombudsman for your region.",
       documentsToCarry: ['Policy document', 'Claim form', 'Rejection letter with reasons', 'All correspondence with insurer'],
       emergency: false,
+      officialUrl: 'https://irdai.gov.in/',
     },
     {
       id: 'travel_airline_complaint', title: 'Airline/travel company issue (delay, cancellation, denied boarding)', category: 'MONEY_SHOPPING',
@@ -775,6 +794,7 @@ const DATA = {
       whereToGo: "Airline's grievance cell first, then airsewa.gov.in (Ministry of Civil Aviation's grievance portal).",
       documentsToCarry: ['Ticket/booking confirmation', 'Boarding pass, if available', 'Communication with airline'],
       emergency: false,
+      officialUrl: 'https://airsewa.gov.in/',
     },
     {
       id: 'bank_complaint', title: 'I have a complaint against my bank', category: 'MONEY_SHOPPING',
@@ -791,6 +811,7 @@ const DATA = {
       whereToGo: "Your bank's grievance cell first, then RBI Banking Ombudsman (cms.rbi.org.in).",
       documentsToCarry: ['Account statements', 'Transaction reference numbers', 'Correspondence with bank', 'Complaint reference number'],
       emergency: false,
+      officialUrl: 'https://cms.rbi.org.in/',
     },
     {
       id: 'hospital_bill_dispute', title: 'Hospital is overcharging or disputing my bill', category: 'MONEY_SHOPPING',
@@ -824,6 +845,7 @@ const DATA = {
       whereToGo: 'mca.gov.in — Ministry of Corporate Affairs portal (SPICe+ form).',
       documentsToCarry: ['Identity/address proof of directors', 'Registered office address proof', 'DSC and DIN of directors'],
       emergency: false,
+      officialUrl: 'https://www.mca.gov.in/',
     },
     {
       id: 'startup_india_registration', title: 'Registering under Startup India', category: 'BUSINESS',
@@ -840,6 +862,7 @@ const DATA = {
       whereToGo: 'startupindia.gov.in.',
       documentsToCarry: ['Certificate of incorporation', 'Business description/pitch', 'PAN of the entity'],
       emergency: false,
+      officialUrl: 'https://www.startupindia.gov.in/',
     },
     {
       id: 'msme_udyam_registration', title: 'MSME / Udyam registration for my business', category: 'BUSINESS',
@@ -856,6 +879,7 @@ const DATA = {
       whereToGo: 'udyamregistration.gov.in.',
       documentsToCarry: ['Aadhaar', 'PAN', 'Business/bank details'],
       emergency: false,
+      officialUrl: 'https://udyamregistration.gov.in/',
     },
     {
       id: 'fssai_licence', title: 'FSSAI licence for a food business', category: 'BUSINESS',
@@ -872,6 +896,7 @@ const DATA = {
       whereToGo: 'foscos.fssai.gov.in.',
       documentsToCarry: ['Identity/address proof', 'Business address proof', 'Food category details'],
       emergency: false,
+      officialUrl: 'https://foscos.fssai.gov.in/',
     },
     {
       id: 'shop_establishment_act', title: 'Shop & Establishment Act registration', category: 'BUSINESS',
@@ -904,6 +929,7 @@ const DATA = {
       whereToGo: 'ipindia.gov.in — Office of the Controller General of Patents, Designs and Trade Marks.',
       documentsToCarry: ['Brand name/logo details', "Business proof (if registering in a company's name)"],
       emergency: false,
+      officialUrl: 'https://ipindia.gov.in/',
     },
     {
       id: 'import_export_code', title: 'Getting an Import Export Code (IEC)', category: 'BUSINESS',
@@ -920,6 +946,7 @@ const DATA = {
       whereToGo: 'dgft.gov.in — Directorate General of Foreign Trade.',
       documentsToCarry: ['Business PAN', 'Bank account details', 'Address proof'],
       emergency: false,
+      officialUrl: 'https://www.dgft.gov.in/',
     },
   ],
 }
