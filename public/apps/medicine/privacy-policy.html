@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - MediRemind</title>
+    <style>
+        :root {
+            --color-base: #FAFAF8;
+            --color-surface: #FFFFFF;
+            --color-border: #EEECE8;
+            --color-primary: #1A1A18;
+            --color-secondary: #4A4A44;
+            --color-subtle-text: #696966;
+            --accent: #06b6d4; /* Cyan accent for medicine */
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-base);
+            color: var(--color-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: var(--color-primary);
+        }
+        .brand img {
+            height: 24px;
+        }
+        .container {
+            max-width: 768px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        .card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+        h1 {
+            font-size: 2.25rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        .meta {
+            color: var(--color-subtle-text);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.15rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        p, li {
+            color: var(--color-secondary);
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer {
+            background-color: rgba(217, 119, 6, 0.05);
+            border-left: 4px solid #D97706;
+            padding: 1.15rem 1.25rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        .disclaimer p {
+            margin: 0;
+            color: #B45309;
+            font-weight: 500;
+        }
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--color-subtle-text);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--color-border);
+            padding-top: 2rem;
+        }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="brand">
+            <img src="/logo.svg" alt="LaunchGrid Logo">
+            <span>LaunchGrid</span>
+        </a>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h1>Privacy Policy</h1>
+            <div class="meta">
+                <span>App: <strong>MediRemind</strong></span> &bull; 
+                <span>Application ID: <code>in.launchgrid.medicine</code></span> &bull; 
+                <span>Last Updated: July 18, 2026</span>
+            </div>
+
+            <div class="disclaimer">
+                <p><strong>Medical Disclaimer:</strong> MediRemind is a consumer medication organizer, not a clinical system, diagnostic product, or medical device. It is not a substitute for professional medical advice. Missed-dose guidance is neutral; the app will never instruct you to take, double, stop, or change a medication.</p>
+            </div>
+
+            <h2>1. Introduction</h2>
+            <p>Welcome to <strong>MediRemind</strong>, published by LaunchGrid. We are committed to protecting the privacy of your sensitive health data. This privacy policy outlines how we collect, store, process, and protect your medication data, scheduling, and profile relationships.</p>
+
+            <h2>2. Privacy Data Classification & Local Storage</h2>
+            <p>MediRemind handles sensitive clinical information including medicine names, strength, dose, route, schedule, notes, prescription identifiers, images, dose events, adherence history, refill reminders, emergency contact info, and profile relationships. </p>
+            <ul>
+                <li><strong>Local-First Design:</strong> All of the sensitive clinical details listed above are stored on-device by default to protect your privacy.</li>
+                <li><strong>Strict Data Boundaries:</strong> None of this sensitive clinical data is ever placed in analytics metadata, crash report logs, exception messages, screen analytics, remote configuration parameters, or ad targeting parameters.</li>
+            </ul>
+
+            <h2>3. Optional Cloud Backup</h2>
+            <p>To help you sync data across devices and safeguard against device loss, we provide an optional cloud backup feature:</p>
+            <ul>
+                <li><strong>Consent-Gated Sync:</strong> Cloud backup is completely optional. It will only sync to the cloud if you register/log in and explicitly consent to cloud backups.</li>
+                <li><strong>Secure Server Stack:</strong> We utilize Firebase Auth, Cloud Firestore, and Firebase Storage to securely host and store your backups.</li>
+            </ul>
+
+            <h2>4. Third-Party Integrations & Advertising</h2>
+            <p>Our app integrates the following developer SDKs to deliver and support services:</p>
+            <ul>
+                <li><strong>Google Mobile Ads:</strong> The free version displays non-personalized, consent-gated banner ads only on non-critical screens. Health data is never transmitted to advertisers.</li>
+                <li><strong>Firebase Analytics & Crashlytics:</strong> Used to understand app usage trends and resolve bugs. Only general technical metadata (e.g. device model, crash logs without user clinical data) are recorded.</li>
+                <li><strong>Subscriptions:</strong> Subscriptions are managed directly by Google Play Store or Apple App Store. No payment details are processed on our servers.</li>
+            </ul>
+
+            <h2>5. Data Control & Deletion</h2>
+            <p>You have full authority over your data:</p>
+            <ul>
+                <li><strong>Local Purge:</strong> You can completely erase your local database and settings directly from the application.</li>
+                <li><strong>Cloud Backup Deletion:</strong> If you are using our cloud backup service, you can request full account deletion inside the application. This immediately purges all cloud backups and authentication logs associated with your account.</li>
+            </ul>
+
+            <h2>6. Changes to This Privacy Policy</h2>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+
+            <h2>7. Contact Us</h2>
+            <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:support@launchgrid.in">support@launchgrid.in</a>.</p>
+
+            <footer>
+                <p>&copy; 2026 LaunchGrid. All rights reserved. <a href="/">Back to LaunchGrid</a></p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
