@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete App Account & Data - LaunchGrid</title>
+    <style>
+        :root {
+            --color-base: #FAFAF8;
+            --color-surface: #FFFFFF;
+            --color-border: #EEECE8;
+            --color-primary: #1A1A18;
+            --color-secondary: #4A4A44;
+            --color-subtle-text: #696966;
+            --accent: #8b5cf6;
+            --accent-light: rgba(139, 92, 246, 0.05);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-base);
+            color: var(--color-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: var(--color-primary);
+        }
+        .brand img {
+            height: 24px;
+        }
+        .container {
+            max-width: 768px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        .card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        .meta {
+            color: var(--color-subtle-text);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-base);
+            color: var(--color-primary);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            margin-bottom: 2rem;
+        }
+        select:focus {
+            border-color: var(--accent);
+        }
+        .app-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .app-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        p, li {
+            color: var(--color-secondary);
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent);
+            color: var(--color-surface);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .info-box {
+            background-color: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1.15rem 1.25rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        .info-box p {
+            margin: 0;
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--color-subtle-text);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--color-border);
+            padding-top: 2rem;
+        }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="brand">
+            <img src="/logo.svg" alt="LaunchGrid Logo">
+            <span>LaunchGrid</span>
+        </a>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h1>Delete Account & Data</h1>
+            <p class="meta">Manage and request deletion of your account and personal data for LaunchGrid applications.</p>
+
+            <label for="app-select">Select the application you want to manage:</label>
+            <select id="app-select" onchange="showApp(this.value)">
+                <option value="" disabled selected>Choose an application...</option>
+                <option value="kinly">Kinly</option>
+                <option value="periods">Know Your Cycle (Period Tracker)</option>
+                <option value="medicine">MediRemind</option>
+                <option value="water">Hydrate</option>
+            </select>
+
+            <!-- 1. KINLY SECTION -->
+            <div id="section-kinly" class="app-section">
+                <div class="info-box">
+                    <p>App ID: <code>in.launchgrid.kinly</code> &bull; Publisher: LaunchGrid, Mumbai, India</p>
+                </div>
+                
+                <h2>How to delete your Kinly account</h2>
+                <p>To request deletion of your Kinly account and associated personal data, click the button below to send a request from your registered email address (or specify your phone number if you signed in using SMS authentication).</p>
+                
+                <a class="btn" href="mailto:grievance@launchgrid.in?subject=Kinly%20account%20deletion%20request&body=Please%20delete%20my%20Kinly%20account%20and%20associated%20data.%0A%0AAccount%20email%2Fphone%2Fdetails%3A%20">Email deletion request</a>
+
+                <h2>What gets deleted</h2>
+                <ul>
+                    <li>Your account credentials and profile metadata (name, avatar, profile roles)</li>
+                    <li>Calendar events, tasks, shopping items, expenses, and activity history you created</li>
+                    <li>Photos and documents you uploaded to shared family vaults</li>
+                    <li>Chat messages you sent, whiteboard entries, and moments</li>
+                    <li>Push notification tokens and custom preference configurations</li>
+                </ul>
+                <p><em>Note:</em> If you are the sole member of a family group, deleting your account also removes the group's shared data. If the family group contains other active members, your personal profile and identifiers will be deleted, but shared content that other members rely on (e.g., family tasks or shared calendar events) is preserved for them.</p>
+
+                <h2>Timeline</h2>
+                <p>Deletion requests are processed within 30 days, except where legal requirements mandate longer retention (e.g. billing and subscription logs required for tax auditing).</p>
+            </div>
+
+            <!-- 2. PERIODS SECTION -->
+            <div id="section-periods" class="app-section">
+                <div class="info-box">
+                    <p>App ID: <code>in.launchgrid.periods</code> &bull; Publisher: LaunchGrid, Mumbai, India</p>
+                </div>
+                
+                <h2>How to delete your Know Your Cycle data</h2>
+                <p>Know Your Cycle is local-first by default. You can delete all your data in two ways:</p>
+                <h3>A. Local-only Data (In-App)</h3>
+                <p>Open the app, navigate to <strong>Settings &rarr; Delete local data</strong>. This immediately and permanently deletes all logs, notes, symptoms, and cycle history stored on your device.</p>
+                
+                <h3>B. Optional Cloud Backup Account</h3>
+                <p>If you signed in and enabled the optional cloud backup feature, you can delete your account and all online backups from within the app settings by selecting <strong>Settings &rarr; Account &rarr; Delete Account</strong>. This permanently removes your data from our database servers.</p>
+
+                <p>Alternatively, you may submit a manual account deletion request by emailing us:</p>
+                <a class="btn" href="mailto:grievance@launchgrid.in?subject=Know%20Your%20Cycle%20account%20deletion%20request&body=Please%20delete%20my%20Know%20Your%20Cycle%20backup%20account%20and%20all%20associated%20data.%0A%0ABackup%20Account%20email%3A%20">Email deletion request</a>
+
+                <h2>What gets deleted</h2>
+                <ul>
+                    <li>Your secure user login profile and identifiers</li>
+                    <li>All backed-up cycle records, symptoms, moods, notes, and prediction history</li>
+                    <li>Settings and preference choices</li>
+                </ul>
+
+                <h2>Timeline</h2>
+                <p>In-app deletions take effect immediately. Manual email deletion requests for cloud backups are executed within 30 days.</p>
+            </div>
+
+            <!-- 3. MEDICINE SECTION -->
+            <div id="section-medicine" class="app-section">
+                <div class="info-box">
+                    <p>App ID: <code>in.launchgrid.medicine</code> &bull; Publisher: LaunchGrid, Mumbai, India</p>
+                </div>
+                
+                <h2>How to delete your MediRemind data</h2>
+                <p>MediRemind is a local-first medication organizer. You can clear and delete your details through the following methods:</p>
+                <h3>A. Local-only Data (In-App)</h3>
+                <p>Open the app, navigate to <strong>Settings &rarr; Reset application data</strong>. This clears all local schedules, medication history, notes, and profile settings.</p>
+                
+                <h3>B. Optional Cloud Backup Account</h3>
+                <p>If you opted to sign in and back up your schedules online, go to <strong>Settings &rarr; Account &rarr; Delete Account</strong> inside the app. This immediately and permanently purges your authentication logs and databases from our cloud infrastructure.</p>
+
+                <p>Alternatively, request manual cloud backup deletion by clicking the button below:</p>
+                <a class="btn" href="mailto:grievance@launchgrid.in?subject=MediRemind%20account%20deletion%20request&body=Please%20delete%20my%20MediRemind%20backup%20account%20and%20all%20associated%20data.%0A%0ABackup%20Account%20email%3A%20">Email deletion request</a>
+
+                <h2>What gets deleted</h2>
+                <ul>
+                    <li>Account credential details</li>
+                    <li>Uploaded prescription images and notes</li>
+                    <li>Stored medication profiles, schedules, reminders, and adherence histories</li>
+                    <li>Linked profile relationships</li>
+                </ul>
+
+                <h2>Timeline</h2>
+                <p>In-app account deletion is instant. Manual email requests for online backup deletion are processed within 30 days.</p>
+            </div>
+
+            <!-- 4. WATER SECTION -->
+            <div id="section-water" class="app-section">
+                <div class="info-box">
+                    <p>App ID: <code>in.launchgrid.water</code> &bull; Publisher: LaunchGrid, Mumbai, India</p>
+                </div>
+                
+                <h2>How to delete your Hydrate data</h2>
+                <p>Hydrate is a 100% offline-first application. We do not maintain user accounts, online servers, or cloud backups. Therefore, your data is entirely under your physical control:</p>
+                <ul>
+                    <li><strong>To delete your data:</strong> Open Hydrate, go to <strong>Settings &rarr; Clear all data</strong>. This instantly deletes the local encrypted SQLCipher database.</li>
+                    <li><strong>Alternatively:</strong> Simply uninstall/delete the application from your iOS or Android device. This removes all stored hydration data.</li>
+                </ul>
+                <p>Since we do not collect or upload any information from Hydrate, there is no online profile or database record to request deletion for.</p>
+            </div>
+
+            <footer>
+                <p>&copy; 2026 LaunchGrid. All rights reserved. <a href="/">Back to LaunchGrid</a></p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function showApp(appId) {
+            // Hide all sections
+            document.querySelectorAll('.app-section').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            
+            // Set primary accents based on chosen app
+            const root = document.documentElement;
+            if (appId === 'kinly') {
+                root.style.setProperty('--accent', '#0b5fff');
+                root.style.setProperty('--accent-light', 'rgba(11, 95, 255, 0.05)');
+            } else if (appId === 'periods') {
+                root.style.setProperty('--accent', '#8b5cf6');
+                root.style.setProperty('--accent-light', 'rgba(139, 92, 246, 0.05)');
+            } else if (appId === 'medicine') {
+                root.style.setProperty('--accent', '#06b6d4');
+                root.style.setProperty('--accent-light', 'rgba(6, 182, 212, 0.05)');
+            } else if (appId === 'water') {
+                root.style.setProperty('--accent', '#2563eb');
+                root.style.setProperty('--accent-light', 'rgba(37, 99, 235, 0.05)');
+            }
+
+            // Show selected section
+            const section = document.getElementById('section-' + appId);
+            if (section) {
+                section.classList.add('active');
+            }
+        }
+
+        // On page load, read query params
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const appParam = urlParams.get('app') || urlParams.get('name');
+            if (appParam) {
+                const normalized = appParam.toLowerCase();
+                let selectVal = '';
+                if (normalized.includes('kinly')) selectVal = 'kinly';
+                else if (normalized.includes('period') || normalized.includes('cycle')) selectVal = 'periods';
+                else if (normalized.includes('med') || normalized.includes('remind')) selectVal = 'medicine';
+                else if (normalized.includes('water') || normalized.includes('hydr')) selectVal = 'water';
+
+                if (selectVal) {
+                    const selectEl = document.getElementById('app-select');
+                    selectEl.value = selectVal;
+                    showApp(selectVal);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
