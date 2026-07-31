@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { getActiveTenant, getTenantOrders, getTenantProductCount } from '@/utils/supabase/queries'
 import { PanicStateModal } from '@/components/dashboard/PanicStateModal'
 import { OrdersChecklistClient } from './OrdersChecklistClient'
@@ -18,7 +19,7 @@ export default async function OrdersPage() {
   const unfulfilledFirstOrder = orders.find(o => o.fulfillment_status === 'unfulfilled')
   const hasFirstOrder = !!unfulfilledFirstOrder
 
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const hasPayments = !!(config.merchant_upi_id || config.rzp_key_id)
   const hasProducts = productCount > 0
   const storeUrl = `https://${tenant.subdomain}.launchgrid.in`

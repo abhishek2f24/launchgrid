@@ -16,7 +16,6 @@ interface Plan {
   tagline: string;
   monthlyPrice: number;
   annualPrice: number;
-  originalPrice: number;
   features: string[];
   cta: string;
   popular: boolean;
@@ -29,7 +28,6 @@ const plans: Plan[] = [
     tagline: 'Get online today. Free, forever. No card needed.',
     monthlyPrice: 0,
     annualPrice: 0,
-    originalPrice: 0,
     features: [
       'Live store in 15 minutes',
       'Up to 3 products',
@@ -47,7 +45,6 @@ const plans: Plan[] = [
     tagline: 'Your store. Your brand. Live in 15 minutes.',
     monthlyPrice: 1999,
     annualPrice: 1399,
-    originalPrice: 9999,
     features: [
       'AI-generated store',
       'Dropship catalog (50 items)',
@@ -66,7 +63,6 @@ const plans: Plan[] = [
     tagline: 'Traffic. Ads. Conversions. Everything you need for your first ₹1 Lakh.',
     monthlyPrice: 9999,
     annualPrice: 6999,
-    originalPrice: 19999,
     features: [
       'Everything in Pro',
       'Meta Ads campaign templates',
@@ -85,7 +81,6 @@ const plans: Plan[] = [
     tagline: 'For founders who have tasted success and want to scale.',
     monthlyPrice: 24999,
     annualPrice: 17999,
-    originalPrice: 49999,
     features: [
       'Everything in Max',
       'Automated GST compliance (CGST/SGST/IGST)',

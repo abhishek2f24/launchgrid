@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { sendWelcomeEmail } from '@/lib/emails'
+import { resolvePlanTier } from '@/lib/plans'
 
 export async function POST(request: Request) {
   try {
@@ -79,15 +80,17 @@ export async function POST(request: Request) {
     //  - Free tier (default, no paid plan selected): status 'active', no expiry.
     //    This is genuinely free-forever — checkout must never be disabled by the
     //    archive-trials cron (which only touches 'trialing' subs).
-    //  - A paid plan was chosen: start a 7-day trial of that plan (existing behaviour;
-    //    starts as 'starter' to keep within the historical trial flow).
+    //  - A paid plan was chosen: start a 7-day trial of THAT plan. This previously
+    //    hardcoded 'starter', so a merchant who selected the ₹9,999 or ₹24,999 plan was
+    //    provisioned (and entitled) as if they had bought the ₹1,999 one.
     const isFreeSignup = !plan || plan === 'free'
+    const selectedTier = resolvePlanTier(plan)
     const trialStarted = new Date()
     const trialExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
     await supabase.from('subscriptions').insert({
       tenant_id: tenant.id,
-      plan_tier: isFreeSignup ? 'free' : 'starter',
+      plan_tier: isFreeSignup ? 'free' : selectedTier,
       billing_cycle: billing === 'annual' ? 'annual' : 'monthly',
       status: isFreeSignup ? 'active' : 'trialing',
       trial_started_at: isFreeSignup ? null : trialStarted.toISOString(),

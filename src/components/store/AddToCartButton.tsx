@@ -26,7 +26,7 @@ export function AddToCartButton({ productId, title, price, image, variant = 'min
   return (
     <button
       onClick={handleAdd}
-      className="bg-[var(--color-mark-ink)] text-white font-bold uppercase tracking-widest py-3 px-8 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 text-xs shadow-xl"
+      className="bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] font-bold uppercase tracking-widest py-3 px-8 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 text-xs shadow-xl"
     >
       {added ? <span className="flex items-center gap-2"><Check className="w-4 h-4" /> Added</span> : 'Quick Add'}
     </button>

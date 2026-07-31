@@ -1,0 +1,101 @@
+=== PARAGRAPHS ===
+TrustShield India Launch, Entity and Compliance Roadmap
+Step-by-step business setup, registrations, compliance and launch sequence
+1. Recommended Legal Positioning
+Start as a private limited company providing transaction-risk assessment and verification assistance. Do not position the company as a credit bureau, detective agency, government identity authority, bank, escrow provider or payment aggregator. The first product should be a consent-based risk report and checklist engine.
+2. Best Entity Structure
+3. Step-by-Step Registration Plan
+Choose a clean brand name. Check MCA name availability, domain availability and trademark conflicts. Prefer a name not too generic, such as VerifyBeforePay, TrustShield, DealSafe, PaySafeCheck or BharatTrustCheck.
+Hire a CA/CS firm for incorporation. This is worth doing because the product handles sensitive verification and investors/partners will care about clean compliance.
+Apply for Digital Signature Certificates for proposed directors.
+Reserve company name and file incorporation through MCA SPICe+ for a private limited company. SPICe+ is the MCA integrated incorporation route and covers linked registrations such as PAN/TAN and other registrations depending on the form options.
+Open current bank account in the company name after certificate of incorporation.
+Apply for GST if required by turnover/inter-state/service model or if payment partners/B2B clients require it early. For app/service business, taking GST early is often practical even before threshold if you plan B2B invoicing.
+Apply for Startup India/DPIIT recognition after incorporation if eligible. This helps with startup credibility, government schemes and some benefits.
+File trademark application for the brand and logo in relevant classes, likely software/SaaS/mobile app and verification/risk assessment services. Use a trademark lawyer for exact classes.
+Register domain, business email and cloud accounts under the company, not personal accounts.
+Create standard legal policies before launch: Privacy Policy, Terms of Use, Consent Notice, Refund Policy, Grievance Policy, Data Retention Policy, Law Enforcement Request Policy and Vulnerability Disclosure Policy.
+4. Registrations and Accounts Checklist
+5. Compliance Architecture
+5.1 Personal Data and DPDP
+Collect only what is necessary for a specific verification purpose.
+Show a clear notice before upload: what data is collected, why, retention period, who processes it and how deletion works.
+Take explicit consent before processing documents, screenshots or personal identifiers.
+Allow consent withdrawal and deletion requests where legally possible.
+Do not reveal one user’s documents or personal identifiers to another user.
+Keep raw evidence only for a short retention period unless the user opts into longer storage.
+5.2 Aadhaar, PAN and Identity Verification
+Do not store Aadhaar numbers unless absolutely necessary and legally reviewed.
+Do not expose Aadhaar/PAN images to another user.
+For Aadhaar, prefer offline Aadhaar verification methods or licensed partner APIs. Direct online Aadhaar authentication requires participation in UIDAI’s AUA/KUA ecosystem or approved sub-entity route.
+Show only derived signals such as "identity document consistency checked" or "name mismatch detected", not full identity details.
+5.3 Payments and Escrow
+MVP should only collect your platform fee for reports. This can be handled through a payment gateway.
+Do not hold buyer funds for seller settlement in MVP. That can create payment aggregator/escrow regulatory obligations.
+If you later offer escrow, use a licensed escrow/payment partner and get legal review before launch.
+5.4 Intermediary and User Content Risk
+Users will upload chats, documents and fraud reports. Treat this as user-generated content and moderate abuse.
+Avoid a public blacklist of phone numbers or individuals. It creates defamation, privacy and false-report risk.
+Keep suspicious reports internal until verified and show only risk signals, not accusations.
+6. Operating Model
+7. 30-Day Execution Plan
+8. What Not To Do Initially
+Do not promise "100% safe" or "verified genuine".
+Do not publish private data, Aadhaar, PAN, addresses or phone numbers.
+Do not create an open searchable blacklist.
+Do not take custody of buyer-seller transaction funds until escrow/payment regulation is reviewed.
+Do not sell user verification data to third parties.
+Do not rely only on AI; use explainable rules and human review for high-risk cases.
+9. Suggested Report Disclaimer
+Sample language: "This report is a transaction-risk assessment based on the information provided by the user and available checks at the time of review. It is not a guarantee of identity, legality, solvency, ownership, product quality or future conduct. Users should independently verify critical information and avoid payment where material inconsistencies remain."
+10. Immediate Founder Tasks
+1. Pick final brand name and buy .in and .com if affordable.
+2. Call CA/CS to start private limited incorporation.
+3. Create one-page landing page: "Before you send money, check if the deal is risky."
+4. Collect 50 real examples from WhatsApp/OLX/Facebook/Instagram scams and label the red flags.
+5. Build manual MVP first: Google Form or web form + human/AI report in 10 minutes. Charge Rs. 49-99 to test willingness to pay.
+6. Only after people pay for manual reports, build full app automation.
+11. Source Notes
+MCA/SPICe+ incorporation concept: MCA integrated incorporation route; see MCA portal and CA/CS filing guidance.
+Startup India/DPIIT: https://www.startupindia.gov.in/content/sih/en/home-page.html
+DPDP Act official copy: https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf
+UIDAI AUA/KUA ecosystem: https://uidai.gov.in/en/ecosystem/authentication-ecosystem/authentication-requesting-agency.html
+UIDAI Offline Verification Regulations: https://uidai.gov.in/images/The_Aadhaar_Authentication_and_Offline_Verifications_Regulations_2021.pdf
+MeitY IT Intermediary Rules: https://www.meity.gov.in/static/uploads/2024/02/Information-Technology-Intermediary-Guidelines-and-Digital-Media-Ethics-Code-Rules-2021-updated-06.04.2023-.pdf
+CERT-In official site: https://www.cert-in.org.in/
+RBI Payment Aggregator framework should be reviewed before any escrow/funds-handling feature.
+
+=== TABLES ===
+--- TABLE 0 ---
+Option | Pros | Cons | Recommendation
+Private Limited Company | Best for startup funding, API contracts, banking/payment partners, limited liability, ESOPs | More compliance than proprietorship/LLP | Recommended
+LLP | Lower compliance, limited liability | Less preferred by venture investors and some fintech/API partners | Okay for consulting, not ideal for scalable app
+Proprietorship | Fast and cheap | Unlimited personal liability; weak credibility for trust/security product | Avoid for this business
+--- TABLE 1 ---
+Item | Where / Owner | When | Notes
+Company incorporation | MCA portal via CA/CS | Before launch | Private limited recommended
+PAN/TAN | Included/linked through incorporation flow | Before banking | Required for tax and bank
+Current account | Bank | After incorporation | Use company account only
+GST | GST portal via CA | Before paid B2B or when required | Useful for invoicing and app payments
+DPIIT Startup India | Startup India portal | After incorporation | Useful but not required to launch
+Trademark | IP India via lawyer/agent | Before public brand push | File wordmark first if budget tight
+Payment gateway | Razorpay/PayU/Cashfree etc. | Before paid launch | For Rs. 99 report fees only
+Aadhaar verification access | UIDAI AUA/KUA or Sub-AUA/KUA route via licensed partner | Later, not MVP day 1 | Online e-KYC is restricted; start with offline verification/partner APIs
+Cybersecurity compliance | Internal + security vendor | Before storing user evidence | Audit logs, encryption, breach plan
+Grievance officer details | Company policy and app/web footer | Before public launch | Needed for user complaints/privacy requests
+--- TABLE 2 ---
+Function | What to Do First
+Verification operations | Create standard checklists and rulebooks for each scenario. Train reviewers to avoid absolute claims.
+Legal review | Have a lawyer review terms, consent flows, disclaimers, data retention and report language.
+Security | Encrypt uploads, restrict employee access, log every access, set deletion schedules.
+Customer support | Create refund rules, escalation flow, scam-report flow and complaint handling SLA.
+Partnerships | Start with APIs/partners for GST, domain intelligence, OCR, device checks, payment verification assistance and business verification.
+--- TABLE 3 ---
+Day Range | Action
+Day 1-3 | Finalize name, positioning and first 3 categories: used electronics, vehicle advance, rental deposit. Buy domain.
+Day 4-7 | Speak to CA/CS and begin private limited incorporation. Draft app screens and report format.
+Day 8-12 | Build clickable prototype and landing page. Interview 25 users with real scam/deal examples.
+Day 13-18 | Build MVP backend, web intake form, evidence upload, QR/screenshot analyzer and rule-based scoring.
+Day 19-22 | Write policies: privacy, terms, consent notice, refund, grievance, data retention. Get legal review.
+Day 23-26 | Integrate payment gateway for Rs. 99 reports. Add admin review dashboard.
+Day 27-30 | Run 100 pilot verifications manually/assisted. Collect testimonials and refine risk rules before paid public launch.

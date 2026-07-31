@@ -96,6 +96,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "C:/Users/Abhishek/Desktop/ghd/personal/viral/web", "--", "--port", "3901"],
       "port": 3901
+    },
+    {
+      "name": "trustshield-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:/Users/Abhishek/Desktop/ghd/personal/security/trustshield-web", "--", "--port", "3902"],
+      "port": 3902
     }
   ]
 }

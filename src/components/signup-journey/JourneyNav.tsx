@@ -52,6 +52,12 @@ export function JourneyNav() {
             Pricing
           </Link>
           <Link
+            href="/research"
+            className="font-inter text-[13px] font-semibold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors px-3 py-2 rounded-lg hover:bg-black/[0.03]"
+          >
+            Research
+          </Link>
+          <Link
             href="/vs-shopify"
             className="font-inter text-[13px] font-semibold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors px-3 py-2 rounded-lg hover:bg-black/[0.03]"
           >
@@ -121,20 +127,20 @@ export function JourneyNav() {
             Log in
           </Link>
           <Link
-            href="/onboarding"
+            href="/research"
             className="ml-2 bg-[var(--color-mark-ink)] text-white font-inter text-[13px] font-bold py-2.5 px-5 rounded-xl hover:bg-black active:scale-[0.98] transition-all shadow-md"
           >
-            Start free
+            Start research
           </Link>
         </div>
 
         {/* Mobile Navigation Toggle */}
         <div className="flex md:hidden items-center gap-3 relative z-50">
           <Link
-            href="/onboarding"
+            href="/research"
             className="bg-[var(--color-mark-ink)] text-white font-inter text-[12px] font-bold py-2 px-4 rounded-xl hover:bg-black active:scale-[0.98] transition-all shadow-sm"
           >
-            Start free
+            Start research
           </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -161,6 +167,13 @@ export function JourneyNav() {
                 className="font-inter text-base font-semibold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors py-2 border-b border-black/[0.03]"
               >
                 Pricing
+              </Link>
+              <Link
+                href="/research"
+                onClick={() => setIsOpen(false)}
+                className="font-inter text-base font-semibold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors py-2 border-b border-black/[0.03]"
+              >
+                Research
               </Link>
               <Link
                 href="/vs-shopify"

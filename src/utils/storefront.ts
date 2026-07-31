@@ -1,3 +1,13 @@
+/** PostgREST returns a to-one embed (tenants → business_configs) as a single
+ *  object, but returns an array when the relationship is ambiguous or to-many.
+ *  Normalize both shapes so callers never have to guess. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function tenantConfig(tenant: { business_configs?: any } | null | undefined): Record<string, any> {
+  const bc = tenant?.business_configs
+  if (!bc) return {}
+  return (Array.isArray(bc) ? bc[0] : bc) || {}
+}
+
 export const COLOR_MAP: Record<string, string> = {
   purple:  '#8b5cf6',
   blue:    '#3b82f6',

@@ -32,6 +32,20 @@
       ],
       "js": ["content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "_comment": "Supplier/wholesale sources. These feed the RESEARCH module (supplier name, MOQ, wholesale price tiers) — a different data class from the retail listings above, which feed the store catalogue.",
+      "matches": [
+        "https://*.indiamart.com/*",
+        "https://*.alibaba.com/*",
+        "https://*.tradeindia.com/*",
+        "https://*.made-in-china.com/*",
+        "https://*.globalsources.com/*",
+        "https://*.1688.com/*",
+        "https://*.yiwugo.com/*"
+      ],
+      "js": ["content-supplier.js"],
+      "run_at": "document_idle"
     }
   ],
   "action": {

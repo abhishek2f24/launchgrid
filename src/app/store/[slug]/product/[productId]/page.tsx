@@ -1,8 +1,10 @@
+import { tenantConfig } from '@/utils/storefront'
 import { createClient } from '@/utils/supabase/server'
 import { createServiceClient } from '@/utils/supabase/service'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Package, Truck, ShoppingBag } from 'lucide-react'
+import { ArrowLeft, Package, Truck } from 'lucide-react'
 import { ProductActions } from '@/components/store/ProductActions'
+import { ProductGallery } from '@/components/store/ProductGallery'
 import { TrackPageView } from '@/components/store/TrackPageView'
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay'
 import { Metadata } from 'next'
@@ -120,7 +122,7 @@ export default async function ProductPage(props: {
     || 'Premium quality product, carefully curated for you.'
   const price = product.retail_price || product.price || 0
   const mainImage = images[0] || ''
-  const whatsapp = tenant.business_configs?.[0]?.whatsapp_number
+  const whatsapp = tenantConfig(tenant).whatsapp_number
   const storeName = tenant.business_name || 'Our Store'
   
   const schemaJson = {
@@ -196,26 +198,7 @@ export default async function ProductPage(props: {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
             {/* Images */}
-            <div className="space-y-4">
-              <div className="aspect-[4/5] bg-[var(--color-mark-muted)] border border-[var(--color-mark-default)] rounded-none overflow-hidden relative">
-                {images[0] ? (
-                  <img src={images[0]} alt={product.title} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="w-16 h-16 text-[var(--color-mark-secondary)]/30" />
-                  </div>
-                )}
-              </div>
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
-                  {images.slice(1, 5).map((img, i) => (
-                    <div key={i} className="aspect-[4/5] bg-[var(--color-mark-muted)] border border-[var(--color-mark-default)] rounded-none overflow-hidden">
-                      <img src={img} alt={`View ${i + 2}`} className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ProductGallery images={images} title={product.title} />
 
             {/* Details */}
             <div className="flex flex-col gap-8 md:pt-8">

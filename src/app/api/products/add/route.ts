@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { createServiceClient } from '@/utils/supabase/service'
+import { getPlan } from '@/lib/plans'
 
 const serviceSupabase = createServiceClient()
 
@@ -36,6 +38,33 @@ export async function POST(req: Request) {
 
     if (!title || !retail_price) {
       return NextResponse.json({ error: 'title and retail_price are required' }, { status: 400 })
+    }
+
+    // Enforce the plan's catalogue cap. This is checked server-side (not just in the UI)
+    // because the extension and URL-import paths post here directly.
+    const { data: subscription } = await serviceSupabase
+      .from('subscriptions')
+      .select('plan_tier')
+      .eq('tenant_id', tenant.id)
+      .eq('status', 'active')
+      .maybeSingle()
+
+    const plan = getPlan(subscription?.plan_tier)
+    const { count: existingProducts } = await serviceSupabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenant.id)
+
+    if ((existingProducts ?? 0) >= plan.features.max_products) {
+      return NextResponse.json(
+        {
+          error: `Your ${plan.publicName} plan includes up to ${plan.features.max_products} products. Upgrade to add more.`,
+          code: 'PRODUCT_LIMIT_REACHED',
+          limit: plan.features.max_products,
+          current: existingProducts ?? 0,
+        },
+        { status: 403 },
+      )
     }
 
     // AI Rewrite using Gemini Flash
@@ -94,6 +123,11 @@ Original Description: ${description}`
       .single()
 
     if (error) throw error
+
+    // Without this, a store cached from an earlier visit (revalidate=false
+    // in src/app/store/[slug]/page.tsx) would never show a product added
+    // via the extension/URL-import path in production.
+    revalidatePath('/store/[slug]', 'page')
 
     return NextResponse.json({ success: true, product })
   } catch (err: any) {

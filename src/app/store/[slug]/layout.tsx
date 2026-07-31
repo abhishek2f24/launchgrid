@@ -2,10 +2,12 @@ import { createClient } from '@/utils/supabase/server'
 import { createServiceClient } from '@/utils/supabase/service'
 import { notFound } from 'next/navigation'
 import { WhatsAppWidget } from '@/components/store/WhatsAppWidget'
+import { AnnouncementBar } from '@/components/store/AnnouncementBar'
 import { CartProvider } from '@/contexts/CartContext'
 import { StoreHeader } from '@/components/store/StoreHeader'
-import { COLOR_MAP, getTemplateConfig } from '@/utils/storefront'
+import { COLOR_MAP, getTemplateConfig, tenantConfig } from '@/utils/storefront'
 import { TrackPageView } from '@/components/store/TrackPageView'
+import { Camera, ThumbsUp, AtSign } from 'lucide-react'
 
 // Service role client to fetch subscription plan (bypasses RLS on public store pages)
 const service = createServiceClient()
@@ -26,7 +28,7 @@ export default async function StoreLayout(props: {
 
   if (!tenant) notFound()
 
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const primaryColor = COLOR_MAP[config.theme_color || 'purple'] || '#8b5cf6'
   const templateConfig = getTemplateConfig(config.template_style || 'minimal', config.theme_color || 'purple')
 
@@ -82,7 +84,11 @@ export default async function StoreLayout(props: {
         {/* Noise Overlay */}
         <div className="absolute inset-0 noise-overlay pointer-events-none" />
 
-        <StoreHeader businessName={tenant.business_name} logoUrl={tenant.logo_url} />
+        {config.announcement_enabled && config.announcement_text && (
+          <AnnouncementBar text={config.announcement_text} countdownAt={config.announcement_countdown_at || null} />
+        )}
+
+        <StoreHeader businessName={tenant.business_name} logoUrl={tenant.logo_url} slug={params.slug} />
 
         <main className="flex-1 relative z-10">
           {children}
@@ -92,6 +98,31 @@ export default async function StoreLayout(props: {
         <footer className="border-t mt-auto py-6" style={{ borderColor: 'var(--color-mark-default)', backgroundColor: 'var(--color-mark-surface)' }}>
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm font-medium text-[var(--color-mark-secondary)]">
             <p>&copy; {new Date().getFullYear()} {tenant.business_name}. All rights reserved.</p>
+            {(config.instagram_url || config.facebook_url || config.x_url) && (
+              <div className="flex gap-3 items-center">
+                {config.instagram_url && (
+                  <a href={config.instagram_url} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                    className="w-8 h-8 rounded-full border flex items-center justify-center hover:text-[var(--color-mark-ink)] transition-colors"
+                    style={{ borderColor: 'var(--color-mark-default)' }}>
+                    <Camera className="w-4 h-4" />
+                  </a>
+                )}
+                {config.facebook_url && (
+                  <a href={config.facebook_url} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                    className="w-8 h-8 rounded-full border flex items-center justify-center hover:text-[var(--color-mark-ink)] transition-colors"
+                    style={{ borderColor: 'var(--color-mark-default)' }}>
+                    <ThumbsUp className="w-4 h-4" />
+                  </a>
+                )}
+                {config.x_url && (
+                  <a href={config.x_url} target="_blank" rel="noopener noreferrer" aria-label="X"
+                    className="w-8 h-8 rounded-full border flex items-center justify-center hover:text-[var(--color-mark-ink)] transition-colors"
+                    style={{ borderColor: 'var(--color-mark-default)' }}>
+                    <AtSign className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            )}
             <div className="flex gap-4 items-center">
               <a href={`/store/${params.slug}/policies/privacy`} className="hover:text-[var(--color-mark-ink)] transition-colors">Privacy Policy</a>
               <a href={`/store/${params.slug}/policies/terms`} className="hover:text-[var(--color-mark-ink)] transition-colors">Terms of Service</a>

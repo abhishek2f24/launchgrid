@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { createServiceClient } from '@/utils/supabase/service'
 import { JourneyNav } from '@/components/signup-journey/JourneyNav'
 import { Footer } from '@/components/signup-journey/Footer'
@@ -63,7 +64,7 @@ export default async function DiscoverPage() {
 
   // Quality Control: Only show stores with products and configured payment methods
   const activeStores = (stores || []).filter((store: any) => {
-    const config = store.business_configs?.[0] || {}
+    const config = tenantConfig(store)
     const hasPayment = !!(config.merchant_upi_id || config.rzp_key_id)
     const hasProducts = (store.products?.length ?? 0) > 0
     return hasPayment && hasProducts

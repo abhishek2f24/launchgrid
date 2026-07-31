@@ -1,29 +1,55 @@
 'use client'
 
-import { useState } from 'react'
-import { ShieldCheck, Zap, CreditCard, ArrowRight, Loader2, CheckCircle2, AlertCircle, Truck } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { ShieldCheck, Zap, CreditCard, ArrowRight, Loader2, CheckCircle2, AlertCircle, Truck, QrCode, X } from 'lucide-react'
 import { savePaymentConfigAction } from '@/actions/portal'
+import { createClient } from '@/utils/supabase/client'
 
 interface Props {
   config: {
     payment_tier: string
     merchant_upi_id: string | null
+    merchant_upi_qr_url?: string | null
     rzp_key_id: string | null
     rzp_key_secret: string | null
     cod_enabled?: boolean
   }
+  feeOwedThisMonth: number
 }
 
-export function PaymentsFormClient({ config }: Props) {
+export function PaymentsFormClient({ config, feeOwedThisMonth }: Props) {
   const [activeTier, setActiveTier] = useState(config.payment_tier || 'free_upi')
   const [upiId, setUpiId] = useState(config.merchant_upi_id || '')
+  const [upiQrUrl, setUpiQrUrl] = useState(config.merchant_upi_qr_url || '')
+  const [qrUploading, setQrUploading] = useState(false)
+  const qrFileInputRef = useRef<HTMLInputElement>(null)
   const [rzpKeyId, setRzpKeyId] = useState(config.rzp_key_id || '')
   const [rzpKeySecret, setRzpKeySecret] = useState(config.rzp_key_secret || '')
   const [codEnabled, setCodEnabled] = useState(config.cod_enabled ?? false)
   const [codLoading, setCodLoading] = useState(false)
-  
+
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  async function handleQrUpload(file: File | null) {
+    if (!file) return
+    setQrUploading(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Sign in again to upload a QR code')
+      const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`
+      const { error: uploadError } = await supabase.storage.from('payment-qr-codes').upload(path, file, { upsert: false })
+      if (uploadError) throw uploadError
+      const { data } = supabase.storage.from('payment-qr-codes').getPublicUrl(path)
+      setUpiQrUrl(data.publicUrl)
+    } catch (err) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'QR upload failed' })
+    } finally {
+      setQrUploading(false)
+      if (qrFileInputRef.current) qrFileInputRef.current.value = ''
+    }
+  }
 
   const handleToggleCod = async () => {
     setCodLoading(true)
@@ -43,16 +69,27 @@ export function PaymentsFormClient({ config }: Props) {
     setLoading(true)
     setMessage(null)
     try {
+      // Route requires real Razorpay Partner/marketplace approval and a
+      // signed webhook secret we don't have — showing a fake success here
+      // would tell a merchant they can accept live payments when they
+      // can't. Be honest instead of mocking it.
+      if (tier === 'route') {
+        setMessage({ type: 'error', text: 'LaunchGrid Route needs a Razorpay Partner integration that isn\'t connected yet. Contact support to get on the waitlist — in the meantime, use Merchant UPI or Bring Your Keys.' })
+        setLoading(false)
+        return
+      }
+
       const formData = new FormData()
       formData.append('paymentTier', tier)
-      
+
       if (tier === 'free_upi') {
-        if (!upiId.trim()) {
-          setMessage({ type: 'error', text: 'Please enter a valid UPI ID.' })
+        if (!upiId.trim() && !upiQrUrl.trim()) {
+          setMessage({ type: 'error', text: 'Enter a UPI ID or upload a QR code.' })
           setLoading(false)
           return
         }
         formData.append('merchantUpiId', upiId.trim())
+        formData.append('merchantUpiQrUrl', upiQrUrl.trim())
       } else if (tier === 'byok') {
         if (!rzpKeyId.trim() || !rzpKeySecret.trim()) {
           setMessage({ type: 'error', text: 'Please enter both Razorpay Key ID and Secret.' })
@@ -61,8 +98,6 @@ export function PaymentsFormClient({ config }: Props) {
         }
         formData.append('rzpKeyId', rzpKeyId.trim())
         formData.append('rzpKeySecret', rzpKeySecret.trim())
-      } else if (tier === 'route') {
-        // Mock KYC/Route activation
       }
 
       const res = await savePaymentConfigAction(formData)
@@ -70,7 +105,7 @@ export function PaymentsFormClient({ config }: Props) {
         setMessage({ type: 'error', text: res.error })
       } else {
         // Capability framing: state what the business can now do, not what was configured
-        setMessage({ type: 'success', text: tier === 'free_upi' ? 'Customers can now pay you instantly via UPI.' : tier === 'byok' ? 'Customers can now pay you with cards, netbanking, wallets and UPI.' : 'Customers can now pay you — LaunchGrid Route is live.' })
+        setMessage({ type: 'success', text: tier === 'free_upi' ? 'Customers can now pay you instantly via UPI.' : 'Customers can now pay you with cards, netbanking, wallets and UPI.' })
         setActiveTier(tier)
       }
     } catch (err: any) {
@@ -82,6 +117,18 @@ export function PaymentsFormClient({ config }: Props) {
 
   return (
     <div className="space-y-8">
+      {activeTier !== 'route' && (
+        <div className="p-5 rounded-2xl border border-black/5 bg-white shadow-sm flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]">Platform fee owed this month</p>
+            <p className="text-xs text-[var(--color-mark-secondary)]/70 mt-1 max-w-md">
+              Buyers pay you directly — LaunchGrid never holds your money. This is what you owe on your {activeTier === 'byok' ? '5%' : '2%'} plan, invoiced monthly.
+            </p>
+          </div>
+          <p className="text-2xl font-bold text-[var(--color-mark-ink)]">₹{feeOwedThisMonth.toLocaleString('en-IN')}</p>
+        </div>
+      )}
+
       {message && (
         <div className={`p-4 rounded-xl border flex gap-3 items-start animate-in fade-in duration-300 ${
           message.type === 'success' 
@@ -121,15 +168,39 @@ export function PaymentsFormClient({ config }: Props) {
               Accept direct payments to your UPI ID (GPay, PhonePe, Paytm). 0% transaction fees.
             </p>
             
-            <div className="space-y-1.5 mb-6">
+            <div className="space-y-1.5 mb-4">
               <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60">UPI ID</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="e.g. storename@okaxis"
                 value={upiId}
                 onChange={e => setUpiId(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 bg-white text-xs font-bold text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] transition-colors"
               />
+            </div>
+
+            <div className="space-y-1.5 mb-6">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60">Or upload your UPI QR code</label>
+              {upiQrUrl ? (
+                <div className="relative w-24 h-24">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={upiQrUrl} alt="UPI QR code" className="w-full h-full object-contain rounded-xl border border-black/10 bg-white" />
+                  <button type="button" onClick={() => setUpiQrUrl('')} aria-label="Remove QR code" className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => qrFileInputRef.current?.click()}
+                  disabled={qrUploading}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-black/20 bg-black/[0.02] text-xs font-bold text-[var(--color-mark-secondary)] hover:border-black/40 transition-colors disabled:opacity-50"
+                >
+                  {qrUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+                  {qrUploading ? 'Uploading…' : 'Upload QR image'}
+                </button>
+              )}
+              <input ref={qrFileInputRef} type="file" accept="image/*" onChange={(e) => handleQrUpload(e.target.files?.[0] ?? null)} className="hidden" />
             </div>
           </div>
 
@@ -231,7 +302,7 @@ export function PaymentsFormClient({ config }: Props) {
               </div>
             </div>
             <p className="text-xs text-[var(--color-mark-secondary)] mb-6 leading-relaxed">
-              1-click instant setup. We process payments, handle GST compliance, and manage disputes.
+              No Razorpay account needed — LaunchGrid handles payments, GST compliance, and disputes for you.
             </p>
             <div className="p-4 bg-purple-50/50 border border-purple-100 rounded-2xl space-y-2 mb-6">
               <h5 className="text-[10px] font-bold text-purple-900 uppercase tracking-widest">🌟 Premium Benefits</h5>
@@ -241,6 +312,7 @@ export function PaymentsFormClient({ config }: Props) {
                 <li>• Unified Payout Dashboard</li>
               </ul>
             </div>
+            <p className="text-[10px] text-purple-700/70 font-semibold">Coming soon — requires Razorpay Partner approval, not connected yet.</p>
           </div>
 
           <div className="space-y-4 pt-4 border-t border-black/5">
@@ -248,12 +320,12 @@ export function PaymentsFormClient({ config }: Props) {
               <span className="text-[var(--color-mark-secondary)]">Platform Fee</span>
               <span className="text-[var(--color-mark-ink)]">15% → 5%</span>
             </div>
-            <button 
+            <button
               onClick={() => handleSave('route')}
               disabled={loading}
               className="w-full py-3 rounded-xl bg-[var(--color-mark-ink)] text-white hover:bg-black/90 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
             >
-              {loading && activeTier === 'route' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Complete 1-Click KYC'}
+              {loading && activeTier === 'route' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Notify me when ready'}
             </button>
           </div>
         </div>

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ImagePlus, Tag, FileText, IndianRupee, Layers, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, ImagePlus, Tag, FileText, IndianRupee, Layers, CheckCircle2, Loader2, X } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
 
 const CATEGORIES = [
   'Electronics', 'Fashion', 'Home & Kitchen', 'Beauty & Personal Care',
@@ -14,6 +15,9 @@ export default function AddProductPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
     title: '',
@@ -25,6 +29,37 @@ export default function AddProductPage() {
   })
 
   const set = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }))
+
+  async function handleFileUpload(files: FileList | null) {
+    if (!files || files.length === 0) return
+    setUploading(true)
+    setError(null)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Sign in again to upload images')
+
+      const uploaded: string[] = []
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue
+        const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`
+        const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { upsert: false })
+        if (uploadError) throw uploadError
+        const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+        uploaded.push(data.publicUrl)
+      }
+      setImageUrls((prev) => [...prev, ...uploaded])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  function removeImage(url: string) {
+    setImageUrls((prev) => prev.filter((u) => u !== url))
+  }
 
   const margin = form.retail_price && form.cost_price
     ? Math.round(((Number(form.retail_price) - Number(form.cost_price)) / Number(form.retail_price)) * 100)
@@ -38,7 +73,7 @@ export default function AddProductPage() {
     const res = await fetch('/api/products/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, image_urls: imageUrls }),
     })
 
     const data = await res.json()
@@ -200,44 +235,48 @@ export default function AddProductPage() {
           )}
         </div>
 
-        {/* Image */}
+        {/* Images */}
         <div className="bg-white border border-black/5 rounded-2xl p-6 shadow-sm space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60 flex items-center gap-2">
-            <ImagePlus className="w-3.5 h-3.5" /> Product Image
+            <ImagePlus className="w-3.5 h-3.5" /> Product Images
           </h2>
 
-          <div className="flex gap-4 items-start">
-            {form.image_url ? (
-              <div className="w-20 h-20 rounded-xl border border-black/10 overflow-hidden shrink-0">
-                <img
-                  src={form.image_url}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                  onError={() => set('image_url', '')}
-                />
+          <div className="flex flex-wrap gap-3">
+            {imageUrls.map((url) => (
+              <div key={url} className="relative w-20 h-20 rounded-xl border border-black/10 overflow-hidden shrink-0 group">
+                {/* Merchant-uploaded photos — remote origin, next/image not worth the config overhead here */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="Product" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(url)}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Remove image"
+                >
+                  <X className="w-3 h-3" />
+                </button>
               </div>
-            ) : (
-              <div className="w-20 h-20 rounded-xl border border-dashed border-black/20 bg-black/[0.02] flex items-center justify-center shrink-0">
-                <ImagePlus className="w-6 h-6 text-[var(--color-mark-secondary)]/30" />
-              </div>
-            )}
-            <div className="flex-1 space-y-1.5">
-              <label className="text-xs font-bold text-[var(--color-mark-secondary)]/70 uppercase tracking-wider">
-                Image URL
-                <span className="normal-case ml-1 font-semibold text-[var(--color-mark-secondary)]/40">Optional</span>
-              </label>
-              <input
-                type="url"
-                value={form.image_url}
-                onChange={e => set('image_url', e.target.value)}
-                placeholder="https://example.com/product-image.jpg"
-                className="w-full px-4 py-3 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] transition-all shadow-sm"
-              />
-              <p className="text-[10px] text-[var(--color-mark-secondary)]/50 font-medium leading-relaxed">
-                Paste a direct image URL. You can always update this later.
-              </p>
-            </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="w-20 h-20 rounded-xl border border-dashed border-black/20 bg-black/[0.02] flex items-center justify-center shrink-0 hover:border-black/40 hover:bg-black/[0.04] transition-colors disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="w-5 h-5 text-[var(--color-mark-secondary)] animate-spin" /> : <ImagePlus className="w-6 h-6 text-[var(--color-mark-secondary)]/40" />}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => handleFileUpload(e.target.files)}
+              className="hidden"
+            />
           </div>
+          <p className="text-[10px] text-[var(--color-mark-secondary)]/50 font-medium leading-relaxed">
+            Upload one or more photos from your device. The first image is the main product photo — customers can scroll through the rest on your storefront.
+          </p>
         </div>
 
         {/* Submit */}

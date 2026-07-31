@@ -3,7 +3,8 @@ import { createServiceClient } from '@/utils/supabase/service'
 import { ArrowRight, ShoppingBag, Store, Sparkles, PlusCircle, ChevronRight, Zap } from 'lucide-react'
 import { ShareStoreCard } from '@/components/storefront/ShareStoreCard'
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay'
-import { getTemplateConfig } from '@/utils/storefront'
+import { HomeImageSlider } from '@/components/store/HomeImageSlider'
+import { getTemplateConfig, tenantConfig } from '@/utils/storefront'
 import { Metadata } from 'next'
 
 export const dynamicParams = true;
@@ -22,10 +23,10 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
   if (!tenant) return {}
 
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const storeName = tenant.business_name || 'Our Store'
-  const title = `${storeName} | Online Store`
-  const description = config.tagline || 'Shop premium products online.'
+  const title = config.meta_title?.trim() || `${storeName} | Online Store`
+  const description = config.meta_description?.trim() || config.tagline || 'Shop premium products online.'
 
   return {
     title,
@@ -181,7 +182,7 @@ export default async function StoreHomePage(props: { params: Promise<{ slug: str
     .eq('is_active', true)
     .limit(12)
 
-  const config = tenant?.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const tagline = config.tagline || 'Discover our latest collection of premium products.'
   const heroSubtitle = config.hero_subtitle || 'Shop securely with fast delivery and easy returns.'
   const storeName = tenant?.business_name || 'Our Store'
@@ -281,6 +282,10 @@ export default async function StoreHomePage(props: { params: Promise<{ slug: str
             Explore Collection <ArrowRight className="w-4 h-4" />
           </a>
         </section>
+
+        {config.slider_enabled && Array.isArray(config.slider_images) && config.slider_images.length > 0 && (
+          <HomeImageSlider images={config.slider_images} />
+        )}
 
         {/* Products */}
         <section className="px-6 md:px-12 pb-28 max-w-7xl mx-auto">

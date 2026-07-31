@@ -7,6 +7,8 @@ import { ChapterLabel } from '../ui-landing/ChapterLabel';
 import { EditorialHeadline } from '../ui-landing/EditorialHeadline';
 import { SectionReveal } from '../ui-landing/SectionReveal';
 
+type MethodStep = (typeof methodSteps)[number];
+
 export default function S06_TheMethod() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -22,10 +24,10 @@ export default function S06_TheMethod() {
         
         <SectionReveal className="text-center mb-24">
           <ChapterLabel chapter="Chapter 05" label="The Method" />
-          <EditorialHeadline text={"Your 12-step journey\nfrom idea to income."} size="lg" />
+          <EditorialHeadline text={"Your product-to-income\njourney."} size="lg" />
           <p className="font-inter text-[var(--color-mark-secondary)] mt-6 text-lg">
             Every mission has a path.<br/>
-            Here's exactly what happens after you click Launch.
+            Here&apos;s how research becomes a store, then a business.
           </p>
         </SectionReveal>
 
@@ -40,7 +42,7 @@ export default function S06_TheMethod() {
           <div className="flex flex-col gap-6 md:gap-12 relative z-10">
             {methodSteps.map((step, idx) => {
               const isLeft = idx % 2 === 0;
-              return <StepCard key={step.id} step={step} isLeft={isLeft} index={idx} />;
+              return <StepCard key={step.id} step={step} isLeft={isLeft} />;
             })}
           </div>
         </div>
@@ -50,7 +52,7 @@ export default function S06_TheMethod() {
   );
 }
 
-function StepCard({ step, isLeft, index }: any) {
+function StepCard({ step, isLeft }: { step: MethodStep; isLeft: boolean }) {
   const [expanded, setExpanded] = useState(false);
 
   return (

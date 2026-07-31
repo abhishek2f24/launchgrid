@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { getActiveTenant, getTenantOrders } from '@/utils/supabase/queries'
 import { Users, Mail, Phone, ExternalLink } from 'lucide-react'
 import { CustomersGuideClient } from './CustomersGuideClient'
@@ -39,7 +40,7 @@ export default async function CustomersPage() {
 
   const customers = Array.from(customersMap.values())
 
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const hasWhatsApp = !!config.whatsapp_number
   const whatsappNumber = config.whatsapp_number
 

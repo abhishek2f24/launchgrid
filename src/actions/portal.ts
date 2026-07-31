@@ -1,13 +1,35 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { encrypt, isEncrypted } from '@/utils/encryption'
+import { getPlan } from '@/lib/plans'
 
 export async function signOutAction() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
+  // Sign-out must never be blocked by a failed remote token revoke. `scope: 'local'` clears
+  // the session cookies without depending on a round-trip to Supabase, and the try/catch
+  // ensures any transport error still falls through to cookie cleanup + redirect.
+  // NOTE: redirect() throws NEXT_REDIRECT, so it must stay OUTSIDE the try/catch.
+  try {
+    const supabase = await createClient()
+    await supabase.auth.signOut({ scope: 'local' })
+  } catch (err) {
+    console.error('[SIGN_OUT] supabase signOut failed, clearing cookies anyway:', err)
+  }
+
+  // Belt-and-braces: drop any lingering Supabase auth cookies directly, so the user is
+  // genuinely logged out even if the SDK failed to write its own removals.
+  try {
+    const cookieStore = await cookies()
+    for (const cookie of cookieStore.getAll()) {
+      if (cookie.name.startsWith('sb-')) cookieStore.delete(cookie.name)
+    }
+  } catch (err) {
+    console.error('[SIGN_OUT] cookie cleanup failed:', err)
+  }
+
   redirect('/login')
 }
 
@@ -83,6 +105,7 @@ export async function savePaymentConfigAction(formData: FormData) {
   if (!user) redirect('/login')
 
   const merchantUpiId = formData.get('merchantUpiId') as string
+  const merchantUpiQrUrl = formData.get('merchantUpiQrUrl') as string
   const rzpKeyId = formData.get('rzpKeyId') as string
   const rzpKeySecret = formData.get('rzpKeySecret') as string
   const paymentTier = formData.get('paymentTier') as string
@@ -97,6 +120,21 @@ export async function savePaymentConfigAction(formData: FormData) {
 
   if (!tenant) return { error: 'Tenant not found' }
 
+  // BYOK (bring-your-own Razorpay keys) is a paid entitlement. Enforce it here rather than
+  // only hiding it in the UI, so activating the tier can't be driven from a crafted request.
+  if (paymentTier === 'byok') {
+    const { data: sub } = await supabase
+      .from('subscriptions')
+      .select('plan_tier')
+      .eq('tenant_id', tenant.id)
+      .eq('status', 'active')
+      .maybeSingle()
+
+    if (!getPlan(sub?.plan_tier).features.razorpay_byok) {
+      return { error: 'Connecting your own Razorpay keys is available on the Research + Scale plan and above. Upgrade to enable it, or use Merchant UPI (0% fees) in the meantime.' }
+    }
+  }
+
   // Encrypt Razorpay key secret before storing (AES-256-GCM)
   let encryptedSecret: string | null = null
   if (rzpKeySecret && rzpKeySecret.trim()) {
@@ -110,22 +148,24 @@ export async function savePaymentConfigAction(formData: FormData) {
     }
   }
 
+  // Only touch a field when this submission actually included it — e.g.
+  // toggling COD alone must never wipe an already-saved UPI ID, QR code, or
+  // Razorpay keys just because this particular form submission didn't
+  // resend them.
   const updateData: Record<string, any> = {
-    merchant_upi_id: merchantUpiId ? merchantUpiId.trim() : null,
-    rzp_key_id: rzpKeyId ? rzpKeyId.trim() : null,
-    rzp_key_secret: encryptedSecret,
+    ...(formData.has('merchantUpiId') && { merchant_upi_id: merchantUpiId.trim() || null }),
+    ...(formData.has('merchantUpiQrUrl') && { merchant_upi_qr_url: merchantUpiQrUrl.trim() || null }),
+    ...(formData.has('rzpKeyId') && { rzp_key_id: rzpKeyId.trim() || null }),
+    ...(formData.has('rzpKeySecret') && rzpKeySecret.trim() && { rzp_key_secret: encryptedSecret }),
     ...(codEnabled !== undefined && { cod_enabled: codEnabled }),
   }
 
-  // Determine or enforce payment tier
+  // Payment tier only changes when this submission explicitly activated a
+  // tier (the Activate/Connect buttons send it) — never inferred from
+  // whichever fields happen to be non-empty, and never touched by the COD
+  // toggle's own submission.
   if (paymentTier) {
     updateData.payment_tier = paymentTier
-  } else if (rzpKeyId) {
-    updateData.payment_tier = 'byok'
-  } else if (merchantUpiId) {
-    updateData.payment_tier = 'free_upi'
-  } else {
-    updateData.payment_tier = 'free_upi'
   }
 
   const { error } = await supabase
@@ -180,7 +220,11 @@ export async function saveStorefrontAction(formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath('/dashboard/settings/storefront')
-  revalidatePath(`/store`)
+  // A bare '/store' does not invalidate the dynamic '/store/[slug]' pages
+  // that proxy.ts rewrites every request to — the 'page' type target below
+  // is the documented way to invalidate every tenant's storefront render at
+  // once regardless of which subdomain it is.
+  revalidatePath('/store/[slug]', 'page')
   return { success: true }
 }
 
@@ -206,6 +250,7 @@ export async function deleteProductAction(productId: string) {
   if (error) return { error: error.message }
 
   revalidatePath('/dashboard/products')
+  revalidatePath('/store/[slug]', 'page')
   return { success: true }
 }
 
@@ -231,6 +276,7 @@ export async function toggleProductStatusAction(productId: string, currentStatus
   if (error) return { error: error.message }
 
   revalidatePath('/dashboard/products')
+  revalidatePath('/store/[slug]', 'page')
   return { success: true }
 }
 
@@ -288,6 +334,7 @@ export async function saveProductEditAction(formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath('/dashboard/products')
+  revalidatePath('/store/[slug]', 'page')
   redirect('/dashboard/products')
 }
 

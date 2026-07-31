@@ -76,7 +76,7 @@ export default async function OrderTrackingPage(props: {
                       {/* Circle icon */}
                       <div className={`absolute -left-[45px] top-0.5 w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
                         step.completed
-                          ? 'bg-[var(--color-mark-ink)] text-white border-[var(--color-mark-ink)] shadow-md'
+                          ? 'bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] border-[var(--color-mark-ink)] shadow-md'
                           : step.active
                           ? 'bg-white text-[var(--color-mark-ink)] border-[var(--color-mark-ink)] animate-pulse'
                           : 'bg-white text-[var(--color-mark-secondary)]/30 border-[var(--color-mark-default)]'
@@ -119,7 +119,7 @@ export default async function OrderTrackingPage(props: {
                     href="https://www.delhivery.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-[var(--color-mark-ink)] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors"
+                    className="px-4 py-2 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors"
                   >
                     Track Shipment →
                   </a>

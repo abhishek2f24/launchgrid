@@ -18,7 +18,7 @@ export default function CartPage() {
           <ShoppingBag className="w-16 h-16 text-[var(--color-mark-secondary)]/30 mb-6" />
           <h1 className="text-3xl font-playfair font-bold text-[var(--color-mark-ink)] mb-2 tracking-tight">Your cart is empty</h1>
           <p className="text-[var(--color-mark-secondary)] mb-8 max-w-sm">Add some products from the shop to get started.</p>
-          <a href={`/store/${slug}/shop`} className="px-8 py-4 bg-[var(--color-mark-ink)] text-white font-bold uppercase tracking-widest text-xs hover:bg-black transition-colors">
+          <a href={`/store/${slug}/shop`} className="px-8 py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] font-bold uppercase tracking-widest text-xs hover:bg-black transition-colors">
             Browse Products
           </a>
         </div>
@@ -46,8 +46,10 @@ export default function CartPage() {
             <div className="lg:col-span-2 flex flex-col gap-6">
               {items.map(item => {
                 const uniqueKey = item.productId + (item.variantId ? `_${item.variantId}` : '')
+                // Card must use the themed surface, not a hardcoded bg-white: on dark templates
+                // --color-mark-ink is white, so white-on-white made the whole line invisible.
                 return (
-                  <div key={uniqueKey} className="flex gap-4 p-4 bg-white border border-[var(--color-mark-default)] shadow-sm">
+                  <div key={uniqueKey} className="flex gap-4 p-4 bg-[var(--color-mark-surface)] border border-[var(--color-mark-default)] shadow-sm">
                     <div className="w-24 h-32 bg-[var(--color-mark-muted)] border border-[var(--color-mark-default)] shrink-0 overflow-hidden">
                       {item.image ? (
                         <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
@@ -123,7 +125,7 @@ export default function CartPage() {
 
                 <a
                   href={`/store/${slug}/checkout`}
-                  className="w-full flex items-center justify-center py-4 bg-[var(--color-mark-ink)] text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
+                  className="w-full flex items-center justify-center py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
                 >
                   Proceed to Checkout
                 </a>

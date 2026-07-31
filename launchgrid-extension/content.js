@@ -26,6 +26,20 @@
     try { return new URL(img, location.href).href } catch { return null }
   }
 
+  /** JSON-LD `image` is often an array of every gallery photo — grab them all, not just the first. */
+  function allImages(img) {
+    if (!img) return []
+    const list = Array.isArray(img) ? img : [img]
+    return list
+      .map(i => {
+        const raw = typeof i === 'object' && i !== null ? (i.url || i.contentUrl) : i
+        if (typeof raw !== 'string') return null
+        try { return new URL(raw, location.href).href } catch { return null }
+      })
+      .filter(Boolean)
+      .slice(0, 6)
+  }
+
   function fromJsonLd() {
     for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
       let data
@@ -48,6 +62,7 @@
           title: String(node.name).trim().slice(0, 200),
           price,
           image: firstImage(node.image),
+          images: allImages(node.image),
           description: typeof node.description === 'string' ? node.description.trim().slice(0, 600) : '',
           confidence: 'high',
         }
@@ -190,6 +205,9 @@
     // Fill gaps across strategies
     if (!product.image) product.image = meta('meta[property="og:image"]') || null
     if (!product.description) product.description = meta('meta[property="og:description"]').slice(0, 600)
+    if (!product.images || product.images.length === 0) {
+      product.images = product.image ? [product.image] : []
+    }
     return product
   }
 
@@ -374,7 +392,7 @@
             <button class="btn" id="lg-add" ${state.adding ? 'disabled' : ''}>
               ${state.adding ? '<span class="spin"></span>Adding…' : `Add to ${esc(state.auth?.store_name || 'my store')}`}
             </button>
-            <div class="note">Photos &amp; description import automatically</div>
+            <div class="note">${(p.images?.length || 1) > 1 ? `${p.images.length} photos` : 'Photo'} &amp; description import automatically</div>
           </div>
         </div>`
     }
@@ -461,7 +479,7 @@
           description: state.product.description || '',
           retail_price: sell,
           cost_price: cost,
-          image_urls: state.product.image ? [state.product.image] : [],
+          image_urls: state.product.images?.length ? state.product.images : (state.product.image ? [state.product.image] : []),
           source_url: location.href.split('?')[0],
         },
       })

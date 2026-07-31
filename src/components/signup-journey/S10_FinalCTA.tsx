@@ -10,17 +10,17 @@ export default function S10_FinalCTA() {
         <SectionReveal className="flex flex-col items-center gap-6">
           {/* Close the narrative loop: resolve the hero's opening line */}
           <h2 className="font-playfair text-3xl md:text-4xl font-bold text-[var(--color-mark-ink)] leading-tight">
-            Still thinking about it?
+            Start with the product decision.
           </h2>
           <p className="font-playfair italic text-[var(--color-mark-secondary)] text-lg -mt-2">
-            You&apos;re 15 minutes away from done thinking.
+            Research the opportunity first. Build the store when the numbers support it.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Link
-              href="/onboarding"
+              href="/research"
               className="bg-[var(--color-mark-ink)] text-white font-inter text-sm font-bold py-4 px-10 rounded-xl hover:bg-black transition-all shadow-lg active:scale-[0.98]"
             >
-              Start building my store →
+              Research a product idea →
             </Link>
             <Link
               href="/login"
@@ -32,7 +32,7 @@ export default function S10_FinalCTA() {
           <div className="flex items-center gap-6 text-xs text-[var(--color-mark-secondary)] mt-2 opacity-80">
             <span>No credit card required</span>
             <span>·</span>
-            <span>Store live in minutes</span>
+            <span>Evidence before inventory</span>
             <span>·</span>
             <span>Cancel anytime</span>
           </div>

@@ -18,13 +18,14 @@ import Image from 'next/image'
 
 type AdFormat = 'meta_feed' | 'meta_story' | 'whatsapp_status' | 'google_display'
 
+// Mirrors the real products table: `title`, `retail_price`, `image_urls`.
 interface Product {
   id: string
-  name: string
+  title?: string
   description?: string
-  selling_price?: number
-  price?: number
-  images?: string[]
+  retail_price?: number
+  compare_at_price?: number
+  image_urls?: string[]
   global_dropship_catalog?: {
     title?: string
     image_urls?: string[]
@@ -78,7 +79,7 @@ const AD_FORMATS: { id: AdFormat; label: string; description: string; badge: str
 // ---------------------------------------------------------------------------
 
 function getProductImageUrl(product: Product): string | null {
-  if (product.images && product.images.length > 0) return product.images[0]
+  if (product.image_urls && product.image_urls.length > 0) return product.image_urls[0]
   if (product.global_dropship_catalog?.image_urls?.length) {
     return product.global_dropship_catalog.image_urls[0]
   }
@@ -86,11 +87,11 @@ function getProductImageUrl(product: Product): string | null {
 }
 
 function getProductPrice(product: Product): number | undefined {
-  return product.selling_price ?? product.price ?? product.global_dropship_catalog?.base_price
+  return product.retail_price ?? product.global_dropship_catalog?.base_price ?? product.compare_at_price
 }
 
 function getProductName(product: Product): string {
-  return product.name || product.global_dropship_catalog?.title || 'Product'
+  return product.title || product.global_dropship_catalog?.title || 'Product'
 }
 
 // ---------------------------------------------------------------------------

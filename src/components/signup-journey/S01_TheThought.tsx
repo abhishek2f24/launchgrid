@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
-// (Link import removed — hero CTA is now the idea form)
+import Link from 'next/link';
+import { ArrowRight, SearchCheck } from 'lucide-react';
 import { ChapterLabel } from '../ui-landing/ChapterLabel';
 import { EditorialHeadline } from '../ui-landing/EditorialHeadline';
 
@@ -34,10 +34,10 @@ export default function S01_TheThought() {
     return () => clearInterval(t)
   }, [idea])
 
-  const startBuilding = (e: React.FormEvent) => {
+  const startResearch = (e: React.FormEvent) => {
     e.preventDefault()
     const q = idea.trim()
-    router.push(q ? `/onboarding?idea=${encodeURIComponent(q)}` : '/onboarding')
+    router.push(q ? `/research?idea=${encodeURIComponent(q)}` : '/research')
   }
 
   useEffect(() => {
@@ -61,11 +61,11 @@ export default function S01_TheThought() {
         animate={{ y: 0 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
-        <ChapterLabel chapter="Chapter 01" label="The Thought" />
+        <ChapterLabel chapter="Chapter 01" label="The Opportunity" />
 
         {/* priority=true → CSS-animated static render, LCP-safe (no JS opacity gate) */}
         <EditorialHeadline
-          text={"You've thought about it\nfor years. Launch it\nin 15 minutes."}
+          text={"Find a product worth\nbuilding. Then launch\nit in 15 minutes."}
           size="xl"
           priority
           as="h1"
@@ -73,24 +73,23 @@ export default function S01_TheThought() {
         />
 
         <p className="body-lg text-[var(--color-mark-secondary)] max-w-lg mx-auto">
-          LaunchGrid turns your idea into a real online store —
-          products, UPI &amp; COD payments, GST handled.
-          Most people never start. You&apos;re about to.
+          Start with the decision that matters: what to sell, who to source from,
+          and whether the margin is worth the risk. Then turn a winning idea into a store.
         </p>
 
-        {/* The hero IS the product: type your idea, start building */}
+        {/* The hero starts the research journey; store creation follows a validated decision. */}
         <div className="mt-10 flex flex-col items-center gap-3 relative z-20">
           <form
-            onSubmit={startBuilding}
+            onSubmit={startResearch}
             className="w-full max-w-xl flex items-stretch gap-0 bg-white border border-black/10 rounded-2xl shadow-[0_8px_40px_rgba(26,26,24,0.08)] focus-within:border-[var(--color-mark-amber,#FF8A00)] focus-within:shadow-[0_8px_40px_rgba(255,138,0,0.12)] transition-all overflow-hidden"
           >
-            <label htmlFor="hero-idea" className="sr-only">What do you want to sell?</label>
+            <label htmlFor="hero-idea" className="sr-only">What product do you want to research?</label>
             <input
               id="hero-idea"
               type="text"
               value={idea}
               onChange={e => setIdea(e.target.value)}
-              placeholder={`I want to sell ${IDEA_PLACEHOLDERS[placeholderIdx]}…`}
+              placeholder={`Research ${IDEA_PLACEHOLDERS[placeholderIdx]}…`}
               className="flex-1 min-w-0 px-5 py-4 font-inter text-[15px] font-medium text-[var(--color-mark-ink)] placeholder:text-[var(--color-mark-secondary)]/70 bg-transparent focus:outline-none"
               autoComplete="off"
             />
@@ -98,19 +97,26 @@ export default function S01_TheThought() {
               type="submit"
               className="shrink-0 m-1.5 inline-flex items-center gap-2 bg-[var(--color-mark-ink)] text-white font-inter font-bold text-sm py-3 px-5 sm:px-7 rounded-xl hover:bg-black transition-all duration-200 active:scale-[0.98] group"
             >
-              <span className="hidden sm:inline">Build my store</span>
-              <span className="sm:hidden">Build</span>
+              <SearchCheck className="w-4 h-4" />
+              <span className="hidden sm:inline">Research this product</span>
+              <span className="sm:hidden">Research</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
           </form>
+          <Link
+            href="/onboarding"
+            className="font-inter text-sm font-semibold text-[var(--color-mark-secondary)] underline underline-offset-4 decoration-[var(--color-mark-amber)]/60 hover:text-[var(--color-mark-ink)] hover:decoration-[var(--color-mark-amber)] transition-colors"
+          >
+            I already know what to sell — build my store →
+          </Link>
           <p className="font-inter text-[11px] sm:text-xs font-medium text-[var(--color-mark-secondary)] flex flex-wrap justify-center items-center gap-x-2 gap-y-1 mt-2">
-            <span>Free starter plan available</span>
+            <span>Start with product research</span>
             <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
-            <span>Plans from ₹1,399/mo</span>
+            <span>Use your own supplier quotes</span>
             <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
-            <span>No GSTIN needed to start</span>
+            <span>Build your store after validation</span>
             <span className="text-[var(--color-mark-default)] hidden sm:inline">•</span>
-            <span>Cancel anytime, keep your data</span>
+            <span>Keep your research with your store</span>
           </p>
         </div>
 

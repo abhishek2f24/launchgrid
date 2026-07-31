@@ -18,6 +18,8 @@ export function SignupForm() {
 
   // Pre-fill from URL ?ref= but allow manual edit
   const urlRef = searchParams.get('ref') || '';
+  const requestedNext = searchParams.get('next');
+  const nextRoute = requestedNext?.startsWith('/dashboard/') ? requestedNext : '/dashboard';
   const [refCode, setRefCode] = useState(urlRef);
 
   const supabase = createClient();
@@ -60,7 +62,7 @@ export function SignupForm() {
     trackLead();
 
     if (data.session) {
-      router.push('/dashboard');
+      router.push(nextRoute);
       router.refresh();
     } else {
       setError('Check your email to verify your account.');
@@ -177,7 +179,7 @@ export function SignupForm() {
           disabled={loading}
           className="mt-2 w-full bg-[var(--color-mark-ink)] text-white font-inter text-sm font-bold py-4 rounded-xl hover:bg-black/90 active:scale-[0.98] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 group disabled:opacity-50"
         >
-          {loading ? 'Creating Store...' : 'Create My Store'}
+          {loading ? 'Creating account...' : 'Create free account'}
           {!loading && (
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />

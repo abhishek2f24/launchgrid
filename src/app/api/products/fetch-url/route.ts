@@ -74,14 +74,80 @@ function extractPriceFromText(text: string): number | null {
   return null
 }
 
+/** Amazon/Flipkart CDNs embed a size modifier in the image URL (e.g. `._SL500_`, `._SX300_`)
+ *  that serves a downscaled thumbnail — strip it so the browser fetches the original full-res image. */
+/** Site chrome that marketplaces serve from their image CDNs — never a product photo. */
+function isProductPhoto(src: string): boolean {
+  if (!/^https?:\/\//i.test(src)) return false
+
+  // Must actually look like an image. Page URLs and anchors (e.g. the product page itself
+  // ending in "#") were being collected as "images" and rendered as broken thumbnails.
+  const looksLikeImage =
+    /\.(jpe?g|png|webp|avif|gif)(\?|$)/i.test(src) ||
+    /(images?|img|media|photo|cdn)[./-]/i.test(new URL(src).hostname + new URL(src).pathname)
+  if (!looksLikeImage) return false
+
+  // SVGs on marketplaces are logos/sprites/badges, never product shots.
+  if (/\.svg(\?|$)/i.test(src)) return false
+
+  const junk = ['icon', 'logo', 'favicon', 'sprite', 'placeholder', 'pixel', '1x1', 'batman-returns', 'static-assets', '/promos/', 'banner']
+  const lower = src.toLowerCase()
+  return !junk.some((j) => lower.includes(j))
+}
+
+function upscaleImageUrl(url: string): string {
+  if (url.includes('media-amazon.com') || url.includes('ssl-images-amazon.com')) {
+    return url.replace(/\._[A-Z]{2}\d+(?:_[A-Z]{2}\d+)*_\./, '.')
+  }
+  if (url.includes('rukminim') && url.includes('flixcart.com')) {
+    return url.replace(/\/image\/\d+\/\d+\//, '/image/1024/1024/')
+  }
+  return url
+}
+
 /** Strip trailing site name suffixes like " | Amazon.in" or " — Flipkart" */
 const SITE_SUFFIX_RE = /\s*[|—–\-]\s*(Amazon|Flipkart|Meesho|Myntra|Nykaa|Ajio|Snapdeal|Tata\s*Cliq|Shopify|Lazada|Alibaba|eBay|Etsy|Swiggy|Zomato|Blinkit|Zepto|JioMart|GlowRoad|Roposo)[^|—–\-]*$/i
+
+/**
+ * Marketplace <title> tags are SEO strings, not product names — e.g.
+ *   "Mivi DuoPods Oris AI ENC Bluetooth Price in India - Buy Mivi DuoPods Oris AI ENC
+ *    Bluetooth Online - Mivi : Flipkart.com"
+ * Pasting that straight into a storefront listing is unusable, so reduce it to the product
+ * name. JSON-LD `name` is preferred over this wherever the page provides it.
+ */
+function cleanProductTitle(raw: string): string {
+  let t = raw.trim()
+
+  // "… : Flipkart.com" / "… | Amazon.in" style trailing site attribution.
+  t = t.replace(/\s*[:|]\s*[A-Za-z0-9.\- ]*\.(com|in|co\.in|net|org)\s*$/i, '')
+  t = t.replace(SITE_SUFFIX_RE, '')
+
+  // Everything from the first SEO boilerplate marker onwards is not the product name.
+  t = t.split(/\s+(?:Price\s+in\s+India|Buy\s+Online|at\s+Best\s+Price|Online\s+at\s+Best)\b/i)[0]
+  t = t.replace(/\s*[-–—]\s*Buy\s+.*$/i, '')
+  t = t.replace(/\s*[-–—|:]\s*$/,'')
+
+  return t.trim()
+}
 
 // ── Route Handler ─────────────────────────────────────────────────────────────
 
 export async function POST(req: Request) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = (await supabase.auth.getUser()).data.user
+
+  // Accept a Bearer token as well as the session cookie, matching /api/products/add.
+  // Without this, non-browser callers (the extension's sourcing flow, CLI import tooling)
+  // got a 401 from this endpoint but succeeded against the add endpoint — an inconsistency
+  // that made the two halves of the import pipeline unusable together.
+  if (!user) {
+    const authHeader = req.headers.get('Authorization')
+    if (authHeader?.startsWith('Bearer ')) {
+      const { data } = await supabase.auth.getUser(authHeader.slice(7))
+      user = data.user
+    }
+  }
+
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { url } = await req.json()
@@ -116,6 +182,8 @@ export async function POST(req: Request) {
   let title:       string | null = null
   let description: string | null = null
   let price:       number | null = null
+  /** True once the price came from structured data (JSON-LD / og:price) rather than a text scan. */
+  let priceIsStructured = false
   let images:      string[]      = []
   const sourceSite = parsed.hostname.replace(/^www\./, '')
 
@@ -143,9 +211,9 @@ export async function POST(req: Request) {
       // Jina wraps response under .data in some versions, root in others
       const data = jinaJson.data ?? jinaJson
 
-      // Title
+      // Title (SEO page title — refined below if the page exposes JSON-LD `name`)
       const rawTitle = (data.title || '').trim()
-      title = rawTitle.replace(SITE_SUFFIX_RE, '').trim() || null
+      title = cleanProductTitle(rawTitle) || null
 
       // Description
       description = (data.description || '').trim() || null
@@ -158,14 +226,8 @@ export async function POST(req: Request) {
       if (Array.isArray(data.images)) {
         images = data.images
           .map((img: any) => img.src || img.url || (typeof img === 'string' ? img : null))
-          .filter((src: any): src is string =>
-            typeof src === 'string' &&
-            src.startsWith('http') &&
-            !src.includes('icon') &&
-            !src.includes('logo') &&
-            !src.includes('favicon') &&
-            !src.includes('sprite')
-          )
+          .filter((src: any): src is string => typeof src === 'string' && isProductPhoto(src))
+          .map(upscaleImageUrl)
           .slice(0, 6)
       }
 
@@ -174,13 +236,8 @@ export async function POST(req: Request) {
         const mdImgs = [...content.matchAll(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/g)]
         images = mdImgs
           .map(m => m[1])
-          .filter(src =>
-            !src.includes('icon') &&
-            !src.includes('logo') &&
-            !src.includes('favicon') &&
-            !src.includes('1x1') &&
-            !src.includes('pixel')
-          )
+          .filter(isProductPhoto)
+          .map(upscaleImageUrl)
           .slice(0, 6)
       }
     }
@@ -191,7 +248,13 @@ export async function POST(req: Request) {
   // ─── Strategy 2: Direct fetch (fallback for unprotected sites) ──────────────
   // Works for most Shopify stores, WooCommerce sites, and any site without
   // aggressive bot protection. Supplements Jina if images/price is missing.
-  if (!title || price === null || images.length === 0) {
+  // Also run when the title still looks like an SEO string, or when the only price we have
+  // came from scanning page text. Text scanning routinely latches onto an unrelated figure
+  // (EMI instalment, exchange offer, bank cashback), so a "successful" Jina fetch must not
+  // be allowed to lock in an unverified price when the page exposes structured data.
+  const titleLooksLikeSeoString = !!title && /\b(buy|price in india|best price)\b|\.(com|in)\b/i.test(title)
+
+  if (!title || price === null || images.length === 0 || titleLooksLikeSeoString || !priceIsStructured) {
     try {
       const directController = new AbortController()
       const directTimeout = setTimeout(() => directController.abort(), 12_000)
@@ -217,7 +280,12 @@ export async function POST(req: Request) {
 
       if (res.ok && (res.headers.get('content-type') || '').includes('html')) {
         const buffer = await res.arrayBuffer()
-        const html   = new TextDecoder('utf-8', { fatal: false }).decode(buffer.slice(0, 512_000))
+        // Marketplace product pages are large (Flipkart ≈1.7 MB) and put their JSON-LD block
+        // near the END of the document — a 512 KB window cut it off entirely, which is why
+        // structured title/price extraction silently never fired. Still bounded, just big
+        // enough to actually reach the metadata we came for.
+        const MAX_HTML_BYTES = 4_000_000
+        const html   = new TextDecoder('utf-8', { fatal: false }).decode(buffer.slice(0, MAX_HTML_BYTES))
 
         const ld            = getJsonLd(html)
         const ogTitle       = getMeta(html, 'property', 'og:title')
@@ -227,21 +295,30 @@ export async function POST(req: Request) {
         const metaDesc      = getMeta(html, 'name', 'description')
         const titleTag      = html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]?.trim() || ''
 
-        if (!title) {
-          const candidate = (ld?.name || ogTitle || titleTag).replace(SITE_SUFFIX_RE, '').trim()
-          title = candidate || null
+        // JSON-LD `name` is the actual product name the merchant wants, so it OVERRIDES the
+        // SEO <title>/Jina title rather than only filling a gap.
+        if (ld?.name) {
+          title = cleanProductTitle(String(ld.name)) || title
+        } else if (!title) {
+          title = cleanProductTitle(ogTitle || titleTag) || null
         }
         if (!description) {
           description = ld?.description || ogDesc || metaDesc || null
         }
-        if (price === null) {
-          price = parsePrice(ogPrice || '') ?? priceFromJsonLd(ld || {}) ?? null
+        // Structured price beats the text scan, which can latch onto an unrelated figure on
+        // the page (an EMI instalment, exchange offer, or bank cashback amount).
+        const structuredPrice = priceFromJsonLd(ld || {}) ?? parsePrice(ogPrice || '')
+        if (structuredPrice !== null && structuredPrice !== undefined) {
+          price = structuredPrice
+          priceIsStructured = true
         }
         if (images.length === 0) {
           const ldImgs = ld ? imagesFromJsonLd(ld) : []
           if (ogImage) ldImgs.push(ogImage)
           images = [...new Set(ldImgs)]
             .filter(u => { try { new URL(u); return true } catch { return false } })
+            .filter(isProductPhoto)
+            .map(upscaleImageUrl)
             .slice(0, 6)
         }
       }

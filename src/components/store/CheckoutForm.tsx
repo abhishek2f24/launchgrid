@@ -196,7 +196,7 @@ export function CheckoutForm({ config }: { config: Config }) {
 
   if (items.length === 0 && !success && !upiState && !confirmingRazorpay) {
     return (
-      <div className="text-center py-16 bg-white border border-[var(--color-mark-default)] p-8">
+      <div className="text-center py-16 bg-[var(--color-mark-surface)] border border-[var(--color-mark-default)] p-8">
         <ShoppingBag className="w-12 h-12 text-[var(--color-mark-secondary)]/30 mx-auto mb-4" />
         <p className="text-[var(--color-mark-secondary)]">Your cart is empty. <a href={`/store/${slug}/shop`} className="text-[var(--color-mark-ink)] font-bold uppercase tracking-wider text-xs">Shop now</a></p>
       </div>
@@ -206,7 +206,7 @@ export function CheckoutForm({ config }: { config: Config }) {
   // 1. Confirming Razorpay Webhook Screen
   if (confirmingRazorpay) {
     return (
-      <div className="text-center py-16 px-6 bg-white border border-[var(--color-mark-default)] shadow-sm space-y-6">
+      <div className="text-center py-16 px-6 bg-[var(--color-mark-surface)] border border-[var(--color-mark-default)] shadow-sm space-y-6">
         <Loader2 className="w-16 h-16 text-[var(--color-mark-ink)] mx-auto animate-spin" />
         <h2 className="text-2xl font-playfair font-bold text-[var(--color-mark-ink)]">Confirming Your Payment...</h2>
         <p className="text-[var(--color-mark-secondary)] max-w-sm mx-auto text-sm leading-relaxed">
@@ -219,7 +219,7 @@ export function CheckoutForm({ config }: { config: Config }) {
   // 2. UPI Deep Link / QR Code Screen (C-04)
   if (upiState) {
     return (
-      <div className="text-center py-12 px-6 bg-white border border-[var(--color-mark-default)] shadow-sm space-y-6 font-inter">
+      <div className="text-center py-12 px-6 bg-[var(--color-mark-surface)] border border-[var(--color-mark-default)] shadow-sm space-y-6 font-inter">
         <h2 className="text-2xl font-playfair font-bold text-[var(--color-mark-ink)]">Complete Your UPI Payment</h2>
         <p className="text-sm text-[var(--color-mark-secondary)] max-w-md mx-auto leading-relaxed">
           Please pay <strong>₹{finalTotal}</strong> to complete your order. Scan the QR code using any UPI app (GPay, PhonePe, Paytm, BHIM) or click the link below on mobile.
@@ -241,7 +241,7 @@ export function CheckoutForm({ config }: { config: Config }) {
         )}
 
         <div className="flex flex-col gap-3.5 max-w-xs mx-auto pt-4">
-          <a href={upiState.upiLink} className="w-full py-4 bg-[var(--color-mark-ink)] text-white text-xs font-bold uppercase tracking-widest hover:bg-black text-center transition-colors shadow-md">
+          <a href={upiState.upiLink} className="w-full py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-xs font-bold uppercase tracking-widest hover:bg-black text-center transition-colors shadow-md">
             Pay via UPI App
           </a>
           <button 
@@ -267,7 +267,7 @@ export function CheckoutForm({ config }: { config: Config }) {
   // 3. Success Screen (U-02 copy check)
   if (success) {
     return (
-      <div className="text-center py-16 px-6 bg-white border border-[var(--color-mark-default)] shadow-sm space-y-4">
+      <div className="text-center py-16 px-6 bg-[var(--color-mark-surface)] border border-[var(--color-mark-default)] shadow-sm space-y-4">
         <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto animate-in zoom-in duration-500" />
         <h2 className="text-2xl font-playfair font-bold text-[var(--color-mark-ink)]">Order Placed!</h2>
         <p className="text-[var(--color-mark-secondary)] max-w-sm mx-auto text-sm leading-relaxed">
@@ -276,7 +276,7 @@ export function CheckoutForm({ config }: { config: Config }) {
             : `Thank you for your purchase. Your Order ID is #${successOrderId.split('-')[0].toUpperCase()}. Please keep it for your reference.`
           }
         </p>
-        <a href={`/store/${slug}`} className="inline-block mt-4 px-8 py-4 bg-[var(--color-mark-ink)] text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors">
+        <a href={`/store/${slug}`} className="inline-block mt-4 px-8 py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors">
           Back to Home
         </a>
       </div>
@@ -325,6 +325,20 @@ export function CheckoutForm({ config }: { config: Config }) {
     setError('')
     if (!form.name || !form.phone || !form.address || !form.city || !form.state || !form.pincode) {
       setError('Please fill all required fields.')
+      return
+    }
+
+    // A COD order is only fulfillable if the merchant can actually call the buyer, so the
+    // phone must be a real Indian mobile number. Accepts optional +91/0 prefix and spaces
+    // or dashes; rejects short/garbage input like "123".
+    const phoneDigits = form.phone.replace(/[\s-]/g, '').replace(/^(\+91|0)/, '')
+    if (!/^[6-9]\d{9}$/.test(phoneDigits)) {
+      setError('Enter a valid 10-digit Indian mobile number so we can confirm your order.')
+      return
+    }
+
+    if (!/^\d{6}$/.test(form.pincode.trim())) {
+      setError('Enter a valid 6-digit PIN code.')
       return
     }
 
@@ -399,7 +413,7 @@ export function CheckoutForm({ config }: { config: Config }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 font-inter bg-white p-6 md:p-10 border border-[var(--color-mark-default)] shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-8 font-inter bg-[var(--color-mark-surface)] p-6 md:p-10 border border-[var(--color-mark-default)] shadow-sm">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
           {error}
@@ -492,7 +506,7 @@ export function CheckoutForm({ config }: { config: Config }) {
               type="button"
               onClick={handleApplyCoupon}
               disabled={couponLoading || !couponCode.trim()}
-              className="px-6 py-3 bg-[var(--color-mark-ink)] text-white text-xs font-bold uppercase tracking-widest hover:bg-black disabled:opacity-50 transition-colors"
+              className="px-6 py-3 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-xs font-bold uppercase tracking-widest hover:bg-black disabled:opacity-50 transition-colors"
             >
               {couponLoading ? 'Applying...' : 'Apply'}
             </button>
@@ -519,7 +533,7 @@ export function CheckoutForm({ config }: { config: Config }) {
                   : 'bg-[var(--color-mark-base)] border-[var(--color-mark-default)] text-[var(--color-mark-ink)]'
               }`}
             >
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${selectedMethod === 'online' ? 'bg-white/20' : 'bg-[var(--color-mark-ink)] text-white'}`}>
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${selectedMethod === 'online' ? 'bg-white/20' : 'bg-[var(--color-mark-ink)] text-[var(--color-mark-base)]'}`}>
                 {config.rzpKeyId ? <CreditCard className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
               </div>
               <div>
@@ -545,7 +559,7 @@ export function CheckoutForm({ config }: { config: Config }) {
                     : 'bg-[var(--color-mark-base)] border-[var(--color-mark-default)] text-[var(--color-mark-ink)]'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${selectedMethod === 'cod' ? 'bg-white/20' : 'bg-[var(--color-mark-ink)] text-white'}`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${selectedMethod === 'cod' ? 'bg-white/20' : 'bg-[var(--color-mark-ink)] text-[var(--color-mark-base)]'}`}>
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
@@ -594,7 +608,7 @@ export function CheckoutForm({ config }: { config: Config }) {
                           type="button"
                           onClick={handleVerifyCodOtp}
                           disabled={codOtpLoading}
-                          className="px-4 py-2 bg-[var(--color-mark-ink)] text-white text-xs font-bold uppercase tracking-widest disabled:opacity-50 transition-colors"
+                          className="px-4 py-2 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-xs font-bold uppercase tracking-widest disabled:opacity-50 transition-colors"
                         >
                           {codOtpLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
                         </button>
@@ -613,7 +627,7 @@ export function CheckoutForm({ config }: { config: Config }) {
           {/* Fallback: no payment config and no COD */}
           {!config.rzpKeyId && !config.merchantUpiId && !config.codEnabled && (
             <div className="p-4 bg-[var(--color-mark-base)] border border-[var(--color-mark-default)] flex gap-3.5 items-start">
-              <div className="w-8 h-8 rounded-xl bg-[var(--color-mark-ink)] text-white flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] flex items-center justify-center shrink-0">
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <div>
@@ -631,7 +645,7 @@ export function CheckoutForm({ config }: { config: Config }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-[var(--color-mark-ink)] text-white text-sm font-bold uppercase tracking-widest hover:bg-black disabled:opacity-50 flex items-center justify-center gap-3 transition-colors"
+          className="w-full py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-sm font-bold uppercase tracking-widest hover:bg-black disabled:opacity-50 flex items-center justify-center gap-3 transition-colors"
         >
           {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing…</> : selectedMethod === 'cod' ? `Place COD Order — ₹${finalTotal}` : `Pay ₹${finalTotal}`}
         </button>

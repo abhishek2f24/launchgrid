@@ -9,15 +9,14 @@ import { Footer } from '@/components/signup-journey/Footer';
 // 4. The Money + real stores · 5. The Door (FAQ + final CTA)
 // Removed from flow: S03_TheReality (redundant with S02), S_ToolComparison
 // (comparison intent lives on /vs-shopify and /vs-dukaan), S08_SocialProof
-// (fictional testimonials — replaced by RealStoresGallery, strictly real data).
+// (fictional named testimonials with invented revenue figures — replaced
+// below by RealStoresGallery, which queries real tenants and renders
+// nothing if none qualify rather than ever inventing a store).
 import S01_TheThought from '@/components/signup-journey/S01_TheThought';
-import S02_ThePain from '@/components/signup-journey/S02_ThePain';
-import S04_TheTransformation from '@/components/signup-journey/S04_TheTransformation';
 import S05_TheMoney from '@/components/signup-journey/S05_TheMoney';
 import S06_TheMethod from '@/components/signup-journey/S06_TheMethod';
-import S07_LiveDemo from '@/components/signup-journey/S07_LiveDemo';
+import { SResearchToStore } from '@/components/signup-journey/S_ResearchToStore';
 import { RealStoresGallery } from '@/components/signup-journey/RealStoresGallery';
-import S08_SocialProof from '@/components/signup-journey/S08_SocialProof';
 import S_FAQ from '@/components/signup-journey/S_FAQ';
 import S10_FinalCTA from '@/components/signup-journey/S10_FinalCTA';
 
@@ -184,6 +183,7 @@ export default function MarketingPage() {
         "Order and inventory management",
         "Analytics dashboard",
         "WhatsApp Business integration",
+        "Product research and supplier sourcing tools",
         "Meta Ads templates (Max and Ultra plans)"
       ],
       "offers": {
@@ -324,6 +324,14 @@ export default function MarketingPage() {
         },
         {
           "@type": "Question",
+          "name": "Can LaunchGrid help me decide what to sell?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. LaunchGrid Research helps you compare supplier evidence, estimate landed cost, model margin, and review a launch verdict before you create a store listing. You can explore the Research preview without logging in, then run research for your own product idea after you start building."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "What happens to my store data if I cancel my subscription?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -396,16 +404,13 @@ export default function MarketingPage() {
       <main className="flex-1 w-full overflow-x-clip">
         {/* Movement 1 — The Proof */}
         <S01_TheThought />
-        {/* Movement 2 — The Pain → The Turn */}
-        <S02_ThePain />
-        <S04_TheTransformation />
-        {/* Movement 3 — The Method, then try it */}
+        {/* Movement 2 — Research, decide, then build */}
+        <SResearchToStore />
+        {/* Movement 3 — The method */}
         <S06_TheMethod />
-        <S07_LiveDemo />
         {/* Movement 4 — The Money, proven by real stores */}
         <S05_TheMoney />
-        <S08_SocialProof />
-        {/* <RealStoresGallery /> */}
+        <RealStoresGallery />
         {/* Movement 5 — The Door */}
         <S_FAQ />
         <S10_FinalCTA />

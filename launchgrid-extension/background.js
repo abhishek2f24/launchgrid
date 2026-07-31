@@ -26,7 +26,59 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     openAuth().then(sendResponse)
     return true
   }
+  // Supplier-evidence capture (content-supplier.js) — feeds the research module with data
+  // read off real supplier pages instead of values typed in by hand.
+  if (message.type === 'LIST_IDEAS') {
+    listIdeas().then(sendResponse)
+    return true
+  }
+  if (message.type === 'INGEST_SUPPLIER') {
+    ingestSupplier(message.data).then(sendResponse)
+    return true
+  }
 })
+
+async function authedFetch(path, init = {}) {
+  const { lg_token } = await chrome.storage.local.get(['lg_token'])
+  const baseUrl = await getBackend()
+  if (!lg_token) return { authError: true }
+  const res = await fetch(`${baseUrl}${path}`, {
+    ...init,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${lg_token}`, ...(init.headers || {}) },
+  })
+  if (res.status === 401) {
+    await chrome.storage.local.remove(['lg_token'])
+    return { authError: true }
+  }
+  return { res }
+}
+
+async function listIdeas() {
+  try {
+    const { res, authError } = await authedFetch('/api/research/my-ideas')
+    if (authError) return { ideas: [], error: 'Not connected to your store', code: 'AUTH_REQUIRED' }
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok) return { ideas: [], error: json.error || `Server error (${res.status})` }
+    return { ideas: json.ideas || [] }
+  } catch {
+    return { ideas: [], error: 'Network error' }
+  }
+}
+
+async function ingestSupplier(data) {
+  try {
+    const { res, authError } = await authedFetch('/api/research/ingest-supplier', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+    if (authError) return { success: false, error: 'Not connected to your store', code: 'AUTH_REQUIRED' }
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok) return { success: false, error: json.error || `Server error (${res.status})` }
+    return { success: true, supplier: json.supplier }
+  } catch {
+    return { success: false, error: 'Network error — is your store reachable?' }
+  }
+}
 
 async function getBackend() {
   const { lg_backend_url } = await chrome.storage.local.get(['lg_backend_url'])

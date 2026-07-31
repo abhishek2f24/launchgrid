@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { createClient } from '@/utils/supabase/server'
 import { createServiceClient } from '@/utils/supabase/service'
 import { notFound } from 'next/navigation'
@@ -59,7 +60,7 @@ export default async function CheckoutPage(props: { params: Promise<{ slug: stri
     )
   }
 
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
 
   return (
     <div className="theme-marketing min-h-screen bg-[var(--color-mark-base)] text-[var(--color-mark-ink)] font-inter relative pb-24">

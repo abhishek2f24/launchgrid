@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { Palette, Layout, Type, ExternalLink, Check, Loader2, Sparkles } from 'lucide-react'
+import { useState, useTransition, useRef } from 'react'
+import { Palette, Layout, Type, ExternalLink, Check, Loader2, Sparkles, Camera, ThumbsUp, AtSign, Megaphone, Images, Plus, Trash2, Timer } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
 
 // ── Templates ────────────────────────────────────────────────────────────────
 const TEMPLATES = [
@@ -166,15 +167,34 @@ const COLORS = [
   { id: 'mono',    hex: '#e5e7eb', name: 'Silver'  },
 ]
 
+interface SliderImage {
+  image_url: string
+  link_url?: string
+  title?: string
+}
+
 interface Props {
   subdomain: string
   initialTemplate: string
   initialColor: string
   initialTagline: string
   initialSubtitle: string
+  initialInstagramUrl?: string
+  initialFacebookUrl?: string
+  initialXUrl?: string
+  initialAnnouncementEnabled?: boolean
+  initialAnnouncementText?: string
+  initialAnnouncementCountdownAt?: string
+  initialSliderEnabled?: boolean
+  initialSliderImages?: SliderImage[]
 }
 
-export function StorefrontDesigner({ subdomain, initialTemplate, initialColor, initialTagline, initialSubtitle }: Props) {
+export function StorefrontDesigner({
+  subdomain, initialTemplate, initialColor, initialTagline, initialSubtitle,
+  initialInstagramUrl, initialFacebookUrl, initialXUrl,
+  initialAnnouncementEnabled, initialAnnouncementText, initialAnnouncementCountdownAt,
+  initialSliderEnabled, initialSliderImages,
+}: Props) {
   const [template, setTemplate] = useState(initialTemplate || 'minimal')
   const [color,    setColor]    = useState(initialColor    || 'purple')
   const [tagline,  setTagline]  = useState(initialTagline  || '')
@@ -182,7 +202,47 @@ export function StorefrontDesigner({ subdomain, initialTemplate, initialColor, i
   const [saved,    setSaved]    = useState(false)
   const [isPending, startTransition] = useTransition()
 
+  const [instagramUrl, setInstagramUrl] = useState(initialInstagramUrl || '')
+  const [facebookUrl,  setFacebookUrl]  = useState(initialFacebookUrl  || '')
+  const [xUrl,          setXUrl]          = useState(initialXUrl          || '')
+
+  const [announcementEnabled, setAnnouncementEnabled] = useState(initialAnnouncementEnabled || false)
+  const [announcementText,    setAnnouncementText]    = useState(initialAnnouncementText    || '')
+  const [announcementCountdownAt, setAnnouncementCountdownAt] = useState(
+    initialAnnouncementCountdownAt ? initialAnnouncementCountdownAt.slice(0, 16) : ''
+  )
+
+  const [sliderEnabled, setSliderEnabled] = useState(initialSliderEnabled || false)
+  const [sliderImages,  setSliderImages]  = useState<SliderImage[]>(initialSliderImages || [])
+  const [uploadingSlide, setUploadingSlide] = useState(false)
+  const sliderFileRef = useRef<HTMLInputElement>(null)
+
   const activeColor = COLORS.find(c => c.id === color)?.hex || '#8b5cf6'
+
+  async function handleSliderUpload(files: FileList | null) {
+    if (!files || files.length === 0) return
+    setUploadingSlide(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Sign in again to upload images')
+      const uploaded: SliderImage[] = []
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue
+        const path = `${user.id}/slider-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`
+        const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { upsert: false })
+        if (uploadError) throw uploadError
+        const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+        uploaded.push({ image_url: data.publicUrl })
+      }
+      setSliderImages(prev => [...prev, ...uploaded].slice(0, 5))
+    } catch (err) {
+      console.error('Slider upload failed:', err)
+    } finally {
+      setUploadingSlide(false)
+      if (sliderFileRef.current) sliderFileRef.current.value = ''
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -190,7 +250,15 @@ export function StorefrontDesigner({ subdomain, initialTemplate, initialColor, i
       const res = await fetch('/api/settings/storefront', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template_style: template, theme_color: color, tagline, hero_subtitle: subtitle }),
+        body: JSON.stringify({
+          template_style: template, theme_color: color, tagline, hero_subtitle: subtitle,
+          instagram_url: instagramUrl, facebook_url: facebookUrl, x_url: xUrl,
+          announcement_enabled: announcementEnabled,
+          announcement_text: announcementText,
+          announcement_countdown_at: announcementCountdownAt ? new Date(announcementCountdownAt).toISOString() : null,
+          slider_enabled: sliderEnabled,
+          slider_images: sliderImages,
+        }),
       })
       if (res.ok) {
         setSaved(true)
@@ -329,6 +397,121 @@ export function StorefrontDesigner({ subdomain, initialTemplate, initialColor, i
               />
             </div>
           </div>
+        </div>
+
+        {/* ── Social Handles ── */}
+        <div className="bg-white border border-black/5 rounded-[1.5rem] shadow-sm p-7">
+          <div className="flex items-center gap-3 mb-6 border-b border-black/5 pb-5">
+            <div className="w-8 h-8 rounded-lg bg-fuchsia-100 flex items-center justify-center">
+              <Camera className="w-4 h-4 text-fuchsia-600" />
+            </div>
+            <div>
+              <h2 className="font-bold text-[var(--color-mark-ink)]">Social Handles</h2>
+              <p className="text-xs text-[var(--color-mark-secondary)]">Shown as icons in your storefront footer. Leave blank to hide.</p>
+            </div>
+          </div>
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-3">
+              <Camera className="w-4 h-4 text-[var(--color-mark-secondary)] shrink-0" />
+              <input type="url" value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)}
+                placeholder="https://instagram.com/yourstore"
+                className="w-full px-4 py-2.5 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:ring-1 focus:ring-[var(--color-mark-ink)] transition-all shadow-sm" />
+            </div>
+            <div className="flex items-center gap-3">
+              <ThumbsUp className="w-4 h-4 text-[var(--color-mark-secondary)] shrink-0" />
+              <input type="url" value={facebookUrl} onChange={e => setFacebookUrl(e.target.value)}
+                placeholder="https://facebook.com/yourstore"
+                className="w-full px-4 py-2.5 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:ring-1 focus:ring-[var(--color-mark-ink)] transition-all shadow-sm" />
+            </div>
+            <div className="flex items-center gap-3">
+              <AtSign className="w-4 h-4 text-[var(--color-mark-secondary)] shrink-0" />
+              <input type="url" value={xUrl} onChange={e => setXUrl(e.target.value)}
+                placeholder="https://x.com/yourstore"
+                className="w-full px-4 py-2.5 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:ring-1 focus:ring-[var(--color-mark-ink)] transition-all shadow-sm" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Announcement / Countdown Bar ── */}
+        <div className="bg-white border border-black/5 rounded-[1.5rem] shadow-sm p-7">
+          <div className="flex items-center justify-between gap-3 mb-6 border-b border-black/5 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Megaphone className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <h2 className="font-bold text-[var(--color-mark-ink)]">Announcement Bar</h2>
+                <p className="text-xs text-[var(--color-mark-secondary)]">A thin bar at the top of your storefront — great for sale messages with an optional countdown.</p>
+              </div>
+            </div>
+            <button type="button" onClick={() => setAnnouncementEnabled(v => !v)}
+              className={`shrink-0 w-11 h-6 rounded-full transition-colors relative ${announcementEnabled ? 'bg-[var(--color-mark-ink)]' : 'bg-black/10'}`}>
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${announcementEnabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
+            </button>
+          </div>
+          {announcementEnabled && (
+            <div className="space-y-4 max-w-2xl">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60">Message</label>
+                <input type="text" value={announcementText} onChange={e => setAnnouncementText(e.target.value)}
+                  placeholder="e.g. Flat 20% off — ends soon!" maxLength={100}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:ring-1 focus:ring-[var(--color-mark-ink)] transition-all shadow-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]/60 flex items-center gap-1.5">
+                  <Timer className="w-3 h-3" /> Countdown ends at <span className="normal-case font-semibold text-[var(--color-mark-secondary)]/40">Optional</span>
+                </label>
+                <input type="datetime-local" value={announcementCountdownAt} onChange={e => setAnnouncementCountdownAt(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 bg-white text-sm text-[var(--color-mark-ink)] focus:outline-none focus:border-[var(--color-mark-ink)] focus:ring-1 focus:ring-[var(--color-mark-ink)] transition-all shadow-sm" />
+                <p className="text-[10px] text-[var(--color-mark-secondary)]/40">Leave blank to show the message without a live countdown.</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Homepage Image Slider ── */}
+        <div className="bg-white border border-black/5 rounded-[1.5rem] shadow-sm p-7">
+          <div className="flex items-center justify-between gap-3 mb-6 border-b border-black/5 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
+                <Images className="w-4 h-4 text-sky-600" />
+              </div>
+              <div>
+                <h2 className="font-bold text-[var(--color-mark-ink)]">Homepage Image Slider</h2>
+                <p className="text-xs text-[var(--color-mark-secondary)]">Up to 5 banner images shown at the top of your homepage, above the products.</p>
+              </div>
+            </div>
+            <button type="button" onClick={() => setSliderEnabled(v => !v)}
+              className={`shrink-0 w-11 h-6 rounded-full transition-colors relative ${sliderEnabled ? 'bg-[var(--color-mark-ink)]' : 'bg-black/10'}`}>
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${sliderEnabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
+            </button>
+          </div>
+          {sliderEnabled && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                {sliderImages.map((img, i) => (
+                  <div key={img.image_url + i} className="relative w-28 h-20 rounded-xl overflow-hidden border border-black/10 group">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                    <button type="button" onClick={() => setSliderImages(prev => prev.filter((_, idx) => idx !== i))}
+                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+                {sliderImages.length < 5 && (
+                  <button type="button" onClick={() => sliderFileRef.current?.click()} disabled={uploadingSlide}
+                    className="w-28 h-20 rounded-xl border-2 border-dashed border-black/15 flex flex-col items-center justify-center gap-1 text-[var(--color-mark-secondary)] hover:border-black/30 transition-colors">
+                    {uploadingSlide ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                    <span className="text-[10px] font-bold">{uploadingSlide ? 'Uploading' : 'Add image'}</span>
+                  </button>
+                )}
+                <input ref={sliderFileRef} type="file" accept="image/*" multiple hidden
+                  onChange={e => handleSliderUpload(e.target.files)} />
+              </div>
+              <p className="text-[10px] text-[var(--color-mark-secondary)]/40">{sliderImages.length}/5 images</p>
+            </div>
+          )}
         </div>
 
         {/* ── Sticky Save Bar ── */}

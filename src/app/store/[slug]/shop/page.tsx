@@ -71,8 +71,11 @@ export default async function ShopPage(props: { params: Promise<{ slug: string }
               const image = product.global_dropship_catalog?.image_urls?.[0] || product.image_urls?.[0]
               return (
                 <div key={product.id} className="group flex flex-col h-full bg-transparent">
-                  <a href={`/store/${params.slug}/product/${product.id}`} className="block mb-4">
-                    <div className="aspect-[4/5] bg-[var(--color-mark-muted)] relative border border-[var(--color-mark-default)] overflow-hidden">
+                  {/* The Add-to-Cart overlay is a SIBLING of the link (not a child) so a click on
+                      it never bubbles into the product link — this avoids needing an onClick
+                      handler here, which is not allowed in a Server Component. */}
+                  <div className="aspect-[4/5] bg-[var(--color-mark-muted)] relative border border-[var(--color-mark-default)] overflow-hidden mb-4">
+                    <a href={`/store/${params.slug}/product/${product.id}`} className="block w-full h-full">
                       {image ? (
                         <img src={image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                       ) : (
@@ -80,17 +83,14 @@ export default async function ShopPage(props: { params: Promise<{ slug: string }
                           <ShoppingBag className="w-8 h-8 text-[var(--color-mark-secondary)]/30" />
                         </div>
                       )}
-                      
-                      {/* Add to Cart Overlay */}
-                      <div className="absolute inset-0 bg-white/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        {/* Wrapper to block click from navigating to product page when clicking add to cart */}
-                        <div onClick={(e) => e.preventDefault()}>
-                          <AddToCartButton productId={product.id} title={product.title} price={product.retail_price || product.price} image={image} variant="minimal" />
-                        </div>
-                      </div>
+                    </a>
+
+                    {/* Add to Cart Overlay */}
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300">
+                      <AddToCartButton productId={product.id} title={product.title} price={product.retail_price || product.price} image={image} variant="minimal" />
                     </div>
-                  </a>
-                  
+                  </div>
+
                   <div className="flex flex-col flex-1 px-1 gap-1">
                     <h3 className="font-bold text-[var(--color-mark-ink)] text-sm tracking-tight">{product.title}</h3>
                     <div className="mt-auto flex items-center gap-2">

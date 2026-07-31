@@ -1,5 +1,7 @@
 'use client'
 
+import { tenantConfig } from '@/utils/storefront'
+
 import { useState, useEffect } from 'react'
 import {
   ArrowUpRight, TrendingUp, DollarSign, ShoppingCart, Activity,
@@ -416,7 +418,7 @@ export function DashboardClient({
         productCount,
         visitorCount,
         trafficSources,
-        shippingScope: tenant.business_configs?.[0]?.shipping_scope,
+        shippingScope: tenantConfig(tenant).shipping_scope,
         plan: tenant.subscriptions?.[0]?.plan_tier || 'free',
       }),
     })
@@ -447,7 +449,7 @@ export function DashboardClient({
 
   const unfulfilledFirstOrder = orders.find(o => o.fulfillment_status === 'unfulfilled')
   const hasFirstOrder = !!unfulfilledFirstOrder
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
 
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val)

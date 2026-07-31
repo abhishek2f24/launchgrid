@@ -143,7 +143,7 @@ export function ProductActions({ product, variants, whatsapp, storeId, isExpired
                   }}
                   className={`px-4 py-2.5 text-xs font-bold tracking-wider uppercase border transition-all duration-200 ${
                     isSelected
-                      ? 'bg-[var(--color-mark-ink)] text-white border-[var(--color-mark-ink)]'
+                      ? 'bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] border-[var(--color-mark-ink)]'
                       : 'bg-white border-[var(--color-mark-default)] text-[var(--color-mark-ink)] hover:border-[var(--color-mark-strong)]'
                   } ${v.stock <= 0 ? 'opacity-40 line-through' : ''}`}
                 >
@@ -206,7 +206,7 @@ export function ProductActions({ product, variants, whatsapp, storeId, isExpired
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock}
-          className="w-full py-4 bg-[var(--color-mark-ink)] text-white text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-colors disabled:opacity-50"
+          className="w-full py-4 bg-[var(--color-mark-ink)] text-[var(--color-mark-base)] text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-colors disabled:opacity-50"
         >
           {added ? (
             <><Check className="w-5 h-5" /> Added to Cart</>

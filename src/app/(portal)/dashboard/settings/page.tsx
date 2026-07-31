@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { getActiveTenant } from '@/utils/supabase/queries'
 import { Settings, Link as LinkIcon, Smartphone, CreditCard, Palette, ChevronRight, MessageCircle, FileText } from 'lucide-react'
 import { saveStoreDetailsAction, savePaymentConfigAction } from '@/actions/portal'
@@ -20,7 +21,7 @@ export default async function SettingsPage() {
   }
 
   const { tenant } = result
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
 
   return (
     <div className="p-8 max-w-4xl mx-auto font-inter">

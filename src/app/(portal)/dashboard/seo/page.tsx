@@ -1,3 +1,4 @@
+import { tenantConfig } from '@/utils/storefront'
 import { getActiveTenant } from '@/utils/supabase/queries'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
@@ -152,7 +153,7 @@ export default async function SeoPage() {
   }
 
   const { tenant } = result
-  const config = tenant.business_configs?.[0] || {}
+  const config = tenantConfig(tenant)
   const subdomain = tenant.subdomain
 
   // Product count via server client
@@ -174,7 +175,7 @@ export default async function SeoPage() {
   if (hasProducts)               score += 20
 
   const feedUrl = `https://launchgrid.in/api/shopping/feed?slug=${subdomain}`
-  const sitemapUrl = `https://launchgrid.in/sitemap.xml`
+  const sitemapUrl = `https://${subdomain}.launchgrid.in/sitemap.xml`
 
   return (
     <div className="p-8 max-w-4xl mx-auto font-inter space-y-8">

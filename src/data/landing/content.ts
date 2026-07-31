@@ -43,6 +43,7 @@ export const founderStories = [
 ];
 
 export const methodSteps = [
+  { id: '00', mission: 'Decide What to Sell', pain: "I don't know what will actually sell.", solution: "Research real suppliers, landed cost, and margin before you commit a rupee.", outcome: "You know your numbers before you build." },
   { id: '01', mission: 'Reserve Your Subdomain', pain: "I don't have a website.", solution: "You pick your store name. We provision it in 15 seconds.", outcome: "Your store URL is live." },
   { id: '02', mission: 'Build Your Brand', pain: "I need a logo and colors.", solution: "AI generates your brand identity on signup.", outcome: "You look professional from day one." },
   { id: '03', mission: 'Import Your Catalog', pain: "How do I upload 50 products?", solution: "One-click dropship catalog import.", outcome: "Your store is stocked instantly." },

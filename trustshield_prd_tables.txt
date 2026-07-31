@@ -1,0 +1,59 @@
+--- TABLE 0 ---
+Segment | Use Case | Willingness to Pay
+Consumer buyer | Used phone, laptop, camera, vehicle, property rental, travel booking | High when ticket size is above Rs. 5,000
+Consumer seller | Verify buyer before shipping product or accepting suspicious overpayment | Medium
+Freelancer / agency | Verify client identity, company, payment method and contract risk | Medium-high
+Small business | Verify supplier GST, bank, domain, address and reputation | High
+Broker / dealer | Bulk verification reports for buyers and sellers | High B2B subscription
+--- TABLE 1 ---
+Module | MVP Requirement | Priority
+Case Intake | Transaction type, amount, buyer/seller role, platform source, city, urgency | P0
+Evidence Upload | Images, PDFs, screenshots, QR code, chat screenshots, product photos | P0
+QR/UPI Analyzer | Decode QR when possible, extract VPA/payee name from screenshot, compare with claimed identity | P0
+Bank/Payment Consistency | Ask user to upload payment confirmation preview; compare account/UPI display name with seller name | P0
+Chat Risk Analyzer | Detect pressure tactics, advance fee language, refusal to video call, identity mismatch, fake courier language | P0
+Scenario Checklist Engine | Generate verification checklist based on case type and amount | P0
+Risk Score | 0-100 score with reasons and confidence level; never declare someone safe | P0
+Report Generation | Downloadable report with timestamp, inputs summary, red flags, recommendations and disclaimer | P0
+User Accounts | Phone OTP login, email optional, report history | P0
+Payments | Razorpay/UPI payments for Rs. 99 report credits; no escrow in MVP | P0
+Counterparty Consent Flow | Optional link to counterparty to voluntarily verify details; private result only as pass/warning signals | P1
+Fraud Report Network | Allow users to report scams; use internally as unverified signal until validated | P1
+B2B Dashboard | Bulk checks and API for dealers/brokers | P2
+--- TABLE 2 ---
+Scenario | Required Checks | Extra Recommended Checks
+Used phone/laptop | UPI/bank name consistency, seller phone, invoice name, IMEI/serial, product photo metadata where available | Video call with product live, battery health, original bill, face-to-face inspection
+Vehicle buying | Seller identity consistency, vehicle number, RC details where legally available, payment recipient match | Service history, challans, insurance, hypothecation, physical inspection
+Rental deposit | Owner/agent identity consistency, property address, rent agreement draft, payment recipient match | Meet owner, verify property possession, avoid token without visit
+Freelance/client | Company domain, GSTIN if business, email domain, contract, payment terms | Advance payment, milestone escrow, LinkedIn/company verification
+Business supplier | GSTIN, PAN/name consistency, bank name, website/domain age signal, invoice format | Physical address, sample order, trade references
+Job/investment offer | Fee demand, unrealistic return/salary, fake HR email, domain mismatch | Official career page, no payment for job, SEBI/RBI regulated entity check
+--- TABLE 3 ---
+Signal | Example | Score Impact
+Identity/payment mismatch | Seller says name A, QR/account shows name B | High negative
+Pressure tactic | Pay in 10 minutes or deal cancelled | Medium-high negative
+Refuses verification | No video call, no invoice, no inspection | Medium negative
+High amount, low evidence | Rs. 50,000+ with only WhatsApp chat | High negative
+Consistent proof | Name consistent across invoice, UPI, phone and chat | Positive
+Known scam pattern | Courier pickup overpayment, fake army/CISF seller, job registration fee | High negative
+--- TABLE 4 ---
+Platform | Requirements
+Android | Kotlin/Flutter or React Native app, camera upload, gallery import, share-to-app from WhatsApp/Telegram/Gallery, UPI QR screenshot analysis, push notifications, report history
+iOS | Same core flow, share extension for screenshots, camera upload, Apple sign-in optional, report history
+Web | Responsive PWA for desktop/mobile, upload evidence, dashboard, B2B console, admin review panel
+Admin | Case review queue, fraud report moderation, abuse handling, data deletion tools, refund handling, manual override with audit trail
+--- TABLE 5 ---
+Layer | Recommendation
+Frontend | React Native or Flutter for Android/iOS; Next.js for web and admin
+Backend | Node.js/NestJS or Python/FastAPI; PostgreSQL; Redis queue
+AI/OCR | Document OCR, QR parsing, LLM-based chat red-flag extraction with deterministic rule engine for scoring
+Storage | India-region cloud storage if available; encrypted object storage for evidence
+Payments | Razorpay/PayU/Cashfree for Rs. 99 report payments; do not hold counterparty funds in MVP
+Analytics | PostHog/Mixpanel, server-side event tracking, fraud taxonomy dashboard
+Security | Vault/KMS, WAF, audit logging, vulnerability scanning, CERT-In compliant logs
+--- TABLE 6 ---
+Phase | Build Outcome | Exit Criteria
+Week 1-2 | Clickable prototype + legal policy drafts + brand/domain | 20 user interviews; 3 core flows validated
+Week 3-6 | MVP web + Android beta with report generation | 100 test reports; payment success; no P0 privacy gaps
+Week 7-8 | Scenario expansion + admin review + Play Store closed test | 500 real-world cases; red-flag accuracy reviewed
+Week 9-12 | Public launch with used electronics and rental deposit positioning | Paid conversion >= 3%; refund/complaint rate tracked
