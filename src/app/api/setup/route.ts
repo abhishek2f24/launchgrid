@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { createServiceClient } from '@/utils/supabase/service'
 import { sendWelcomeEmail } from '@/lib/emails'
 import { resolvePlanTier } from '@/lib/plans'
+import { WELCOME_RESEARCH_CREDITS } from '@/lib/research/creditPacks'
 
 export async function POST(request: Request) {
   try {
@@ -97,6 +99,26 @@ export async function POST(request: Request) {
       trial_expires_at: isFreeSignup ? null : trialExpires.toISOString(),
       current_period_end: isFreeSignup ? null : trialExpires.toISOString(),
     })
+
+    // Welcome research credits.
+    //
+    // Credits buy ON-DEMAND research (a real residential-proxy scrape, ~6h). Reading
+    // an already-researched catalogue report costs nothing, so a new account can
+    // explore freely and only spends a credit on something we have never sourced.
+    //
+    // Idempotent via payment_ref: setup can legitimately be retried, and without a
+    // key a retry would mint a second welcome pack.
+    // Service role: granting credits is money creation, so the function is revoked
+    // from `authenticated` and is not callable with the user's own client.
+    const { error: creditErr } = await createServiceClient().rpc('grant_research_credits_for_payment', {
+      p_tenant_id: tenant.id,
+      p_amount: WELCOME_RESEARCH_CREDITS,
+      p_payment_ref: `welcome:${tenant.id}`,
+      p_note: 'Welcome credits',
+    })
+    // Never fail signup over this — an account without credits is recoverable,
+    // a half-provisioned tenant is not.
+    if (creditErr) console.error('[SETUP] welcome credit grant failed', creditErr.message)
 
     // Also set featured_until on the tenant (System 3: Discover Feed)
     await supabase.from('tenants').update({

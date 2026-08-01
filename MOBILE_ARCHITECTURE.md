@@ -7,29 +7,23 @@
 
 ## 1. Stack Decision
 
-### React Native + Expo. Confirmed — but for LaunchGrid-specific reasons.
+### Native Kotlin + Jetpack Compose. Confirmed — for LaunchGrid-specific reasons.
 
-| Criterion | RN + Expo | Flutter | Why it matters here |
-|---|---|---|---|
-| Code sharing with existing codebase | **High** — TypeScript types, validation, Supabase client, even business constants shared via a monorepo package | None (Dart) | You have a TS Next.js codebase and (effectively) one engineer |
-| Supabase SDK maturity | First-class (`supabase-js` works in RN) | Good but separate ecosystem | Auth/Realtime/storage come free |
-| Dev speed | Fastest: Expo Router, EAS builds, OTA updates | Fast, but new language + toolchain | OTA updates let you fix bugs without store review — critical solo |
-| Hiring (India) | Largest JS pool | Growing | Future team |
-| Performance | Sufficient (dashboard/CRUD app, not a game) | Better raw perf | LaunchGrid mobile is lists + forms + charts |
-| Maintenance | One language everywhere | Two ecosystems | The whole point of this exercise |
+Originally planned as React Native + Expo, we pivoted to a native Kotlin app to ensure first-class integration with hardware APIs, Keystore, background services, and native push receivers.
 
 **Final stack:**
-- **Expo (managed) + Expo Router** (file-based, mirrors Next.js mental model)
-- **TanStack Query** — server state, caching, offline persistence
-- **Zustand** — UI/local state only (never server data)
-- **supabase-js** — auth, Realtime, storage (NOT direct DB writes — see §3)
-- **Expo Notifications + FCM/APNs** — push
-- **Sentry (sentry-expo)** — same org/project family as web
-- **MMKV + expo-secure-store** — storage (encrypted cache / tokens)
-- **RevenueCat — deferred, with a caveat the generic advice misses (§6)**
+- **Kotlin 2.1 & Jetpack Compose (Material 3)** — single-activity architecture, Navigation Compose
+- **OkHttp & kotlinx.serialization** — standard REST client and serialization
+- **OkHttp WebSockets** — lightweight, performant Supabase Realtime synchronization client
+- **Coil** — asynchronous image loading
+- **EncryptedSharedPreferences (Keystore-backed)** — hardware-encrypted auth token storage
+- **Firebase Cloud Messaging (FCM)** — native high-priority order alert integration
 
-### Monorepo
-Move to a pnpm workspace monorepo (low-risk, incremental):
+### App structure
+The Android app is located in the `launchgrid-android` folder as a separate native module.
+- `in.launchgrid.mobile.data` — API client (`Backend`), repository (`Repo`), models (`Models`), secure token store (`SessionStore`), and realtime socket (`RealtimeClient`).
+- `in.launchgrid.mobile.ui` — screens (Home, Products, Orders, Research, Settings, Details, Login) and components/themes.
+- `in.launchgrid.mobile.push` — native Firebase Cloud Messaging setup.
 ```
 launchgrid/
 ├── apps/

@@ -28,18 +28,33 @@ class AppViewModel : ViewModel() {
     private val _entitlementsError = MutableStateFlow<String?>(null)
     val entitlementsError: StateFlow<String?> = _entitlementsError.asStateFlow()
 
+    private val _refreshTrigger = MutableStateFlow(0)
+    val refreshTrigger: StateFlow<Int> = _refreshTrigger.asStateFlow()
+
+    private var realtimeClient: `in`.launchgrid.mobile.data.RealtimeClient? = null
+
     val email: String? get() = Graph.store.email
 
     init {
         if (Graph.store.hasSession) loadEntitlements()
     }
 
+    fun triggerRefresh() {
+        _refreshTrigger.value += 1
+    }
+
     fun loadEntitlements() {
         viewModelScope.launch {
             Graph.repo.entitlements()
-                .onSuccess {
-                    _entitlements.value = it
+                .onSuccess { ent ->
+                    _entitlements.value = ent
                     _entitlementsError.value = null
+                    if (realtimeClient == null) {
+                        realtimeClient = `in`.launchgrid.mobile.data.RealtimeClient(ent.tenant_id) {
+                            triggerRefresh()
+                        }
+                        realtimeClient?.connect()
+                    }
                 }
                 .onFailure {
                     _entitlementsError.value = it.message
@@ -63,6 +78,8 @@ class AppViewModel : ViewModel() {
     }
 
     fun signOut() {
+        realtimeClient?.disconnect()
+        realtimeClient = null
         // Best-effort device unregistration first — sign-out must never be blocked by it.
         Push.unregister {
             Graph.auth.signOut()

@@ -3,6 +3,7 @@ import { createServiceClient } from '@/utils/supabase/service'
 import crypto from 'crypto'
 import { inngest } from '@/inngest/client'
 import { Resend } from 'resend'
+import { getCreditPack } from '@/lib/research/creditPacks'
 
 // Webhook Secret for signature validation
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET || 'whsec_local_testing_secret'
@@ -33,7 +34,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: 'ignored' }, { status: 200 })
     }
 
-    const { order_id, notes } = event.payload.payment.entity
+    const { order_id, notes, id: paymentId } = event.payload.payment.entity
+
+    // ── Research credit packs ────────────────────────────────────────────────
+    // A different kind of purchase from a storefront order, so it branches before
+    // the order lookup below (a credit pack has no `orders` row to find).
+    if (notes?.purpose === 'research_credits') {
+      const pack = getCreditPack(String(notes.pack_id ?? ''))
+      const tenantId = notes.tenant_id
+
+      if (!pack || !tenantId) {
+        // 400 would make Razorpay retry forever on a malformed note. This is not
+        // retryable, so acknowledge and record it instead.
+        console.error('[razorpay] credit pack note malformed', { notes })
+        return NextResponse.json({ status: 'ignored', reason: 'bad_credit_pack_note' }, { status: 200 })
+      }
+
+      const svc = createServiceClient()
+      const { data: newBalance, error: grantErr } = await svc.rpc('grant_research_credits_for_payment', {
+        p_tenant_id: tenantId,
+        p_amount: pack.credits,
+        p_payment_ref: paymentId,
+        p_note: `${pack.label} (${pack.id})`,
+      })
+
+      if (grantErr) {
+        // Let Razorpay retry — a genuine failure here means the customer paid and
+        // has nothing to show for it.
+        console.error('[razorpay] credit grant failed', grantErr.message)
+        return NextResponse.json({ error: 'Grant failed' }, { status: 500 })
+      }
+
+      // newBalance === null means this payment was already credited on an earlier
+      // delivery of the same event. That is success, not a problem.
+      return NextResponse.json({
+        status: newBalance === null ? 'already_credited' : 'credited',
+        credits: pack.credits,
+      })
+    }
+
     const provisionalOrderId = notes?.provisional_order_id
 
     if (!provisionalOrderId) {

@@ -705,10 +705,23 @@ function buildSourcingScenarios(
   return { scenarios, verdict: pickSourcingVerdict(scenarios) }
 }
 
-export async function getResearchReport(productIdeaId: string) {
-  const { supabase, user } = await requireUser()
-  if (!user) return null
+/**
+ * Report assembly, parameterised by client so both the cookie-authenticated web path and
+ * the Bearer-authenticated mobile endpoint share ONE implementation. The seven scoring
+ * engines run here and nowhere else — a second implementation is how the two surfaces
+ * start disagreeing.
+ *
+ * Types are derived from requireUser() rather than `any`: annotating these as `any`
+ * collapsed this function's inferred return type, which silently broke type inference
+ * for `Report` consumers in the web dashboard.
+ */
+type ResearchAuth = Awaited<ReturnType<typeof requireUser>>
 
+export async function getResearchReportWithClient(
+  supabase: ResearchAuth['supabase'],
+  user: NonNullable<ResearchAuth['user']>,
+  productIdeaId: string,
+) {
   const [{ data: idea }, { data: rawSuppliers }, { data: opportunityScores }, { data: landedCosts }, { data: profitability }] = await Promise.all([
     supabase.from('product_ideas').select('*').eq('id', productIdeaId).single(),
     supabase.from('research_suppliers').select('*, research_supplier_scores(*), research_price_tiers(*)').eq('product_idea_id', productIdeaId),
@@ -753,6 +766,12 @@ export async function getResearchReport(productIdeaId: string) {
     decisionCockpit,
     sourcingScenarios,
   }
+}
+
+export async function getResearchReport(productIdeaId: string) {
+  const { supabase, user } = await requireUser()
+  if (!user) return null
+  return getResearchReportWithClient(supabase, user, productIdeaId)
 }
 
 // ---------------------------------------------------------------------------

@@ -50,10 +50,22 @@ type PublicReportMatch = {
 
 type CategoryCount = { category: string; count: number }
 
+/** Shown when nothing matched at all, so the screen is never empty. */
+type Suggestions = {
+  category: string | null
+  reason: string
+  results: PublicReportMatch[]
+  otherCategories: string[]
+}
+
 export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea: string; initialCategory?: string }) {
   const router = useRouter()
   const [idea, setIdea] = useState(initialIdea)
   const [matches, setMatches] = useState<PublicReportMatch[]>([])
+  // Word-relevant but not confident enough to call a match — see the
+  // CONFIDENT_MATCH_SCORE note in the search route.
+  const [related, setRelated] = useState<PublicReportMatch[]>([])
+  const [suggestions, setSuggestions] = useState<Suggestions | null>(null)
   const [categories, setCategories] = useState<CategoryCount[]>([])
   const query = initialIdea.trim()
   const category = (initialCategory ?? '').trim()
@@ -97,11 +109,17 @@ export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea
     const controller = new AbortController()
     const params = category ? `category=${encodeURIComponent(category)}` : `q=${encodeURIComponent(query)}`
     fetch(`/api/research/public-search?${params}`, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : { results: [] }))
-      .then((payload) => setMatches(payload.results ?? []))
+      .then((response) => (response.ok ? response.json() : { results: [], related: [], suggestions: null }))
+      .then((payload) => {
+        setMatches(payload.results ?? [])
+        setRelated(payload.related ?? [])
+        setSuggestions(payload.suggestions ?? null)
+      })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === 'AbortError') return
         setMatches([])
+        setRelated([])
+        setSuggestions(null)
       })
 
     return () => controller.abort()
@@ -164,7 +182,11 @@ export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea
             </div>
             <span className={`inline-flex w-fit items-center gap-1.5 rounded-lg px-3 py-2 font-inter text-xs font-bold ${matches.length > 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>
               {matches.length > 0 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <CircleAlert className="w-3.5 h-3.5" />}
-              {matches.length > 0 ? `${matches.length} example report${matches.length === 1 ? '' : 's'} found` : 'No example matches this search'}
+              {matches.length > 0
+                ? `${matches.length} example report${matches.length === 1 ? '' : 's'} found`
+                : related.length > 0
+                  ? `${related.length} related report${related.length === 1 ? '' : 's'}`
+                  : 'Not researched yet'}
             </span>
           </div>
 
@@ -195,7 +217,7 @@ export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea
                     <p className="font-inter text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-mark-secondary)]">Report preview</p>
                     <h3 className="mt-1 font-playfair text-2xl font-bold text-[var(--color-mark-ink)]">The evidence is ready to review.</h3>
                   </div>
-                  <p className="font-inter text-xs text-[var(--color-mark-secondary)]">Verify your email to unlock your first {FREE_RESEARCH_LIMIT} full reports.</p>
+                  <p className="font-inter text-xs text-[var(--color-mark-secondary)]">Verify your email to unlock your first {FREE_RESEARCH_LIMIT} full report{FREE_RESEARCH_LIMIT === 1 ? '' : 's'}.</p>
                 </div>
                 <div className="mt-4 grid md:grid-cols-3 gap-4">
                   {signals.map(({ label, detail, icon: Icon }) => (
@@ -211,24 +233,72 @@ export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea
             </>
           ) : (
             <>
-              <div className="mt-7 grid md:grid-cols-3 gap-4">
-                {signals.map(({ label, detail, icon: Icon }) => (
-                  <article key={label} className="rounded-2xl border border-black/[0.08] bg-white p-6">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-mark-subtle)] text-[var(--color-mark-secondary)]"><Icon className="w-5 h-5" /></span>
-                    <h3 className="mt-6 font-inter text-base font-bold text-[var(--color-mark-ink)]">{label}</h3>
-                    <p className="mt-2 font-inter text-sm leading-relaxed text-[var(--color-mark-secondary)]">{detail}</p>
-                    <p className="mt-5 font-inter text-sm font-bold text-[var(--color-mark-secondary)]">Not collected</p>
-                  </article>
-                ))}
+              {/* A miss must never be a dead end. Offer the exact thing the
+                  merchant asked for first, then near-relevant reports, then
+                  category browse — in that order of usefulness. */}
+              <div className="mt-7 rounded-2xl border border-[var(--color-mark-amber)]/40 bg-amber-50/50 p-6">
+                <h3 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)]">
+                  We haven&rsquo;t researched &ldquo;{query}&rdquo; yet.
+                </h3>
+                <p className="mt-2 font-inter text-sm leading-relaxed text-[var(--color-mark-secondary)]">
+                  Create a free account and we&rsquo;ll research it for you &mdash; real suppliers,
+                  quoted prices and landed cost. Ready within about 6 hours, and you only
+                  spend a credit if the report is usable.
+                </p>
+                <Link
+                  href={`/signup?next=${encodeURIComponent(`/dashboard/research/requests?q=${encodeURIComponent(query)}`)}`}
+                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-mark-ink)] px-5 py-3 font-inter text-sm font-bold text-white hover:bg-black active:scale-[0.98] transition-all"
+                >
+                  Research this for me <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-              <p className="mt-6 font-inter text-sm text-[var(--color-mark-secondary)]">No published report matches this wording yet. Create an account to research this product with your own supplier and cost evidence.</p>
+
+              {related.length > 0 && (
+                <section className="mt-8">
+                  <p className="font-inter text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-mark-secondary)]">
+                    Related &mdash; not an exact match
+                  </p>
+                  <div className="mt-4 grid md:grid-cols-2 gap-4">
+                    {related.map((report) => (
+                      <ReportCard key={report.slug} report={report} tone="neutral" />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {suggestions && suggestions.results.length > 0 && (
+                <section className="mt-8">
+                  <p className="font-inter text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-mark-secondary)]">
+                    {suggestions.reason}
+                  </p>
+                  <div className="mt-4 grid md:grid-cols-2 gap-4">
+                    {suggestions.results.map((report) => (
+                      <ReportCard key={report.slug} report={report} tone="neutral" />
+                    ))}
+                  </div>
+                  {suggestions.otherCategories.length > 0 && (
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {suggestions.otherCategories.map((name) => (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => browseCategory(name)}
+                          className="rounded-full border border-black/10 bg-white px-4 py-2 font-inter text-sm font-semibold text-[var(--color-mark-ink)] hover:border-[var(--color-mark-amber)] transition-colors"
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
             </>
           )}
 
           <div className="mt-6 rounded-2xl border border-black/[0.08] bg-[var(--color-mark-subtle)] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6 justify-between">
             <div className="max-w-2xl">
               <div className="flex items-center gap-2 text-[var(--color-mark-amber)]"><CheckCircle2 className="w-4 h-4" /><p className="font-inter text-sm font-bold">See the rest with a free account</p></div>
-              <p className="mt-2 font-inter text-sm leading-relaxed text-[var(--color-mark-secondary)]">Free accounts can complete up to {FREE_RESEARCH_LIMIT} product research reports each month before a plan is required.</p>
+              <p className="mt-2 font-inter text-sm leading-relaxed text-[var(--color-mark-secondary)]">Free accounts can complete {FREE_RESEARCH_LIMIT} product research report{FREE_RESEARCH_LIMIT === 1 ? '' : 's'} each month before a plan is required.</p>
             </div>
             <div className="flex shrink-0 flex-col sm:flex-row items-stretch gap-2">
               <Link href={signupHref} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-mark-ink)] px-5 py-3.5 font-inter text-sm font-bold text-white hover:bg-black active:scale-[0.98] transition-all">Create free account <ArrowRight className="w-4 h-4" /></Link>
@@ -249,5 +319,34 @@ export function ResearchExplorer({ initialIdea, initialCategory }: { initialIdea
         </section>
       )}
     </div>
+  )
+}
+
+/** One report tile. `tone` distinguishes a confident match from a related one so
+ *  a near-miss is never styled as though it answered the search. */
+function ReportCard({ report, tone }: { report: PublicReportMatch; tone: 'match' | 'neutral' }) {
+  const shell =
+    tone === 'match'
+      ? 'border-emerald-200 bg-emerald-50/60'
+      : 'border-black/[0.08] bg-white'
+  return (
+    <article className={`rounded-2xl border ${shell} p-6 flex flex-col gap-4`}>
+      <div>
+        <h3 className="font-playfair text-lg font-bold text-[var(--color-mark-ink)]">{report.name}</h3>
+        <p className="mt-1 font-inter text-sm text-[var(--color-mark-secondary)]">
+          {report.category ?? 'Category not collected'} · {report.supplierCount} supplier{report.supplierCount === 1 ? '' : 's'} analysed
+          {report.score !== null ? ` · Decision score ${report.score.toFixed(0)}` : ''}
+        </p>
+        {report.recommendation && (
+          <p className="mt-2 font-inter text-xs text-[var(--color-mark-secondary)]">{report.recommendation}</p>
+        )}
+      </div>
+      <Link
+        href={`/signup?next=${encodeURIComponent(`/dashboard/research?idea=${encodeURIComponent(report.name)}`)}`}
+        className="inline-flex items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-5 py-2.5 font-inter text-sm font-bold text-[var(--color-mark-ink)] hover:bg-black/[0.03] transition-colors"
+      >
+        Preview full report <ArrowRight className="w-4 h-4" />
+      </Link>
+    </article>
   )
 }

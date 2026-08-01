@@ -28,8 +28,16 @@ export interface PlanFeatures {
   advanced_analytics: boolean
   priority_support: boolean
   hide_powered_by: boolean
-  /** Product researches per calendar month. A null value means unlimited. */
+  /** Cached-catalogue reports per calendar month. A null value means unlimited. */
   research_ideas_per_month: number | null
+  /**
+   * On-demand research credits granted with the plan. null = unlimited.
+   *
+   * "Unlimited" is bounded by RESEARCH_FAIR_USE_PER_DAY below. Every credit is real
+   * residential-proxy spend (~₹2–5), so a literally uncapped plan is an uncapped
+   * liability — 10,000 scripted requests would cost ~₹50,000 on a ₹9,999 plan.
+   */
+  research_credits_included: number | null
 }
 
 /**
@@ -69,7 +77,11 @@ export const PLANS: Record<PlanTier, {
       advanced_analytics: false,
       priority_support: false,
       hide_powered_by: false,
-      research_ideas_per_month: 2,
+      // Monthly allowance for reading CACHED catalogue reports. Separate from research
+      // credits (research_credit_ledger), which buy on-demand research of products we
+      // have never sourced. Must stay in sync with finalize_research_report (0037).
+      research_ideas_per_month: 1,
+      research_credits_included: 5,
     },
   },
   starter: {
@@ -82,7 +94,7 @@ export const PLANS: Record<PlanTier, {
     },
     features: {
       max_products: 100,
-      max_stores: 1,
+      max_stores: 5,
       custom_domain: true,
       included_custom_domains: 1,
       additional_custom_domain_setup_fee: 999,
@@ -95,6 +107,7 @@ export const PLANS: Record<PlanTier, {
       priority_support: false,
       hide_powered_by: false,
       research_ideas_per_month: 25,
+      research_credits_included: 25,
     },
   },
   pro: {
@@ -107,7 +120,7 @@ export const PLANS: Record<PlanTier, {
     },
     features: {
       max_products: 100,
-      max_stores: 5,
+      max_stores: 25,
       custom_domain: true,
       included_custom_domains: 5,
       additional_custom_domain_setup_fee: 999,
@@ -120,6 +133,8 @@ export const PLANS: Record<PlanTier, {
       priority_support: false,
       hide_powered_by: true,
       research_ideas_per_month: 250,
+      // null = unlimited, subject to the fair-use cap below.
+      research_credits_included: null,
     },
   },
   premium: {
@@ -127,7 +142,7 @@ export const PLANS: Record<PlanTier, {
     priceMonthly: 24999,
     features: {
       max_products: 500,
-      max_stores: 5,
+      max_stores: 50,
       custom_domain: true,
       included_custom_domains: 5,
       additional_custom_domain_setup_fee: 999,
@@ -140,6 +155,7 @@ export const PLANS: Record<PlanTier, {
       priority_support: true,
       hide_powered_by: true,
       research_ideas_per_month: 500,
+      research_credits_included: null,
     },
   },
 }
@@ -147,6 +163,16 @@ export const PLANS: Record<PlanTier, {
 export function getPlan(tier: string | null | undefined) {
   return PLANS[(tier as PlanTier) || 'free'] ?? PLANS.free
 }
+
+/**
+ * Daily ceiling on on-demand research for plans whose credits are "unlimited".
+ *
+ * Unlimited must still be bounded: each request is real residential-proxy spend, so an
+ * uncapped plan is an uncapped liability. This is a fair-use limit, not a paywall —
+ * it sits far above what a merchant researching their own catalogue would ever hit,
+ * and only bites scripted bulk use.
+ */
+export const RESEARCH_FAIR_USE_PER_DAY = 50
 
 export function isResearchUnlimited(tier: string | null | undefined) {
   return getPlan(tier).features.research_ideas_per_month === null

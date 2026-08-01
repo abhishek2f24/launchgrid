@@ -71,6 +71,7 @@
     {
       host: /indiamart\./i,
       platform: 'IndiaMART',
+      quoteCurrency: 'INR',
       defaultCountry: 'India',
       isSupplierPage: () => /proddetail|impcat|company|\/aboutus/i.test(location.pathname + location.href),
       supplierName: ['.cmpny_hdng a', '.compName', '[class*="companyName"]', '.lft-cmp-nm', 'h1 + div a'],
@@ -81,6 +82,7 @@
     {
       host: /alibaba\./i,
       platform: 'Alibaba',
+      quoteCurrency: 'USD',
       defaultCountry: null,
       isSupplierPage: () => /\/product-detail\/|\/company_profile|\.html/i.test(location.pathname),
       supplierName: ['a[data-role="company-name"]', '.company-name', '[class*="company-name"]', '[data-spm="seller"] a'],
@@ -91,6 +93,7 @@
     {
       host: /tradeindia\./i,
       platform: 'TradeIndia',
+      quoteCurrency: 'INR',
       defaultCountry: 'India',
       isSupplierPage: () => /products|company|seller/i.test(location.pathname),
       supplierName: ['[class*="companyName"]', '.cmp-name', 'h2 a'],
@@ -101,6 +104,7 @@
     {
       host: /made-in-china\./i,
       platform: 'Made-in-China',
+      quoteCurrency: 'USD',
       defaultCountry: 'China',
       isSupplierPage: () => /product|company/i.test(location.pathname),
       supplierName: ['.company-name', '[class*="compName"]', '.cmp-name a'],
@@ -111,6 +115,7 @@
     {
       host: /globalsources\./i,
       platform: 'GlobalSources',
+      quoteCurrency: 'USD',
       defaultCountry: null,
       isSupplierPage: () => /product|supplier|company/i.test(location.pathname),
       supplierName: ['[class*="supplierName"]', '[class*="company"]', '.supplier-name'],
@@ -121,6 +126,7 @@
     {
       host: /1688\.com|yiwugo\./i,
       platform: '1688 / Yiwugo',
+      quoteCurrency: 'CNY',
       defaultCountry: 'China',
       isSupplierPage: () => /offer|product|shop/i.test(location.pathname),
       supplierName: ['.company-name', '[class*="companyName"]', '.shop-name'],
@@ -143,7 +149,10 @@
 
     const prices = parsePriceRange(priceText)
     const moq = parseMoq(moqText)
-    const currency = detectCurrency(priceText) || (site.defaultCountry === 'India' ? 'INR' : null)
+    // Read the symbol off the page first; otherwise use the platform's own quoting currency.
+    // Never infer from the seller's country — Alibaba sellers are mostly Chinese but the
+    // site quotes USD, and mislabelling USD as INR understates landed cost ~83x.
+    const currency = detectCurrency(priceText) || site.quoteCurrency
 
     // Confidence reflects how much we actually resolved — not how confident we'd like to be.
     let confidence = 0.3 // we have a supplier name at minimum
@@ -153,7 +162,7 @@
     confidence = Math.min(1, Math.round(confidence * 100) / 100)
 
     const priceTiers = prices.length
-      ? [{ quantity: moq || 1, unitPrice: prices[0], currency: currency || 'USD' }]
+      ? [{ quantity: moq || 1, unitPrice: prices[0], currency }]
       : []
 
     return {

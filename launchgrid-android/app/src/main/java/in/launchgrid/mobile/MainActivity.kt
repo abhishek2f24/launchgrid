@@ -11,10 +11,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,6 +47,9 @@ import `in`.launchgrid.mobile.ui.screens.OrderDetailScreen
 import `in`.launchgrid.mobile.ui.screens.OrdersScreen
 import `in`.launchgrid.mobile.ui.screens.ProductsScreen
 import `in`.launchgrid.mobile.ui.screens.SettingsScreen
+import `in`.launchgrid.mobile.ui.screens.ResearchScreen
+import `in`.launchgrid.mobile.ui.screens.RequestResearchScreen
+import `in`.launchgrid.mobile.ui.screens.ReportDetailScreen
 import `in`.launchgrid.mobile.ui.theme.Brand
 import `in`.launchgrid.mobile.ui.theme.LaunchGridTheme
 
@@ -73,7 +78,7 @@ private data class Tab(
 )
 
 private val tabs = listOf(
-    Tab("home", "Home", Icons.Filled.Home, Icons.Outlined.Home),
+    Tab("research", "Research", Icons.Filled.Search, Icons.Outlined.Search),
     Tab("orders", "Orders", Icons.Filled.Receipt, Icons.Outlined.Receipt),
     Tab("products", "Products", Icons.Filled.Inventory2, Icons.Outlined.Inventory2),
     Tab("settings", "Settings", Icons.Filled.Settings, Icons.Outlined.Settings),
@@ -87,7 +92,9 @@ private fun MainScaffold(vm: AppViewModel) {
     val currentRoute = backStackEntry?.destination?.route
     val isOrderDetail = currentRoute?.startsWith("order/") == true
     val isAddProduct = currentRoute == "products/add"
-    val showBackBar = isOrderDetail || isAddProduct
+    val isRequestResearch = currentRoute == "research/request"
+    val isReportDetail = currentRoute?.startsWith("research/") == true && currentRoute != "research/request"
+    val showBackBar = isOrderDetail || isAddProduct || isRequestResearch || isReportDetail
 
     Scaffold(
         containerColor = Brand.Base,
@@ -96,7 +103,12 @@ private fun MainScaffold(vm: AppViewModel) {
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            if (isAddProduct) "Add product" else "Order",
+                            when {
+                                isAddProduct -> "Add product"
+                                isRequestResearch -> "Request research"
+                                isReportDetail -> "Research report"
+                                else -> "Order"
+                            },
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 16.sp,
                         )
@@ -154,11 +166,15 @@ private fun MainScaffold(vm: AppViewModel) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "research",
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable("home") {
-                HomeScreen(vm, onOrderClick = { navController.navigate("order/$it") })
+            composable("research") {
+                ResearchScreen(
+                    vm,
+                    onReportClick = { navController.navigate("research/$it") },
+                    onRequestClick = { navController.navigate("research/request") }
+                )
             }
             composable("orders") {
                 OrdersScreen(vm, onOrderClick = { navController.navigate("order/$it") })
@@ -177,6 +193,13 @@ private fun MainScaffold(vm: AppViewModel) {
             composable("order/{id}") { entry ->
                 val id = entry.arguments?.getString("id").orEmpty()
                 OrderDetailScreen(orderId = id)
+            }
+            composable("research/{id}") { entry ->
+                val id = entry.arguments?.getString("id").orEmpty()
+                ReportDetailScreen(vm = vm, ideaId = id)
+            }
+            composable("research/request") {
+                RequestResearchScreen(vm = vm, onBack = { navController.popBackStack() })
             }
             composable("products/add") {
                 AddProductScreen(onAdded = {

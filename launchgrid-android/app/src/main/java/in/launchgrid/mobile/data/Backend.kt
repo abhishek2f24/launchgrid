@@ -9,6 +9,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+// Reified extension; without it decodeFromJsonElement<T>(element) resolves to the
+// two-arg member overload decodeFromJsonElement(deserializer, element) and fails.
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -234,6 +237,36 @@ class Repo(private val auth: AuthClient, private val client: OkHttpClient) {
         apiCall("DELETE", "/api/v1/devices", body = buildJsonObject { put("push_token", pushToken) })
             .map { }
 
+    // ---- Research Module APIs ----
+
+    suspend fun myIdeas(): Result<List<ProductIdea>> = apiCall("GET", "/api/research/my-ideas")
+        .mapCatching { el ->
+            val obj = el.jsonObject
+            val array = obj["ideas"]?.jsonArray ?: obj["data"]?.jsonArray ?: throw BackendException("Unexpected response format")
+            json.decodeFromJsonElement<List<ProductIdea>>(array)
+        }
+
+    suspend fun researchCreditBalance(tenantId: String): Result<Int> = runCatching {
+        val body = buildJsonObject { put("p_tenant_id", tenantId) }
+        val resText = pgRpc("research_credit_balance", body)
+        resText.trim().toInt()
+    }
+
+    suspend fun requestResearchReport(query: String): Result<String> = runCatching {
+        val body = buildJsonObject { put("p_query", query) }
+        val resText = pgRpc("request_research_report", body)
+        resText.trim().removeSurrounding("\"")
+    }
+
+    suspend fun researchReportRequests(tenantId: String): Result<List<ResearchReportRequest>> = pgList(
+        "research_report_requests?select=*&tenant_id=eq.$tenantId&order=created_at.desc&limit=50"
+    )
+
+    suspend fun getResearchReport(ideaId: String): Result<ResearchReport> = apiCall("GET", "/api/research/report/$ideaId")
+        .mapCatching { el ->
+            json.decodeFromJsonElement<ResearchReport>(el)
+        }
+
     // ---- Helpers ----
 
     private suspend inline fun <reified T> pgList(pathQuery: String): Result<List<T>> =
@@ -268,6 +301,22 @@ class Repo(private val auth: AuthClient, private val client: OkHttpClient) {
         return executeIo(req).use {
             // Content-Range: "0-0/123" or "*/0"
             it.header("Content-Range")?.substringAfter('/')?.toIntOrNull() ?: 0
+        }
+    }
+
+    private suspend fun pgRpc(name: String, body: JsonObject): String {
+        val token = auth.validToken() ?: throw BackendException("Signed out")
+        val req = Request.Builder()
+            .url("$SUPABASE/rest/v1/rpc/$name")
+            .header("apikey", ANON_KEY)
+            .header("Authorization", "Bearer $token")
+            .header("Content-Type", "application/json")
+            .post(body.toString().toRequestBody(JSON_MEDIA))
+            .build()
+        return executeIo(req).use {
+            val text = it.body?.string().orEmpty()
+            if (!it.isSuccessful) throw BackendException("RPC $name failed (HTTP ${it.code}): $text")
+            text
         }
     }
 
