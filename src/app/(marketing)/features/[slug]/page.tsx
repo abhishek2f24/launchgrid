@@ -120,12 +120,14 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   const data = FEATURE_DATA[params.slug]
   if (!data) return {}
 
-  const title = `${data.title} | LaunchGrid Features`
+  // The root template appends " | LaunchGrid".
+  const title = `${data.title.replace(/\.$/, '')} — Features`
   const description = data.tagline
 
   return {
     title,
     description,
+    alternates: { canonical: `https://launchgrid.in/features/${params.slug}` },
     openGraph: {
       title,
       description,

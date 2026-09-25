@@ -1,3 +1,11 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'How LaunchGrid collects, uses and protects personal data for merchants, their customers and visitors to launchgrid.in.',
+  alternates: { canonical: 'https://launchgrid.in/legal/privacy' },
+};
+
 export default function PrivacyPage() {
   return (
     <>

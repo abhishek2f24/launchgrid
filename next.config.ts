@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // Removed: the case study described a store that was not a real customer.
+      { source: '/blog/case-study-local-clothing-store-launchgrid', destination: '/blog', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co' },

@@ -1,77 +1,13 @@
-'use client';
-
 import Link from 'next/link';
 import { JourneyNav } from '@/components/signup-journey/JourneyNav';
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay';
 import { Footer } from '@/components/signup-journey/Footer';
+import { blogPosts, postDescription } from '@/lib/blog-posts';
 
-interface BlogPost {
-  title: string;
-  slug: string;
-  description: string;
-  date: string;
-  readTime: string;
-  category: string;
-}
-
-const posts: BlogPost[] = [
-  {
-    title: 'How to start dropshipping in India with zero inventory investment',
-    slug: 'start-dropshipping-india',
-    description: 'Learn the exact roadmap of setting up a dropshipping store in India, sourcing products locally, and marketing via Instagram.',
-    date: 'June 5, 2026',
-    readTime: '6 min read',
-    category: 'Guides',
-  },
-  {
-    title: 'How does GST compliance work for online ecommerce stores in India?',
-    slug: 'gst-compliance-ecommerce',
-    description: 'Understanding the ₹20 Lakh and ₹40 Lakh registration thresholds, CGST/SGST/IGST splits, and invoice compliance.',
-    date: 'May 28, 2026',
-    readTime: '8 min read',
-    category: 'Compliance',
-  },
-  {
-    title: 'What is abandoned cart recovery: Recovering lost sales on auto-pilot',
-    slug: 'what-is-abandoned-cart-recovery',
-    description: 'How simple automated WhatsApp and email reminders can recover up to 25% of abandoned checkouts without rising ad costs.',
-    date: 'May 14, 2026',
-    readTime: '5 min read',
-    category: 'Optimization',
-  },
-  {
-    title: 'How to Start an Online Store in India (2026 Guide)',
-    slug: 'how-to-start-online-store-india-2026',
-    description: 'The complete step-by-step roadmap to launching a successful D2C brand in India, from name generation to logistics configurations.',
-    date: 'June 14, 2026',
-    readTime: '7 min read',
-    category: 'Guides',
-  },
-  {
-    title: 'Shopify vs WooCommerce vs LaunchGrid: Which is Best in 2026?',
-    slug: 'shopify-vs-woocommerce-vs-launchgrid',
-    description: 'An honest comparison of pricing, transaction fees, speed, payment gateways, and compliance tools for Indian D2C merchants.',
-    date: 'June 14, 2026',
-    readTime: '9 min read',
-    category: 'Comparisons',
-  },
-  {
-    title: 'The Complete GST Guide for Small Online Businesses in India',
-    slug: 'complete-gst-guide-small-businesses',
-    description: 'Understand threshold limits, CGST/SGST/IGST splits, GSTR filing rules, and how to automate invoicing without high accounting costs.',
-    date: 'June 14, 2026',
-    readTime: '10 min read',
-    category: 'Compliance',
-  },
-  {
-    title: 'Case Study: How Aanya Ethnic Wear Increased Orders 3x Using LaunchGrid',
-    slug: 'case-study-local-clothing-store-launchgrid',
-    description: 'How a local Indian fashion retailer replaced manual Instagram DMs with streamlined one-tap checkouts and recovered 28% of abandoned carts.',
-    date: 'June 14, 2026',
-    readTime: '6 min read',
-    category: 'Case Studies',
-  },
-];
+// Newest first, straight from the shared post data (src/lib/blog-posts.ts).
+const posts = Object.entries(blogPosts)
+  .map(([slug, post]) => ({ slug, ...post, description: postDescription(post) }))
+  .sort((x, y) => new Date(y.date).getTime() - new Date(x.date).getTime());
 
 export default function BlogPage() {
   return (
@@ -97,9 +33,9 @@ export default function BlogPage() {
 
           {/* Post Directory */}
           <div className="space-y-10">
-            {posts.map((post, index) => (
+            {posts.map((post) => (
               <article
-                key={index}
+                key={post.slug}
                 className="bg-white border border-[var(--color-mark-default)] rounded-[2rem] p-8 md:p-10 shadow-[0_8px_32px_rgba(26,26,24,0.02)] hover:shadow-[0_16px_48px_rgba(26,26,24,0.06)] transition-all flex flex-col justify-between"
               >
                 <div>

@@ -8,6 +8,12 @@ import Link from 'next/link'
 
 export const revalidate = 3600 // Refresh discovery feed hourly
 
+export const metadata = {
+  title: 'Discover Online Stores Built by Indian Sellers',
+  description: 'Browse live online stores launched on LaunchGrid by Indian businesses: fashion, food, decor, accessories and more. See what a finished store looks like before you build yours.',
+  alternates: { canonical: 'https://launchgrid.in/discover' },
+}
+
 // Inline relative time helper
 function getRelativeTime(dateString: string) {
   const date = new Date(dateString)

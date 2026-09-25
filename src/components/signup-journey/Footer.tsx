@@ -6,7 +6,7 @@ import { LaunchGridLogo } from '@/components/ui/LaunchGridLogo';
 export function Footer() {
   return (
     <footer className="w-full bg-[var(--color-mark-subtle)] border-t border-[var(--color-mark-default)] py-20 relative z-10">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 text-left">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 text-left">
         
         {/* Column 1: Brand Info */}
         <div className="flex flex-col justify-between h-full">
@@ -35,7 +35,6 @@ export function Footer() {
               { label: 'Free Business Tools', href: '/tools' },
               { label: 'Android Apps', href: '/apps' },
               { label: 'Discover Featured Stores', href: '/discover' },
-              { label: 'Sell Online in Your City', href: '/sell-online' },
               { label: 'Pricing Plan Comparison', href: '/pricing' },
               { label: 'Frequently Asked Questions (FAQ)', href: '/faq' },
               { label: 'Ecommerce Growth Blog', href: '/blog' },
@@ -43,6 +42,31 @@ export function Footer() {
               { label: 'Platform XML Sitemap', href: '/sitemap.xml' },
             ].map(l => (
               <li key={l.label}>
+                <Link href={l.href} className="font-inter text-xs text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Seller guides: descriptive anchors to the commercial landing pages.
+            The footer is on every marketing page, so this is the strongest
+            sitewide internal link those pages get. */}
+        <div>
+          <p className="font-mono text-xs font-bold tracking-widest text-[var(--color-mark-subtle-text)] uppercase mb-6" role="heading" aria-level={3}>
+            Seller Guides
+          </p>
+          <ul className="space-y-3.5">
+            {[
+              { label: 'How to sell online in India', href: '/sell-online' },
+              { label: 'Sell mobile accessories online', href: '/sell-online/mobile-accessories' },
+              { label: 'How to sell sarees online', href: '/sell-online/sarees' },
+              { label: 'Sell home decor online', href: '/sell-online/home-decor' },
+              { label: 'Profit margin calculator', href: '/tools/profit-margin-calculator' },
+              { label: 'Create a GST invoice', href: '/tools/invoice-generator' },
+            ].map(l => (
+              <li key={l.href}>
                 <Link href={l.href} className="font-inter text-xs text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors">
                   {l.label}
                 </Link>

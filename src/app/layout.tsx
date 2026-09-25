@@ -75,8 +75,8 @@ export default function RootLayout({
         "@id": "https://launchgrid.in/#organization",
         "name": "LaunchGrid",
         "url": "https://launchgrid.in",
-        "logo": "https://launchgrid.in/logo.svg",
-        "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in" },
+        "logo": "https://launchgrid.in/logo.svg", "founder": { "@type": "Person", "name": "Abhishek Maurya" }, "address": { "@type": "PostalAddress", "addressLocality": "Vadodara", "addressRegion": "Gujarat", "addressCountry": "IN" },
+        "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in", "telephone": "+91-9506212886", "areaServed": "IN", "availableLanguage": ["en", "hi"] },
         "sameAs": ["https://twitter.com/launchgrid_in", "https://instagram.com/launchgrid.in"]
       },
       {
@@ -100,48 +100,13 @@ export default function RootLayout({
           { "@type": "Offer", "name": "Get Customers (Growth)",  "price": "9999",  "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } },
           { "@type": "Offer", "name": "Scale Revenue (Scale)",   "price": "24999", "priceCurrency": "INR", "priceSpecification": { "@type": "UnitPriceSpecification", "billingDuration": "P1M" } }
         ]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How long does it take to launch a store?",
-            "acceptedAnswer": { "@type": "Answer", "text": "About 15 minutes. You describe your business, LaunchGrid generates your store with AI, you add products by pasting any product URL, and connect your UPI ID to accept payments." }
-          },
-          {
-            "@type": "Question",
-            "name": "Does LaunchGrid handle GST compliance?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Yes. LaunchGrid monitors your revenue against GST thresholds (₹20 Lakh for services, ₹40 Lakh for goods), alerts you when you're approaching registration requirements, and generates GST-compliant tax invoices automatically." }
-          },
-          {
-            "@type": "Question",
-            "name": "What payment methods can my customers use?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Customers can pay via UPI (GPay, PhonePe, Paytm, BHIM), credit/debit cards, netbanking, wallets through Razorpay integration, or Cash on Delivery (COD) with OTP verification." }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I sell dropship products without holding inventory?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Yes. LaunchGrid has a built-in Indian dropship catalog. You can also import any product by pasting a Meesho, Amazon, Ajio, or Nykaa URL — the AI fills in the title, description, and images automatically." }
-          },
-          {
-            "@type": "Question",
-            "name": "What happens when my trial ends?",
-            "acceptedAnswer": { "@type": "Answer", "text": "After 7 days, your store enters read-only mode. Your store data is preserved and you can upgrade to a paid plan at any time to resume selling. No data is deleted." }
-          },
-          {
-            "@type": "Question",
-            "name": "How is LaunchGrid different from Shopify or Dukaan?",
-            "acceptedAnswer": { "@type": "Answer", "text": "LaunchGrid is built specifically for Indian merchants. It includes native UPI checkout (no app installs), GST compliance built-in, an Indian dropship catalog, COD with fraud prevention, and INR billing with no FX losses. Shopify charges in USD and lacks Indian payment and compliance features natively." }
-          }
-        ]
       }
     ]
   };
 
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${inter.variable} h-full antialiased`}
     >
       <head>

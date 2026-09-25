@@ -7,7 +7,7 @@ import { Calculator, Percent, ShieldCheck, HelpCircle } from 'lucide-react';
 const previewTools = [
   {
     name: 'GST Calculator India',
-    description: 'Calculate SGST, CGST, and IGST for any slab (5%, 12%, 18%, 28%) with instant Add/Remove toggle.',
+    description: 'Calculate SGST, CGST, and IGST for any slab (3%, 5%, 18%, 40%) with instant Add/Remove toggle.',
     href: '/tools/gst-calculator',
     icon: ShieldCheck,
     badge: 'Popular',
