@@ -26,7 +26,12 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const email = typeof body.email === 'string' ? body.email.trim().slice(0, 254) : ''
+    // Lower-cased here, not in the database: the unique constraint is a plain
+    // one over (email, source), so normalisation is this layer's job.
+    const email =
+      typeof body.email === 'string'
+        ? body.email.trim().toLowerCase().slice(0, 254)
+        : ''
     const source = typeof body.source === 'string' ? body.source.trim().slice(0, 64) : ''
 
     if (!EMAIL.test(email) || !source) {
@@ -34,15 +39,27 @@ export async function POST(request: Request) {
     }
 
     // Counts only — deliberately not the findings themselves.
-    const context = {
-      rowsAnalysed: Number.isFinite(body.rowsAnalysed) ? Math.trunc(body.rowsAnalysed) : null,
-      findingsCount: Number.isFinite(body.findingsCount) ? Math.trunc(body.findingsCount) : null,
+    const rowsAnalysed = Number.isFinite(body.rowsAnalysed)
+      ? Math.trunc(body.rowsAnalysed)
+      : null
+    const findingsCount = Number.isFinite(body.findingsCount)
+      ? Math.trunc(body.findingsCount)
+      : null
+
+    // `context` is omitted entirely when this submission carries no counts.
+    // An upsert only updates the columns it is given, so leaving it out
+    // preserves what an earlier signup recorded — someone who signs up again
+    // from the footer should not erase the "19 rows, 6 findings" captured the
+    // first time, which is the whole reason the column exists.
+    const row: Record<string, unknown> = { email, source }
+    if (rowsAnalysed !== null || findingsCount !== null) {
+      row.context = { rowsAnalysed, findingsCount }
     }
 
     const supabase = createServiceClient()
     const { error } = await supabase
       .from('early_access_signups')
-      .upsert({ email, source, context }, { onConflict: 'email,source' })
+      .upsert(row, { onConflict: 'email,source' })
 
     if (error) {
       console.error('[EARLY_ACCESS_ERROR]', error.message)

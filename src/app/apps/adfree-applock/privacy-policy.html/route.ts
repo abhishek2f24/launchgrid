@@ -15,16 +15,18 @@ import { NextResponse } from 'next/server'
  *   requires a publicly accessible policy. Console → App content → Privacy
  *   policy should be repointed at this page.
  *
- * ON ADVERTISING — UNRESOLVED CONTRADICTION, FLAGGED TO THE OWNER
- *   The GitHub policy (last updated 11 June 2026) says the free tier shows
- *   Google AdMob ads and that AdMob processes the advertising ID and IP.
- *   Everything else says the opposite: the app is called AdFree AppLock, the
- *   store listing promises "ZERO ads, ever", Play Data Safety declares no data
- *   collected, and reviews from July–September 2026 specifically praise the
- *   absence of ads. This page follows the Data Safety declaration, which is the
- *   operative one, on the basis that the June policy is stale. If the app does
- *   still serve AdMob, this page AND the Data Safety declaration are both wrong
- *   and must change together.
+ * ON ADVERTISING — RESOLVED
+ *   An earlier policy (11 June 2026) described Google AdMob on the free tier.
+ *   AdMob has since been REMOVED from the app; the owner confirmed this on
+ *   25 September 2026. That is why the app is named AdFree AppLock, why the
+ *   listing promises "ZERO ads, ever", why Play Data Safety declares no data
+ *   collected, and why reviews from July onwards praise the absence of ads.
+ *   This page is the current, authoritative policy.
+ *
+ *   If advertising is ever reintroduced, this page and the Play Data Safety
+ *   declaration must change together and BEFORE the release ships — an
+ *   advertising ID is collected data, and shipping ads against a "no data
+ *   collected" declaration is a suspension-grade mismatch.
  *
  * Technical specifics below are taken from the owner's own policy, which is
  * more precise than the store description.
@@ -61,7 +63,7 @@ const HTML = `<!DOCTYPE html>
 <p>${APP_NAME} ("the App") is published by LaunchGrid, Mumbai, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. The short version: we collect nothing</h2>
-<p class="note">The App collects no personal data and shares none with third parties. There is no account, no sign-up, no advertising and no analytics or tracking SDK. Your lock settings, vault contents and intruder photos never leave your device, and we have no server that could receive them.</p>
+<p class="note">The App collects no personal data and shares none with third parties. There is no account, no sign-up, <strong>no ads</strong> and no analytics or tracking SDK. Your lock settings, vault contents and intruder photos never leave your device, and we have no server that could receive them.</p>
 
 <h2>3. What the App stores, on your device only</h2>
 <ul>
@@ -100,7 +102,8 @@ const HTML = `<!DOCTYPE html>
 <p>These are operated by Google and governed by <a href="https://policies.google.com/privacy">Google&rsquo;s privacy policy</a>. We do not receive or store your payment details.</p>
 
 <h2>7. Advertising and analytics</h2>
-<p>The App contains no advertising SDK and no analytics or tracking SDK, and does not use the Android advertising ID. This matches the App&rsquo;s Data Safety declaration on Google Play, which states that no data is collected and none is shared with third parties.</p>
+<p class="note"><strong>The App contains no advertising.</strong> There is no advertising SDK, no analytics SDK and no tracking SDK of any kind, and the App does not use the Android advertising ID. This is true of the free version as well as the paid one &mdash; there is no ad-supported tier.</p>
+<p>An earlier version of this policy described Google AdMob on the free tier. AdMob has since been removed from the App entirely. This page reflects the App as it ships today, and matches its Data Safety declaration on Google Play, which states that no data is collected and none is shared with third parties.</p>
 
 <h2>8. Your rights under the DPDP Act, 2023</h2>
 <ul>
