@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { JourneyNav } from '@/components/signup-journey/JourneyNav';
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay';
 import { Footer } from '@/components/signup-journey/Footer';
-import { motion } from 'framer-motion';
-import { Percent, ArrowRight, HelpCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { PROFIT_MARGIN_EXAMPLES, PROFIT_MARGIN_FAQS } from './content';
+
+const inr = (n: number) => `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
 
 export default function ProfitMarginCalculatorPage() {
   const [cogs, setCogs] = useState<string>('500');
@@ -39,10 +41,12 @@ export default function ProfitMarginCalculatorPage() {
               Finance Utilities
             </span>
             <h1 className="font-playfair text-4xl md:text-5xl font-bold text-[var(--color-mark-ink)] leading-tight mb-4">
-              Profit Margin Calculator
+              Free Profit Margin Calculator for Products
             </h1>
-            <p className="font-inter text-xs md:text-sm text-[var(--color-mark-secondary)] max-w-xl mx-auto leading-relaxed">
-              Calculate D2C sales margins, markup percentages, gross profits, and net margins by factoring in sourcing and operational costs.
+            <p className="font-inter text-sm text-[var(--color-mark-secondary)] max-w-2xl mx-auto leading-relaxed">
+              <strong className="text-[var(--color-mark-ink)]">Profit margin = (selling price − cost) ÷ selling price × 100.</strong>{' '}
+              Enter what the product costs you, what you sell it for, and your per-order expenses (shipping,
+              packaging, gateway fees, returns). You get gross margin, net margin and markup instantly, in rupees.
             </p>
           </div>
 
@@ -171,55 +175,118 @@ export default function ProfitMarginCalculatorPage() {
             <section>
               <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">The Mathematical Formulas</h2>
               <p className="mb-2"><strong>1. Gross Profit Margin Formula:</strong></p>
-              <pre className="bg-[var(--color-mark-subtle)] p-4 rounded-xl border border-[var(--color-mark-default)] font-mono text-[11px] mb-4">
+              <pre className="bg-[var(--color-mark-subtle)] p-4 rounded-xl border border-[var(--color-mark-default)] font-mono text-[11px] mb-4 whitespace-pre-wrap">
                 Gross Profit = Selling Price - Cost of Goods Sold (COGS)
                 Profit Margin % = (Gross Profit / Selling Price) * 100
               </pre>
               <p className="mb-2"><strong>2. Markup Formula:</strong></p>
-              <pre className="bg-[var(--color-mark-subtle)] p-4 rounded-xl border border-[var(--color-mark-default)] font-mono text-[11px]">
+              <pre className="bg-[var(--color-mark-subtle)] p-4 rounded-xl border border-[var(--color-mark-default)] font-mono text-[11px] whitespace-pre-wrap">
                 Markup % = (Gross Profit / COGS) * 100
               </pre>
             </section>
 
             <section>
-              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Typical Product Margins in Indian D2C Industries</h2>
-              <div className="bg-white border border-[var(--color-mark-default)] rounded-[2rem] p-6 space-y-4 shadow-sm">
-                <p>Standard benchmarks across Indian ecommerce sectors include:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Fashion & Accessories</strong>: 60% – 80% Gross Margin. Sourcing is cheap (Surat, Ludhiana), but high return rates (RTOs) require higher initial retail buffers.</li>
-                  <li><strong>Cosmetics & Personal Care</strong>: 70% – 85% Gross Margin. Low packaging volumes make shipping efficient, but high advertising CAC requires substantial margins.</li>
-                  <li><strong>Electronics & Home Appliances</strong>: 15% – 30% Gross Margin. Heavy weights increase logistics fees, requiring high volumes to build overall net profit.</li>
-                </ul>
-              </div>
+              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">How to Find Your Selling Price From a Target Margin</h2>
+              <p className="mb-4">
+                Work backwards from the margin you need, not forwards from cost. Add up everything one order costs
+                you, then divide by one minus your target margin:
+              </p>
+              <pre className="bg-[var(--color-mark-subtle)] p-4 rounded-xl border border-[var(--color-mark-default)] font-mono text-[11px] mb-4 whitespace-pre-wrap">
+                Selling price = Total cost per order ÷ (1 − target margin)
+                Example: ₹600 ÷ (1 − 0.40) = ₹1,000 for a 40% margin
+              </pre>
+              <p>
+                If you&apos;re GST-registered, this is the price <strong>before</strong> GST. Add GST on top, because the
+                tax you collect isn&apos;t your revenue. Check the tax part with the{' '}
+                <Link href="/tools/gst-calculator" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">GST calculator</Link>.
+                To build a full price including ad spend per order, use the{' '}
+                <Link href="/tools/ecommerce-pricing-calculator" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">ecommerce pricing calculator</Link>.
+              </p>
             </section>
 
             <section>
-              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Common Mistakes When Setting Pricing</h2>
+              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Worked Examples for Indian Online Sellers</h2>
+              <p className="mb-4">
+                Three example products, with every per-order cost written out. The numbers are illustrative, so swap
+                in your own supplier and courier quotes.
+              </p>
+              <div className="overflow-x-auto bg-white border border-[var(--color-mark-default)] rounded-2xl shadow-sm">
+                <table className="w-full text-left text-[11px] md:text-xs">
+                  <thead className="bg-[var(--color-mark-subtle)] text-[var(--color-mark-ink)]">
+                    <tr>
+                      <th className="p-3 font-bold">Product</th>
+                      <th className="p-3 font-bold">Cost</th>
+                      <th className="p-3 font-bold">Price</th>
+                      <th className="p-3 font-bold">Per-order costs</th>
+                      <th className="p-3 font-bold">Gross margin</th>
+                      <th className="p-3 font-bold">Net profit</th>
+                      <th className="p-3 font-bold">Net margin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PROFIT_MARGIN_EXAMPLES.map((ex) => {
+                      const net = ex.price - ex.cost - ex.expenses;
+                      return (
+                        <tr key={ex.label} className="border-t border-[var(--color-mark-default)] align-top">
+                          <td className="p-3">
+                            <span className="font-bold text-[var(--color-mark-ink)] block">{ex.label}</span>
+                            <Link href={ex.href} className="underline underline-offset-2">{ex.anchor}</Link>
+                          </td>
+                          <td className="p-3">{inr(ex.cost)}</td>
+                          <td className="p-3">{inr(ex.price)}</td>
+                          <td className="p-3">{inr(ex.expenses)}<span className="block text-[10px] text-[var(--color-mark-subtle-text)]">{ex.expenseNote}</span></td>
+                          <td className="p-3">{(((ex.price - ex.cost) / ex.price) * 100).toFixed(0)}%</td>
+                          <td className="p-3 font-bold text-[var(--color-mark-ink)]">{inr(net)}</td>
+                          <td className="p-3 font-bold text-[var(--color-mark-ink)]">{((net / ex.price) * 100).toFixed(0)}%</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-4">
+                Look at the vase. Its 68% gross margin looks like the best of the three, but fragile shipping and a
+                breakage buffer take away more than 20 points. The phone case goes from 72% gross to 40% net. That&apos;s
+                why you should always check net margin before you set a price.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Common Mistakes When Setting Prices</h2>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Ignoring Payment Gateway Fees</strong>: Standard gateway fees (1.9% to 3.0%) eat directly into net margin on thousands of monthly transactions.</li>
-                <li><strong>Underestimating RTO (Return-to-Origin) Costs</strong>: In India, cash-on-delivery orders have a 30% return rate on average. When an order returns, you pay for both forward shipping and return logistics with no sales revenue to show for it.</li>
-                <li><strong>Treating ad spend as optional overhead</strong>: Acquisition budgets (CAC) should be modeled directly into your initial cost structure.</li>
+                <li><strong>Confusing markup with margin</strong>: a 50% markup on cost is only a 33% margin on price.</li>
+                <li><strong>Calculating margin on the GST-inclusive price</strong>: the tax is not your money, so it inflates your margin on paper.</li>
+                <li><strong>Ignoring payment gateway fees</strong>: around 2% per prepaid order adds up across thousands of orders.</li>
+                <li><strong>Forgetting COD returns (RTO)</strong>: every refused COD parcel costs two-way shipping with no sale. Spread that cost across the orders that succeed.</li>
+                <li><strong>Treating ad spend as overhead</strong>: if each order costs ₹150 in Meta ads, that ₹150 belongs in the per-order cost. Check it with the <Link href="/tools/roas-calculator" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">ROAS calculator</Link>.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Frequently Asked Questions (FAQ)</h2>
+              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Frequently Asked Questions</h2>
               <div className="space-y-4">
-                <div>
-                  <p className="font-bold text-[var(--color-mark-ink)]">Q: How do shipping fees affect profit margin calculation?</p>
-                  <p>A: Shipping fees represent direct operational expenses. To calculate true net margin, you must subtract shipping costs from gross profit. Offering "Free Shipping" requires adjusting the base product retail price to absorb logistics fees.</p>
-                </div>
-                <div>
-                  <p className="font-bold text-[var(--color-mark-ink)]">Q: What is a healthy net profit margin target for a startup?</p>
-                  <p>A: A target net margin between 15% and 25% is healthy. This ensures you can cover customer acquisition costs (CAC) while retaining a safety buffer for sudden inventory holding increases.</p>
-                </div>
+                {PROFIT_MARGIN_FAQS.map((faq) => (
+                  <div key={faq.q}>
+                    <h3 className="font-bold text-[var(--color-mark-ink)] text-sm">{faq.q}</h3>
+                    <p>{faq.a}</p>
+                  </div>
+                ))}
               </div>
+            </section>
+
+            <section>
+              <h2 className="font-playfair text-2xl font-bold text-[var(--color-mark-ink)] mb-4">Pricing Guides by Category</h2>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><Link href="/blog/mobile-accessories-business-margins-sourcing" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">Mobile accessories margins and sourcing</Link>: what phone cases, chargers and earbuds really make after shipping.</li>
+                <li><Link href="/blog/how-to-price-sarees-online" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">How to price sarees online</Link>: pricing, shipping and returns for saree sellers.</li>
+                <li><Link href="/blog/ship-home-decor-without-breakage" className="font-bold underline underline-offset-2 text-[var(--color-mark-ink)]">Shipping fragile home decor</Link>: packaging costs and breakage buffers.</li>
+              </ul>
             </section>
 
             {/* CTA */}
             <div className="bg-[var(--color-mark-subtle)] border border-[var(--color-mark-default)] rounded-[2rem] p-8 text-center mt-12">
               <h3 className="font-playfair text-xl font-bold text-[var(--color-mark-ink)] mb-3">
-                Cut Platform Overhead and Boost Your Store Margins
+                Keep More of Every Sale
               </h3>
               <p className="mb-6 max-w-xl mx-auto text-xs">
                 LaunchGrid charges 0% transaction fees on all paid plans. Every Rupee your customers pay goes straight to your account, protecting your margins from typical platform commission cuts (e.g., Dukaan charges up to 2.99%).
@@ -228,7 +295,7 @@ export default function ProfitMarginCalculatorPage() {
                 href="/onboarding"
                 className="inline-flex items-center gap-2 bg-[var(--color-mark-ink)] text-white font-inter text-xs font-bold py-3.5 px-8 rounded-full hover:bg-black transition-all shadow-md"
               >
-                Start Selling and Save Margins <ArrowRight className="w-4 h-4" />
+                Create your free online store <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </article>

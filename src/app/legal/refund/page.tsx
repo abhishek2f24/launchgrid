@@ -1,3 +1,11 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Refund & Cancellation Policy',
+  description: 'LaunchGrid subscription refunds and cancellations: eligibility, timelines and how to request a refund.',
+  alternates: { canonical: 'https://launchgrid.in/legal/refund' },
+};
+
 export default function RefundPage() {
   return (
     <>

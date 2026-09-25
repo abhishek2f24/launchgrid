@@ -1,3 +1,11 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Contact LaunchGrid',
+  description: 'How to reach LaunchGrid: support email, grievance officer and business contact details.',
+  alternates: { canonical: 'https://launchgrid.in/legal/contact' },
+};
+
 export default function ContactPage() {
   return (
     <>

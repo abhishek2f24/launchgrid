@@ -339,6 +339,36 @@ export default function MarketingPage() {
             })}
           </div>
 
+          {/* Seller guides — contextual, descriptive links into the commercial
+              landing pages so they inherit authority from the homepage. */}
+          <section aria-labelledby="guides" className="mt-20">
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 border-b border-[var(--color-mark-default)] pb-4 mb-8">
+              <h2 id="guides" className="font-playfair text-2xl md:text-3xl font-bold text-[var(--color-mark-ink)]">
+                Start selling online
+              </h2>
+              <Link href="/sell-online" className="font-inter text-xs font-bold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] sm:text-right">
+                How to sell online in India →
+              </Link>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-inter text-sm">
+              {[
+                { href: '/sell-online/mobile-accessories', label: 'Sell mobile accessories online', note: 'Sourcing, margins after shipping, COD rules' },
+                { href: '/sell-online/sarees', label: 'How to sell sarees online', note: 'Pricing, photos, shipping and returns' },
+                { href: '/sell-online/home-decor', label: 'Sell home decor online', note: 'Volumetric shipping and fragile packing' },
+                { href: '/sell-online/jaipur', label: 'Sell online from Jaipur', note: 'Block prints, gems and crafts to all India' },
+                { href: '/sell-online/pune', label: 'Sell online in Pune', note: 'Local delivery plus Maharashtra-wide shipping' },
+                { href: '/sell-online/noida', label: 'Sell online from Noida', note: 'D2C launch, Delhi sourcing, IGST explained' },
+              ].map((g) => (
+                <li key={g.href}>
+                  <Link href={g.href} className="block h-full bg-white rounded-2xl border border-[var(--color-mark-default)] p-5 hover:border-[var(--color-mark-ink)] transition-colors">
+                    <span className="block font-bold text-[var(--color-mark-ink)]">{g.label}</span>
+                    <span className="block text-xs text-[var(--color-mark-secondary)] mt-1">{g.note}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+
           {/* Two plain links out. No pitch. */}
           <nav
             aria-label="More"

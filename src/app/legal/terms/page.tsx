@@ -1,3 +1,11 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'The terms that govern your use of LaunchGrid, the online store builder and free business tools for Indian sellers.',
+  alternates: { canonical: 'https://launchgrid.in/legal/terms' },
+};
+
 export default function TermsPage() {
   return (
     <>
