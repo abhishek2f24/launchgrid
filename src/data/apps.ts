@@ -66,7 +66,7 @@ export interface AppEntry {
   appStoreUrl?: string;
   /** Path to the privacy policy. All seven already have one. */
   privacyPolicyUrl: string;
-  /** Present only where a deletion page exists. */
+  /** Every app has one. Play expects a deletion route alongside the policy. */
   deleteAccountUrl?: string;
   /** REAL Play Console figures only. See the note at the top of this file. */
   rating?: number;
@@ -121,6 +121,7 @@ export const APPS: AppEntry[] = [
       'gst reconciliation checklist',
     ],
     privacyPolicyUrl: '/apps/gst-sahayak/privacy-policy.html',
+    deleteAccountUrl: '/apps/gst-sahayak/delete-account.html',
     price: 'Free with paid plans',
     priority: 0.8,
   },
@@ -203,6 +204,7 @@ export const APPS: AppEntry[] = [
       'legal matter management',
     ],
     privacyPolicyUrl: '/apps/nyayai/privacy-policy.html',
+    deleteAccountUrl: '/apps/nyayai/delete-account.html',
     price: 'Free with paid plans',
     priority: 0.8,
   },
@@ -250,6 +252,7 @@ export const APPS: AppEntry[] = [
       'auto message scheduler',
     ],
     privacyPolicyUrl: '/apps/whatsapp/privacy-policy.html',
+    deleteAccountUrl: '/apps/whatsapp/delete-account.html',
     price: 'Free with Pro subscription',
     priority: 0.9,
   },
@@ -289,6 +292,7 @@ export const APPS: AppEntry[] = [
       'dose reminder offline',
     ],
     privacyPolicyUrl: '/apps/medicine/privacy-policy.html',
+    deleteAccountUrl: '/apps/medicine/delete-account.html',
     price: 'Free',
     priority: 0.7,
   },
@@ -328,6 +332,7 @@ export const APPS: AppEntry[] = [
       'period tracker no account',
     ],
     privacyPolicyUrl: '/apps/periods/privacy-policy.html',
+    deleteAccountUrl: '/apps/periods/delete-account.html',
     price: 'Free',
     priority: 0.7,
   },
@@ -368,6 +373,7 @@ export const APPS: AppEntry[] = [
       'water intake tracker no ads',
     ],
     privacyPolicyUrl: '/apps/water/privacy-policy.html',
+    deleteAccountUrl: '/apps/water/delete-account.html',
     price: 'Free',
     priority: 0.7,
   },
