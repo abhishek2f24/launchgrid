@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { ALL_SEO_PAGES } from '@/lib/seo-pages';
+import { liveTools } from '@/data/tools';
 
 // Keep these in sync with src/app/(marketing)/blog and src/app/(marketing)/features/[slug]
 const BLOG_SLUGS = [
@@ -22,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]['changeFrequency'] }[] = [
     { path: '',               priority: 1.0, freq: 'weekly'  },
     { path: '/pricing',       priority: 0.9, freq: 'monthly' },
+    { path: '/tools',         priority: 0.9, freq: 'weekly'  },
     { path: '/blog',          priority: 0.8, freq: 'weekly'  },
     { path: '/discover',      priority: 0.7, freq: 'daily'   },
     { path: '/faq',           priority: 0.7, freq: 'monthly' },
@@ -40,7 +42,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...FEATURE_SLUGS.map(slug => ({ path: `/features/${slug}`, priority: 0.8, freq: 'monthly' as const })),
     { path: '/sell-online', priority: 0.8, freq: 'monthly' as const },
     { path: '/free-setup', priority: 0.8, freq: 'monthly' as const },
+    { path: '/shopify-payout-reconciliation', priority: 1.0, freq: 'weekly' as const },
     ...ALL_SEO_PAGES.map(p => ({ path: `/sell-online/${p.slug}`, priority: 0.7, freq: 'monthly' as const })),
+    // Every live tool, straight from the catalogue — the homepage grid and the
+    // sitemap can no longer disagree about which tools exist.
+    ...liveTools().map(t => ({ path: t.href, priority: t.priority, freq: 'monthly' as const })),
   ];
 
   return routes.map(({ path, priority, freq }) => ({

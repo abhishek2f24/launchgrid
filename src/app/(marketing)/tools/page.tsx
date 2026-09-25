@@ -5,74 +5,12 @@ import { JourneyNav } from '@/components/signup-journey/JourneyNav';
 import { GrainOverlay } from '@/components/ui-landing/GrainOverlay';
 import { Footer } from '@/components/signup-journey/Footer';
 import { motion } from 'framer-motion';
-import { ShieldCheck, TrendingUp, IndianRupee, Calculator, MessageSquare, Sparkles } from 'lucide-react';
+import { liveTools } from '@/data/tools';
 
-interface ToolItem {
-  name: string;
-  slug: string;
-  description: string;
-  icon: any;
-  useCases: string[];
-  ctaText: string;
-  badge?: string;
-}
-
-const toolsList: ToolItem[] = [
-  {
-    name: 'GST Calculator India',
-    slug: 'gst-calculator',
-    description: 'Quickly calculate CGST, SGST, IGST and the net amount for any product value across all Indian GST slabs.',
-    icon: ShieldCheck,
-    useCases: ['Calculate tax for billing', 'Find net amount excluding GST', 'Quick quote preparation'],
-    ctaText: 'Calculate GST Now',
-    badge: 'Compliance',
-  },
-  {
-    name: 'Meta Ads ROAS Calculator',
-    slug: 'roas-calculator',
-    description: 'Calculate ROAS, CPA, and purchases based on ad spend, conversion value, and average order value.',
-    icon: TrendingUp,
-    useCases: ['Measure Meta Ads efficiency', 'Budget forecasting', 'CPA threshold validation'],
-    ctaText: 'Calculate ROAS Now',
-    badge: 'Marketing',
-  },
-  {
-    name: 'Profit Margin Calculator',
-    slug: 'profit-margin-calculator',
-    description: 'Understand D2C profitability by calculating markup, margin percentage, gross profit, and ideal pricing.',
-    icon: IndianRupee,
-    useCases: ['Determine markup rate', 'Validate product pricing', 'Compare cost vs revenue'],
-    ctaText: 'Calculate Profit Now',
-    badge: 'Finance',
-  },
-  {
-    name: 'Ecommerce Pricing Calculator',
-    slug: 'ecommerce-pricing-calculator',
-    description: 'Factor in shipping, packaging, gateway commissions, and CAC to discover your true bottom-line pricing.',
-    icon: Calculator,
-    useCases: ['Account for hidden costs', 'Set profitable selling prices', 'Break-even analysis'],
-    ctaText: 'Calculate Price Now',
-    badge: 'Pricing Strategy',
-  },
-  {
-    name: 'WhatsApp Message Generator',
-    slug: 'whatsapp-message-generator',
-    description: 'Convert custom messages into formatted WhatsApp click-to-chat links and copy-ready QR codes.',
-    icon: MessageSquare,
-    useCases: ['Generate Instagram story links', 'Pre-fill support chats', 'Configure marketing campaigns'],
-    ctaText: 'Generate Message Now',
-    badge: 'Growth Tool',
-  },
-  {
-    name: 'Store Name Generator',
-    slug: 'store-name-generator',
-    description: 'Get instant brand name suggestions matching Indian consumer psychology, and search domain availability.',
-    icon: Sparkles,
-    useCases: ['Brainstorm brand names', 'Check domain availability', 'Niche-focused suggestions'],
-    ctaText: 'Generate Name Now',
-    badge: 'Brand Identity',
-  },
-];
+// The catalogue lives in src/data/tools.ts — this page renders it, it does not
+// define it. Adding a tool here would silently diverge from the homepage grid,
+// the sitemap and the ItemList structured data.
+const toolsList = liveTools();
 
 export default function ToolsHubPage() {
   return (
@@ -142,7 +80,7 @@ export default function ToolsHubPage() {
                   </div>
 
                   <Link
-                    href={`/tools/${tool.slug}`}
+                    href={tool.href}
                     className="inline-flex justify-center items-center gap-2 bg-[var(--color-mark-ink)] text-white font-inter text-xs font-bold py-3 px-6 rounded-full group-hover:bg-black transition-colors w-full shadow-sm"
                   >
                     {tool.ctaText} →

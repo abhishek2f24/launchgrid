@@ -1,15 +1,28 @@
 import type { Metadata } from 'next';
+import { liveTools } from '@/data/tools';
+
+// Keywords come from the catalogue so a new tool brings its own search terms
+// with it instead of needing a second edit here.
+const toolKeywords = Array.from(
+  new Set(liveTools().flatMap((tool) => tool.keywords))
+);
 
 export const metadata: Metadata = {
-  title: 'Free D2C & Ecommerce Business Tools for Indian Brands | LaunchGrid',
-  description: 'Boost your D2C growth with free business calculators and utility generators: GST, Meta Ads ROAS, Profit Margin, Ecommerce Pricing, WhatsApp link maker, and Store Name Generator.',
-  keywords: ['gst calculator india', 'roas calculator', 'profit margin calculator', 'ecommerce pricing calculator', 'whatsapp message generator', 'store name generator', 'd2c tools', 'free business calculators'],
+  // The root layout appends '| LaunchGrid' via its title template.
+  title: 'Free Business Tools for Indian Sellers',
+  description:
+    'Free calculators and generators for Indian sellers: GST, Meta Ads ROAS, profit margin, ecommerce pricing, WhatsApp links and QR codes, store names, and product research.',
+  keywords: toolKeywords,
   openGraph: {
-    title: 'Free Business Tools for Indian D2C & Ecommerce Brands | LaunchGrid',
-    description: 'Free business tools built specifically for Indian D2C, dropshipping, and Meta Ads. Optimize your sales margins and pricing today.',
+    title: 'Free Business Tools for Indian Sellers | LaunchGrid',
+    description:
+      'Free business tools built for Indian D2C, retail and WhatsApp sellers. Most need no account.',
     url: 'https://launchgrid.in/tools',
     siteName: 'LaunchGrid',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://launchgrid.in/tools',
   },
 };
 
