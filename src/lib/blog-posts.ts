@@ -227,28 +227,6 @@ export const blogPosts: Record<string, BlogPostData> = {
       }
     ]
   },
-  'case-study-local-clothing-store-launchgrid': {
-    title: 'Case Study: How Aanya Ethnic Wear Increased Orders 3x Using LaunchGrid',
-    category: 'Case Studies',
-    date: 'June 14, 2026',
-    readTime: '6 min read',
-    content: [
-      'Aanya Ethnic Wear is a growing fashion label that originally sold products entirely through Instagram DMs and manual WhatsApp chats. In this case study, we look at how they automated their operations and tripled order volumes.',
-      '<strong>The Challenge: Manual DM Bottlenecks</strong><br/>Sharing individual photo files, quoting prices, sharing UPI QR codes, and confirming payments manually took hours. High cart abandonment occurred when customers had to wait for replies.',
-      '<strong>The Solution: Streamlined Checkout</strong><br/>They built a storefront on LaunchGrid, letting customers tap bio links to view the entire catalog and checkout immediately. They used our <a href="/tools/whatsapp-message-generator" class="text-black font-bold underline">WhatsApp Message Generator</a> to customize quick chat CTAs for campaigns.',
-      '<strong>The Result: 3x Order Growth</strong><br/>Conversion rates climbed from 1.2% to 3.8%. Automatic WhatsApp reminders recovered 28% of abandoned checkouts. Check your own ad potential with our <a href="/tools/roas-calculator" class="text-black font-bold underline">Meta Ads ROAS Calculator</a>.'
-    ],
-    faqs: [
-      {
-        question: 'How did Aanya Ethnic Wear manage logistics?',
-        answer: 'They connected Delhivery shipping APIs natively to their storefront, printing shipping labels with a single tap.'
-      },
-      {
-        question: 'What was their cart recovery rate?',
-        answer: 'Using LaunchGrid\'s automated WhatsApp recovery loops, they recovered 28% of checkouts that had entered shipping details but left before paying.'
-      }
-    ]
-  },
   'mobile-accessories-business-margins-sourcing': {
     title: 'Mobile Accessories Business in India: Sourcing, Margins and Best Sellers',
     description: 'What phone cases, chargers and earbuds really earn after shipping and COD returns, where Indian sellers source them, and how to raise order value so small parcels stay profitable.',

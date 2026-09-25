@@ -34,6 +34,15 @@ export function ToolShell({
   children: React.ReactNode;
 }) {
   const url = `https://launchgrid.in/tools/${slug}`;
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://launchgrid.in' },
+      { '@type': 'ListItem', position: 2, name: 'Free Tools', item: 'https://launchgrid.in/tools' },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  };
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -52,6 +61,10 @@ export function ToolShell({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       <GrainOverlay />
       <JourneyNav />

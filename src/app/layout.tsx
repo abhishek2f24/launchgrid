@@ -76,7 +76,7 @@ export default function RootLayout({
         "name": "LaunchGrid",
         "url": "https://launchgrid.in",
         "logo": "https://launchgrid.in/logo.svg",
-        "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in" },
+        "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in", "telephone": "+91-9506212886", "areaServed": "IN", "availableLanguage": ["en", "hi"] },
         "sameAs": ["https://twitter.com/launchgrid_in", "https://instagram.com/launchgrid.in"]
       },
       {

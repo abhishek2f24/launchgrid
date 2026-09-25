@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { CalculatorGuide } from '@/components/calculators/CalculatorGuide';
 import { notFound } from 'next/navigation';
 import { ToolShell } from '@/components/tools/ToolShell';
 import { CalculatorWorkspace } from '@/components/calculators/CalculatorWorkspace';
@@ -44,7 +45,7 @@ export async function generateMetadata(props: {
   if (kind) {
     const config = DOCUMENT_KINDS[kind];
     return {
-      title: config.pageTitle,
+      title: `${config.pageTitle} — Free Online, No Signup`,
       description: config.pageDescription,
       keywords: config.keywords,
       openGraph: {
@@ -61,7 +62,7 @@ export async function generateMetadata(props: {
   const generator = getGenerator(slug);
   if (generator) {
     return {
-      title: generator.title,
+      title: `${generator.title} — Free Online Tool`,
       description: generator.description,
       keywords: generator.keywords,
       openGraph: {
@@ -79,7 +80,7 @@ export async function generateMetadata(props: {
   if (!def) return {};
 
   return {
-    title: def.title,
+    title: `${def.title} — Free Online Calculator (India)`,
     description: def.description,
     keywords: def.keywords,
     openGraph: {
@@ -134,6 +135,7 @@ export default async function GeneratedToolPage(props: {
       privacyLine="Free · no account · calculates in your browser"
     >
       <CalculatorWorkspace slug={def.slug} />
+      <CalculatorGuide def={def} />
     </ToolShell>
   );
 }

@@ -48,7 +48,7 @@ export default function GstCalculatorPage() {
               GST Calculator India
             </h1>
             <p className="font-inter text-xs md:text-sm text-[var(--color-mark-secondary)] max-w-xl mx-auto leading-relaxed">
-              Calculate CGST, SGST, IGST, and base values for Indian tax slabs (5%, 12%, 18%, 28%) with instant add/remove parameters.
+              Calculate CGST, SGST, IGST, and base values for current Indian GST slabs (3%, 5%, 18%, 40%) after the September 2025 rate rationalisation, with instant add/remove parameters.
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default function GstCalculatorPage() {
                     GST Rate Slab (%)
                   </label>
                   <div className="grid grid-cols-4 gap-2">
-                    {[5, 12, 18, 28].map((rate) => (
+                    {[3, 5, 18, 40].map((rate) => (
                       <button
                         key={rate}
                         onClick={() => setGstRate(rate)}
@@ -211,10 +211,10 @@ export default function GstCalculatorPage() {
                   - Total Billing Amount = 5,000 + 900 = ₹5,900<br />
                   - (If Intrastate: CGST = ₹450, SGST = ₹450)
                 </p>
-                <p><strong>Example 2 (Extract GST from a ₹10,000 billing amount at 12%):</strong></p>
+                <p><strong>Example 2 (Extract GST from a ₹10,000 billing amount at 5%):</strong></p>
                 <p className="pl-4">
-                  - Base Product Cost = 10,000 / 1.12 = ₹8,928.57<br />
-                  - Tax Amount = 10,000 - 8,928.57 = ₹1,071.43
+                  - Base Product Cost = 10,000 / 1.05 = ₹9,523.81<br />
+                  - Tax Amount = 10,000 - 9,523.81 = ₹476.19
                 </p>
               </div>
             </section>
@@ -237,7 +237,7 @@ export default function GstCalculatorPage() {
                 </div>
                 <div>
                   <p className="font-bold text-[var(--color-mark-ink)]">Q: What is the GST rate for typical ecommerce items?</p>
-                  <p>A: Most apparel, accessories, and shoes under ₹1,000 are taxed at 5%, while those above are at 12%. Electronics and general consumer goods typically fall under the 18% slab, while luxury items go up to 28%.</p>
+                  <p>A: Since 22 September 2025 GST has two main slabs, 5% and 18%, plus a 40% rate for luxury and sin goods (the old 12% and 28% slabs were removed). Apparel and footwear up to ₹2,500 per piece are generally at 5%, most electronics and general consumer goods at 18%, and gold and jewellery at 3%. Always confirm the HSN code for your product.</p>
                 </div>
               </div>
             </section>
