@@ -1,0 +1,393 @@
+/**
+ * SINGLE SOURCE OF TRUTH for the LaunchGrid app catalogue.
+ *
+ * Drives /apps, every /apps/<slug> page, the sitemap and the structured data.
+ * Adding an app means adding one entry here plus its assets under
+ * public/apps/<slug>/.
+ *
+ * ON METRICS — READ THIS BEFORE FILLING THEM IN
+ *   `rating`, `ratingCount` and `installs` must be the REAL figures from the
+ *   Play Console, or left undefined. They are not decoration: when a rating is
+ *   present the page emits schema.org `aggregateRating`, which Google treats
+ *   as a factual claim. A made-up rating is a structured-data policy violation
+ *   and earns a manual action — which would bury these pages rather than rank
+ *   them. This codebase already had one invented aggregateRating (4.9 from
+ *   "142 reviews", with no review system behind it); it was removed for
+ *   exactly this reason. Undefined is always safe: the page simply omits the
+ *   block.
+ *
+ * ON DESCRIPTIONS
+ *   Everything below is written from each app's own privacy policy, which is
+ *   the only authoritative source in this repo. Check each against its live
+ *   Play listing before pushing for indexing — a store listing and a landing
+ *   page that describe different products is a bad search result and a worse
+ *   first impression.
+ */
+
+import {
+  Baby,
+  Droplets,
+  MessageSquare,
+  Pill,
+  Scale,
+  ShieldCheck,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
+
+export type AppPlatform = 'android' | 'ios';
+
+export interface AppFaq {
+  question: string;
+  answer: string;
+}
+
+export interface AppEntry {
+  /** URL segment: /apps/<slug>. Matches the existing privacy-policy.html path. */
+  slug: string;
+  /** Store name, exactly as published. */
+  name: string;
+  /** One line under the title. Should read as a benefit, not a category. */
+  tagline: string;
+  /** Two or three sentences for the page intro and the meta description. */
+  description: string;
+  packageId: string;
+  platforms: AppPlatform[];
+  icon: LucideIcon;
+  /** Short category label for the directory card. */
+  category: string;
+  /** What the app does. Each should be verifiable in the app itself. */
+  features: string[];
+  /** Answers real search queries; also emits FAQPage structured data. */
+  faqs: AppFaq[];
+  keywords: string[];
+  /** Absent until the app is actually published — no badge is rendered without it. */
+  playStoreUrl?: string;
+  appStoreUrl?: string;
+  /** Path to the privacy policy. All seven already have one. */
+  privacyPolicyUrl: string;
+  /** Present only where a deletion page exists. */
+  deleteAccountUrl?: string;
+  /** REAL Play Console figures only. See the note at the top of this file. */
+  rating?: number;
+  ratingCount?: number;
+  installs?: string;
+  /** Free, or the paid entry point. */
+  price: string;
+  /** Sitemap priority. */
+  priority: number;
+}
+
+export const APPS: AppEntry[] = [
+  {
+    slug: 'gst-sahayak',
+    name: 'GST Sahayak',
+    tagline: 'Keep every client’s GST filing on track.',
+    description:
+      'GST Sahayak is a compliance workspace for Indian tax practitioners and business owners. Track clients, validate GSTINs, work through reconciliation checklists, and keep filing deadlines visible — all stored on your device, with nothing sent to a server.',
+    packageId: 'in.launchgrid.gstsahayak',
+    platforms: ['android'],
+    icon: ShieldCheck,
+    category: 'Tax & compliance',
+    features: [
+      'Client records with GSTIN, filing scheme and checklist state',
+      'GSTIN validation, checked and stored locally',
+      'Reconciliation checklists and a filing calendar',
+      'Export everything as JSON, or erase it all in one tap',
+      'No account, no ads, no analytics — data never leaves the device',
+    ],
+    faqs: [
+      {
+        question: 'Does GST Sahayak upload my client data anywhere?',
+        answer:
+          'No. Client records, GSTINs and checklist progress are stored in the app’s private storage on your device. The app has no server that receives them, and Android’s automatic cloud backup is disabled for it.',
+      },
+      {
+        question: 'Do I need an account to use it?',
+        answer:
+          'No. There is no sign-up and no login. Paid plans are purchased through Google Play, which handles payment entirely — we never see your card details.',
+      },
+      {
+        question: 'Can I get my data out?',
+        answer:
+          'Yes. Settings → Export my data produces a complete JSON copy of everything the app stores, which you can save or share anywhere.',
+      },
+    ],
+    keywords: [
+      'gst filing app',
+      'gst compliance app india',
+      'gstin validator app',
+      'gst practitioner app',
+      'gst reconciliation checklist',
+    ],
+    privacyPolicyUrl: '/apps/gst-sahayak/privacy-policy.html',
+    price: 'Free with paid plans',
+    priority: 0.8,
+  },
+
+  {
+    slug: 'kinly',
+    name: 'Kinly',
+    tagline: 'One place for everything your family is juggling.',
+    description:
+      'Kinly is a shared family organiser: a calendar everyone can see, tasks that get assigned, shopping lists that update live, and expenses that stay settled. Built so a household stops coordinating across four different chat threads.',
+    packageId: 'in.launchgrid.kinly',
+    platforms: ['android'],
+    icon: Users,
+    category: 'Family & organisation',
+    features: [
+      'Shared family calendar',
+      'Tasks and chores, assigned to whoever owns them',
+      'Live shopping lists',
+      'Shared expenses and settling up',
+      'Built for a household, not a workplace',
+    ],
+    faqs: [
+      {
+        question: 'How many people can share a Kinly family?',
+        answer:
+          'Kinly is built for a household — parents, children and anyone else who needs to see the same calendar and lists.',
+      },
+      {
+        question: 'Can I delete my account and data?',
+        answer:
+          'Yes. There is a dedicated deletion page, and you can also request deletion from inside the app.',
+      },
+    ],
+    keywords: [
+      'family organiser app',
+      'shared family calendar app',
+      'family shopping list app',
+      'household task app',
+      'family expense sharing',
+    ],
+    privacyPolicyUrl: '/apps/kinly/privacy-policy.html',
+    deleteAccountUrl: '/apps/kinly/delete-account.html',
+    price: 'Free',
+    priority: 0.8,
+  },
+
+  {
+    slug: 'nyayai',
+    name: 'Nyaya',
+    tagline: 'A working reference for your legal matters.',
+    description:
+      'Nyaya is a professional reference and matter-tracking tool for legal practitioners. Keep matters, parties, courts, case numbers and hearing dates in order, bookmark what you need from the research library, and draft from templates — with every record held on your own device.',
+    packageId: 'in.launchgrid.nyayaai',
+    platforms: ['android'],
+    icon: Scale,
+    category: 'Legal & professional',
+    features: [
+      'Matters with parties, courts, case numbers, hearing dates and stage',
+      'Notes against each matter',
+      'Bookmarks in the research library',
+      'Draft generation with a monthly allowance',
+      'Export as JSON, or erase everything on-device in one tap',
+    ],
+    faqs: [
+      {
+        question: 'Is my case data sent anywhere?',
+        answer:
+          'No. Nyaya does not transmit your legal data. The app requests internet access solely so Google Play can process purchases; that permission is never used to send your matters anywhere.',
+      },
+      {
+        question: 'Is Nyaya legal advice?',
+        answer:
+          'No. It is a professional reference and organisation tool. It does not provide legal advice and is not a substitute for a qualified lawyer’s judgement.',
+      },
+    ],
+    keywords: [
+      'legal case management app india',
+      'advocate diary app',
+      'court case tracker app',
+      'legal matter management',
+    ],
+    privacyPolicyUrl: '/apps/nyayai/privacy-policy.html',
+    price: 'Free with paid plans',
+    priority: 0.8,
+  },
+
+  {
+    slug: 'whatsapp',
+    name: 'SendLater – Message Scheduler',
+    tagline: 'Write it now. Send it at exactly the right minute.',
+    description:
+      'SendLater schedules messages from your own number — midnight birthday wishes, morning reminders, payment follow-ups. Tap a notification to send, or turn on automatic sending and let it go out while you sleep. Everything stays on your phone.',
+    packageId: 'in.launchgrid.whatsapp',
+    platforms: ['android'],
+    icon: MessageSquare,
+    category: 'Productivity',
+    features: [
+      'Schedule a message to the exact minute',
+      'Repeat daily, weekly, monthly or yearly',
+      'Send to several people, each greeted by first name',
+      'Send at the recipient’s local time, in any time zone',
+      'Daily safety check-in that alerts family if you do not respond',
+      'Optional automatic sending, off by default',
+    ],
+    faqs: [
+      {
+        question: 'Does the app read my chats?',
+        answer:
+          'No. In automatic mode the accessibility service only locates the message box and Send button, and only while a message you scheduled is due. It does not read, store or transmit chat content.',
+      },
+      {
+        question: 'Do I have to turn on automatic sending?',
+        answer:
+          'No. The default is one-tap: you get a notification at the time you chose, and tapping it opens the chat with your message ready to send. Automatic sending is off until you explicitly enable it.',
+      },
+      {
+        question: 'Is this made by WhatsApp?',
+        answer:
+          'No. SendLater is published by LaunchGrid and is not affiliated with, endorsed by, or sponsored by WhatsApp LLC or Meta Platforms, Inc. WhatsApp is a trademark of WhatsApp LLC.',
+      },
+    ],
+    keywords: [
+      'message scheduler app',
+      'schedule messages android',
+      'send later app',
+      'birthday message scheduler',
+      'auto message scheduler',
+    ],
+    privacyPolicyUrl: '/apps/whatsapp/privacy-policy.html',
+    price: 'Free with Pro subscription',
+    priority: 0.9,
+  },
+
+  {
+    slug: 'medicine',
+    name: 'MediRemind',
+    tagline: 'Never lose track of a dose.',
+    description:
+      'MediRemind is a medication organiser: schedule what you take and when, get reminded on time, and keep a record of what was actually taken. A consumer organiser, not a clinical system — and everything stays on your device.',
+    packageId: 'in.launchgrid.medicine',
+    platforms: ['android'],
+    icon: Pill,
+    category: 'Health & reminders',
+    features: [
+      'Medication schedules with reminders',
+      'A record of doses taken and missed',
+      'Guidance written for consumers, not clinicians',
+      'Works entirely offline — no account, no upload',
+    ],
+    faqs: [
+      {
+        question: 'Is MediRemind a medical device?',
+        answer:
+          'No. It is a consumer medication organiser, not a clinical system, diagnostic product or medical device, and it is not a substitute for professional medical advice.',
+      },
+      {
+        question: 'Is my health data uploaded?',
+        answer:
+          'No. Your medications and dose history stay in the app’s private storage on your device.',
+      },
+    ],
+    keywords: [
+      'medicine reminder app',
+      'medication tracker app',
+      'pill reminder app india',
+      'dose reminder offline',
+    ],
+    privacyPolicyUrl: '/apps/medicine/privacy-policy.html',
+    price: 'Free',
+    priority: 0.7,
+  },
+
+  {
+    slug: 'periods',
+    name: 'Know Your Cycle',
+    tagline: 'Understand your cycle, privately.',
+    description:
+      'Know Your Cycle logs your periods and shows what your own history suggests about the weeks ahead. Health data of this kind should never leave your phone, so it does not: there is no account and no server.',
+    packageId: 'in.launchgrid.periods',
+    platforms: ['android'],
+    icon: Baby,
+    category: 'Health & reminders',
+    features: [
+      'Period logging and cycle history',
+      'Estimates based on your own recorded cycles',
+      'Reminders for upcoming dates',
+      'No account, and nothing leaves the device',
+    ],
+    faqs: [
+      {
+        question: 'Can I use it as contraception?',
+        answer:
+          'No. Fertility estimates are based on cycle history. They cannot confirm ovulation and must not be used as contraception or as a guarantee of conception.',
+      },
+      {
+        question: 'Where is my cycle data stored?',
+        answer:
+          'Only on your phone, in the app’s private storage. It is never uploaded — which matters more for this category of data than almost any other.',
+      },
+    ],
+    keywords: [
+      'period tracker app private',
+      'offline period tracker',
+      'menstrual cycle tracker india',
+      'period tracker no account',
+    ],
+    privacyPolicyUrl: '/apps/periods/privacy-policy.html',
+    price: 'Free',
+    priority: 0.7,
+  },
+
+  {
+    slug: 'water',
+    name: 'Hydrate',
+    tagline: 'Drink enough water, without thinking about it.',
+    description:
+      'Hydrate is a local-only hydration companion. Set a daily goal, log a glass in one tap, and get nudged when you are behind. No sign-up, no ads, no tracking — the whole app works offline.',
+    packageId: 'in.launchgrid.water',
+    platforms: ['android', 'ios'],
+    icon: Droplets,
+    category: 'Health & reminders',
+    features: [
+      'Daily goal with one-tap logging',
+      'Reminders through the day',
+      'No account needed — nothing to sign up for',
+      'Completely ad-free, with no advertising ID',
+      'Works offline on iOS and Android',
+    ],
+    faqs: [
+      {
+        question: 'Do I need an account?',
+        answer:
+          'No. You do not need to sign up, log in or create an account to use Hydrate.',
+      },
+      {
+        question: 'Are there ads?',
+        answer:
+          'No. Hydrate is entirely ad-free, with no advertising trackers and no advertising ID.',
+      },
+    ],
+    keywords: [
+      'water reminder app',
+      'hydration tracker app',
+      'drink water reminder offline',
+      'water intake tracker no ads',
+    ],
+    privacyPolicyUrl: '/apps/water/privacy-policy.html',
+    price: 'Free',
+    priority: 0.7,
+  },
+];
+
+export function getApp(slug: string): AppEntry | undefined {
+  return APPS.find((app) => app.slug === slug);
+}
+
+export function appSlugs(): string[] {
+  return APPS.map((app) => app.slug);
+}
+
+/** Directory grouping. Order is the order the categories appear on /apps. */
+export function appsByCategory(): { category: string; apps: AppEntry[] }[] {
+  const groups = new Map<string, AppEntry[]>();
+  for (const app of APPS) {
+    const existing = groups.get(app.category);
+    if (existing) existing.push(app);
+    else groups.set(app.category, [app]);
+  }
+  return [...groups.entries()].map(([category, apps]) => ({ category, apps }));
+}

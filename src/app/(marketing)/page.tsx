@@ -345,6 +345,12 @@ export default function MarketingPage() {
             className="mt-20 pt-10 border-t border-[var(--color-mark-default)] flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
           >
             <Link
+              href="/apps"
+              className="font-inter text-xs font-bold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors"
+            >
+              Android apps
+            </Link>
+            <Link
               href="/pricing"
               className="font-inter text-xs font-bold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors"
             >

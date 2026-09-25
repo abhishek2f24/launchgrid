@@ -30,6 +30,10 @@ export function Footer() {
           </p>
           <ul className="space-y-3.5">
             {[
+              // Apps and Tools first: these are the pages with something to
+              // index, and the footer is the only link to them on every page.
+              { label: 'Free Business Tools', href: '/tools' },
+              { label: 'Android Apps', href: '/apps' },
               { label: 'Discover Featured Stores', href: '/discover' },
               { label: 'Sell Online in Your City', href: '/sell-online' },
               { label: 'Pricing Plan Comparison', href: '/pricing' },
