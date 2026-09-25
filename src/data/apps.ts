@@ -69,6 +69,11 @@ export interface AppEntry {
   privacyPolicyUrl: string;
   /** Every app has one. Play expects a deletion route alongside the policy. */
   deleteAccountUrl?: string;
+  /**
+   * Built, but never submitted to Play. The page says so in plain words
+   * instead of showing a download button that goes nowhere.
+   */
+  unreleased?: boolean;
   /** REAL Play Console figures only. See the note at the top of this file. */
   rating?: number;
   ratingCount?: number;
@@ -264,8 +269,10 @@ export const APPS: AppEntry[] = [
     description:
       'Nyaya is a professional reference and matter-tracking tool for legal practitioners. Keep matters, parties, courts, case numbers and hearing dates in order, bookmark what you need from the research library, and draft from templates — with every record held on your own device.',
     packageId: 'in.launchgrid.nyayaai',
-    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
-    // The page shows "Coming to Google Play" until a playStoreUrl is added.
+    // Built but never submitted to Play (confirmed by the owner, 25 Sep 2026).
+    // Kept deliberately for a future release. `unreleased` makes the page say
+    // so plainly rather than implying a launch is imminent.
+    unreleased: true,
     platforms: ['android'],
     icon: Scale,
     category: 'Legal & professional',
@@ -361,8 +368,10 @@ export const APPS: AppEntry[] = [
     description:
       'MediRemind is a medication organiser: schedule what you take and when, get reminded on time, and keep a record of what was actually taken. A consumer organiser, not a clinical system — and everything stays on your device.',
     packageId: 'in.launchgrid.medicine',
-    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
-    // The page shows "Coming to Google Play" until a playStoreUrl is added.
+    // Built but never submitted to Play (confirmed by the owner, 25 Sep 2026).
+    // Kept deliberately for a future release. `unreleased` makes the page say
+    // so plainly rather than implying a launch is imminent.
+    unreleased: true,
     platforms: ['android'],
     icon: Pill,
     category: 'Health & reminders',
@@ -453,8 +462,10 @@ export const APPS: AppEntry[] = [
     description:
       'Hydrate is a local-only hydration companion. Set a daily goal, log a glass in one tap, and get nudged when you are behind. No sign-up, no ads, no tracking — the whole app works offline.',
     packageId: 'in.launchgrid.water',
-    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
-    // The page shows "Coming to Google Play" until a playStoreUrl is added.
+    // Built but never submitted to Play (confirmed by the owner, 25 Sep 2026).
+    // Kept deliberately for a future release. `unreleased` makes the page say
+    // so plainly rather than implying a launch is imminent.
+    unreleased: true,
     platforms: ['android', 'ios'],
     icon: Droplets,
     category: 'Health & reminders',

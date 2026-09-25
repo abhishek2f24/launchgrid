@@ -9,9 +9,25 @@ import { NextResponse } from 'next/server'
  * declaration have to move together — a policy that contradicts Data Safety is
  * a policy violation regardless of which one is right.
  *
- * NOTE: this app was published before this page existed, so Play Console may
- * point at a different policy URL. Check Console → App content → Privacy policy
- * and update it to this URL if so.
+ * PLAY CONSOLE CURRENTLY POINTS AT A PRIVATE GITHUB REPO
+ *   github.com/abhishek2f24/AppLock/blob/main/PRIVACY_POLICY.md is private, so
+ *   that URL returns 404 for every user and every policy reviewer. Play
+ *   requires a publicly accessible policy. Console → App content → Privacy
+ *   policy should be repointed at this page.
+ *
+ * ON ADVERTISING — UNRESOLVED CONTRADICTION, FLAGGED TO THE OWNER
+ *   The GitHub policy (last updated 11 June 2026) says the free tier shows
+ *   Google AdMob ads and that AdMob processes the advertising ID and IP.
+ *   Everything else says the opposite: the app is called AdFree AppLock, the
+ *   store listing promises "ZERO ads, ever", Play Data Safety declares no data
+ *   collected, and reviews from July–September 2026 specifically praise the
+ *   absence of ads. This page follows the Data Safety declaration, which is the
+ *   operative one, on the basis that the June policy is stale. If the app does
+ *   still serve AdMob, this page AND the Data Safety declaration are both wrong
+ *   and must change together.
+ *
+ * Technical specifics below are taken from the owner's own policy, which is
+ * more precise than the store description.
  */
 
 const APP_NAME = 'AdFree AppLock: App Locker'
@@ -50,43 +66,56 @@ const HTML = `<!DOCTYPE html>
 <h2>3. What the App stores, on your device only</h2>
 <ul>
   <li>Which apps you have chosen to lock, and your lock preferences</li>
-  <li>Your PIN, pattern or password &mdash; stored as a hash, never as the value you typed</li>
+  <li>Your PIN, pattern or password &mdash; stored as a salted hash, never as the value you typed</li>
   <li>Photos and videos you move into the vault</li>
   <li>Intruder photos and failed-attempt logs, if you enable that feature</li>
 </ul>
 
 <h2>4. How it is protected</h2>
 <ul>
-  <li>Credentials are hashed with PBKDF2 at 210,000 iterations. We never store, and cannot recover, your actual PIN or password.</li>
-  <li>Vault files are encrypted with AES-256 using the Android Keystore.</li>
+  <li>Credentials are hashed with PBKDF2-HMAC-SHA256 at 210,000 iterations with a random salt, and verified using constant-time comparison. We never store, and cannot recover, your actual PIN or password.</li>
+  <li>Vault files and intruder photos are encrypted with AES-256-GCM, backed by the Android Keystore.</li>
+  <li>All sensitive key-value settings use encrypted shared preferences.</li>
   <li>Everything sits in the App&rsquo;s sandboxed private storage, protected by Android&rsquo;s application isolation.</li>
 </ul>
 <p>Because your credential is not recoverable, losing it means losing access to the vault. That is the trade-off of encryption that we cannot bypass either.</p>
 
 <h2>5. Permissions, and why each is needed</h2>
 <ul>
-  <li><strong>Usage Access</strong> &mdash; lets the App detect which app has come to the foreground, so it can show the lock screen. Without it the App cannot lock anything. It is used only for that check; no usage history is recorded or transmitted.</li>
-  <li><strong>Display Over Other Apps</strong> &mdash; draws the lock screen above the app being opened.</li>
-  <li><strong>Camera (optional)</strong> &mdash; used only to take an intruder selfie after a failed unlock. Photos are stored encrypted on your device. Decline it and every other feature still works.</li>
+  <li><strong>PACKAGE_USAGE_STATS</strong> (Usage Access) &mdash; detects which app has come to the foreground so the lock screen can be shown. Without it the App cannot lock anything. It is used only for that check; no usage history is recorded or transmitted.</li>
+  <li><strong>SYSTEM_ALERT_WINDOW</strong> (Display over other apps) &mdash; draws the lock screen above the app being opened.</li>
+  <li><strong>FOREGROUND_SERVICE</strong> &mdash; keeps the protection service running so locking does not stop when the App is in the background.</li>
+  <li><strong>RECEIVE_BOOT_COMPLETED</strong> &mdash; restarts protection after the device reboots, so your apps are not left unlocked.</li>
+  <li><strong>POST_NOTIFICATIONS</strong> &mdash; shows protection status and intruder alerts.</li>
+  <li><strong>CAMERA (optional)</strong> &mdash; used only for the intruder selfie after a failed unlock. Photos are encrypted and stored on your device. Decline it and every other feature still works.</li>
 </ul>
 
-<h2>6. Payments</h2>
-<p>In-app purchases are processed by Google Play. We do not receive or store your payment details. Google&rsquo;s privacy policy governs those transactions: <a href="https://policies.google.com/privacy">policies.google.com/privacy</a>.</p>
+<h2>6. Network access</h2>
+<p>The App does not send your lock credentials, locked-app list, vault files or intruder photos to any server. Those stay on your device. Network access is used only by Google services bundled with the App:</p>
+<ul>
+  <li><strong>Google Play Billing</strong> &mdash; processes purchases and checks subscription status.</li>
+  <li><strong>Google Play Integrity</strong> &mdash; verifies the App was installed from Google Play.</li>
+  <li><strong>Google Play In-App Updates</strong> &mdash; checks for and delivers updates.</li>
+</ul>
+<p>These are operated by Google and governed by <a href="https://policies.google.com/privacy">Google&rsquo;s privacy policy</a>. We do not receive or store your payment details.</p>
 
-<h2>7. Your rights under the DPDP Act, 2023</h2>
+<h2>7. Advertising and analytics</h2>
+<p>The App contains no advertising SDK and no analytics or tracking SDK, and does not use the Android advertising ID. This matches the App&rsquo;s Data Safety declaration on Google Play, which states that no data is collected and none is shared with third parties.</p>
+
+<h2>8. Your rights under the DPDP Act, 2023</h2>
 <ul>
   <li><strong>Access:</strong> everything the App holds is visible inside the App on your device.</li>
   <li><strong>Erasure:</strong> delete items in the App, clear the App&rsquo;s data in Android Settings, or uninstall. Nothing is held anywhere else. See the <a href="/apps/adfree-applock/delete-account.html">data deletion page</a>.</li>
   <li><strong>Grievance redressal:</strong> write to <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a>. We respond within 30 days.</li>
 </ul>
 
-<h2>8. Children</h2>
+<h2>9. Children</h2>
 <p>The App is intended for general audiences and collects no data from anyone, including children.</p>
 
-<h2>9. Changes to this policy</h2>
+<h2>10. Changes to this policy</h2>
 <p>Material changes will be reflected in an updated App version with a revised "Last updated" date.</p>
 
-<h2>10. Contact</h2>
+<h2>11. Contact</h2>
 <p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a> &middot; Support: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></p>
 
 <footer>

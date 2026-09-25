@@ -22,7 +22,7 @@ const HTML = buildDeletionPage({
     'Intruder photos and failed-attempt logs, if you enabled that feature',
   ],
   inAppPath:
-    'Remove individual items from the vault, and clear the intruder log, from inside the app.',
+    'Settings → Privacy & Data → Delete All Data removes everything at once, from inside the app.',
   hasSubscription: true,
   lastUpdated: '25 September 2026',
 })

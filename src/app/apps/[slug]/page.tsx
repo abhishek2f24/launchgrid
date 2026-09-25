@@ -181,7 +181,7 @@ export default async function AppPage(props: {
                   </a>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-mark-default)] px-5 py-2.5 text-[11px] font-bold text-[var(--color-mark-subtle-text)]">
-                    Coming to Google Play
+                    {app.unreleased ? 'Not yet released' : 'Coming to Google Play'}
                   </span>
                 )}
                 <span className="font-inter text-[11px] font-bold text-[var(--color-mark-subtle-text)]">
@@ -209,6 +209,14 @@ export default async function AppPage(props: {
               )}
             </div>
           </header>
+
+          {app.unreleased && (
+            <p className="mb-10 -mt-2 font-inter text-xs text-[var(--color-mark-secondary)] leading-relaxed bg-[var(--color-mark-subtle)] border border-[var(--color-mark-default)] rounded-xl p-4 max-w-2xl">
+              <strong className="text-[var(--color-mark-ink)]">This app is built but not published yet.</strong>{' '}
+              It is not on Google Play, so there is nothing to download today.
+              The page is here because the app exists and may be released later.
+            </p>
+          )}
 
           {/* Screenshots — rendered only when the files exist */}
           {screenshots.length > 0 && (
