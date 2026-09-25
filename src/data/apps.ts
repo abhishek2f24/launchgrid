@@ -26,6 +26,7 @@
 
 import {
   Baby,
+  Lock,
   Droplets,
   MessageSquare,
   Pill,
@@ -92,6 +93,70 @@ export interface AppEntry {
 }
 
 export const APPS: AppEntry[] = [
+  {
+    slug: 'adfree-applock',
+    name: 'AdFree AppLock: App Locker',
+    tagline: 'Lock any app. No ads, ever.',
+    description:
+      'AdFree AppLock locks any app behind a fingerprint, PIN, pattern or password, hides private photos in an AES-256 vault, and photographs whoever gets the PIN wrong. No ads, no tracking, and Play Data Safety declares no data collected.',
+    packageId: 'com.nomadiccharts.applock',
+    platforms: ['android'],
+    icon: Lock,
+    category: 'Privacy & security',
+    features: [
+      'Lock any app with fingerprint, PIN (4–12 digits), pattern or password',
+      'Randomised keypad so nobody reads your PIN over your shoulder',
+      'Intruder selfie: a silent front-camera photo on a wrong PIN',
+      'AES-256 encrypted photo and video vault, hidden from the gallery',
+      'Fake crash screen, hidden notification content, uninstall protection',
+      'Auto-lock newly installed apps, and quick templates for Social, Finance and Messaging',
+    ],
+    faqs: [
+      {
+        question: 'Does AdFree AppLock show ads?',
+        answer:
+          'No — that is the point of it. There are no ads, no tracking SDKs and no data collection. Google Play Data Safety declares no data collected and none shared with third parties.',
+      },
+      {
+        question: 'Where are my locked photos stored?',
+        answer:
+          'In an AES-256 encrypted vault on your own device, using the Android Keystore. They never leave the phone. Your PIN or password is hashed with PBKDF2 at 210,000 iterations, not stored.',
+      },
+      {
+        question: 'Why does it need Usage Access and Display Over Apps?',
+        answer:
+          'Usage Access lets the app detect which app has come to the foreground so it can show the lock screen; Display Over Apps draws that lock screen. Both are core to locking apps at all. Camera access is optional and used only for the intruder selfie.',
+      },
+      {
+        question: 'Can I use a longer PIN?',
+        answer:
+          'Yes. PINs can be 4 to 12 digits, so 6 is supported. You can also use a pattern or a full password instead.',
+      },
+    ],
+    keywords: [
+      'app lock without ads',
+      'applock fingerprint lock',
+      'photo vault app android',
+      'intruder selfie app lock',
+      'ad free app locker',
+    ],
+    playStoreUrl:
+      'https://play.google.com/store/apps/details?id=com.nomadiccharts.applock',
+    privacyPolicyUrl: '/apps/adfree-applock/privacy-policy.html',
+    deleteAccountUrl: '/apps/adfree-applock/delete-account.html',
+    // Real figures from the public Play listing, checked 25 Sep 2026.
+    rating: 3.5,
+    ratingCount: 54,
+    // `installs` deliberately left unset: Play shows "10K+", which is a bucket,
+    // and a landing page that quotes it invites the comparison with apps that
+    // have millions. The rating is the useful signal here.
+    price: 'Free with in-app purchases',
+    hasAds: false,
+    privacySummary:
+      'Nothing leaves the device. Play Data Safety declares no data collected and none shared. Credentials are hashed with PBKDF2 (210,000 iterations) and vault files encrypted with Android Keystore AES-256.',
+    priority: 1.0,
+  },
+
   {
     slug: 'gst-sahayak',
     name: 'GST Sahayak – Offline GST App',
@@ -428,6 +493,18 @@ export const APPS: AppEntry[] = [
   },
 ];
 
+/**
+ * Published apps first, then the rest.
+ *
+ * A directory that leads with drafts sends its best traffic to pages with no
+ * download button. Within each group the registry order is kept.
+ */
+export function appsForDisplay(): AppEntry[] {
+  const published = APPS.filter((app) => app.playStoreUrl);
+  const unpublished = APPS.filter((app) => !app.playStoreUrl);
+  return [...published, ...unpublished];
+}
+
 export function getApp(slug: string): AppEntry | undefined {
   return APPS.find((app) => app.slug === slug);
 }
@@ -439,7 +516,7 @@ export function appSlugs(): string[] {
 /** Directory grouping. Order is the order the categories appear on /apps. */
 export function appsByCategory(): { category: string; apps: AppEntry[] }[] {
   const groups = new Map<string, AppEntry[]>();
-  for (const app of APPS) {
+  for (const app of appsForDisplay()) {
     const existing = groups.get(app.category);
     if (existing) existing.push(app);
     else groups.set(app.category, [app]);
