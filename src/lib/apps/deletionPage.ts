@@ -28,6 +28,20 @@ export interface DeletionPageConfig {
   inAppPath?: string;
   /** True when the app sells a Play subscription that survives uninstalling. */
   hasSubscription: boolean;
+  /**
+   * True when the app can hold data off-device — a sync backend, or an opt-in
+   * cloud backup.
+   *
+   * This exists because the first version of these pages asserted "there is no
+   * account and no server" for every app, which was taken from the repo's
+   * privacy policies. CycleCare's own Play Data Safety section declares
+   * collection of Personal info, Health and fitness and Device IDs, plus an
+   * optional cloud backup. A deletion page that denies a backend the app
+   * declares is both wrong and useless to someone who enabled that backup.
+   */
+  hasCloudCopy?: boolean;
+  /** Shown when hasCloudCopy: how to remove the off-device copy. */
+  cloudCopyNote?: string;
   lastUpdated: string;
 }
 
@@ -66,8 +80,13 @@ export function buildDeletionPage(config: DeletionPageConfig): string {
 <h1>Delete Your ${appName} Data</h1>
 <p class="meta">Last updated: ${lastUpdated} &middot; App: ${appName} (${packageId}) &middot; Published by LaunchGrid, Mumbai, India</p>
 
-<h2>There is no account to delete</h2>
-<p class="note"><strong>${appName} has no sign-up, no login and no server of ours that receives your data.</strong> Everything the app stores is held in its private storage on your own device. That means there is no copy on our side for us to delete &mdash; deleting it on your phone deletes it everywhere.</p>
+${
+    config.hasCloudCopy
+      ? `<h2>Most of it is on your device</h2>
+<p class="note"><strong>${appName} is local-first: core data is held in the app's private storage on your own device, and no account is needed to use it.</strong> If you have explicitly enabled cloud backup, a copy also exists off-device &mdash; see <em>Removing a cloud backup</em> below.</p>`
+      : `<h2>There is no account to delete</h2>
+<p class="note"><strong>${appName} has no sign-up, no login and no server of ours that receives your data.</strong> Everything the app stores is held in its private storage on your own device. That means there is no copy on our side for us to delete &mdash; deleting it on your phone deletes it everywhere.</p>`
+  }
 
 <h2>What the app stores</h2>
 <ul>
@@ -80,7 +99,19 @@ ${inAppPath ? `  <li><strong>Delete individual records in the app.</strong> ${in
   <li><strong>Clear all app data.</strong> Open Android <em>Settings &rarr; Apps &rarr; ${appName} &rarr; Storage &rarr; Clear data</em>. This removes everything listed above and returns the app to a fresh install.</li>
   <li><strong>Or uninstall the app.</strong> Removing ${appName} deletes its private storage along with it.</li>
 </ol>
-<p>Either of the last two steps is permanent and immediate. We are not involved in it, and we receive no notification &mdash; because we never had the data.</p>
+<p>Either of the last two steps is permanent and immediate.${
+    config.hasCloudCopy
+      ? ''
+      : ' We are not involved in it, and we receive no notification &mdash; because we never had the data.'
+  }</p>
+${
+  config.hasCloudCopy
+    ? `
+<h2>Removing a cloud backup</h2>
+<p>${config.cloudCopyNote ?? ''} Clearing app data or uninstalling does <strong>not</strong> by itself remove a backup you previously uploaded.</p>
+<p>To have any off-device copy deleted, write to <a href="mailto:grievance@launchgrid.in?subject=${encodeURIComponent(`${appName} data deletion request`)}">grievance@launchgrid.in</a> from the address associated with the backup. We action deletion requests within 30 days.</p>`
+    : ''
+}
 ${
   hasSubscription
     ? `
@@ -91,7 +122,11 @@ ${
 }
 
 <h2>What we hold about you</h2>
-<p>Nothing. ${appName} contains no analytics, no advertising and no tracking SDKs, and it does not use the Android advertising ID.${
+<p>${
+    config.hasCloudCopy
+      ? `Only what an enabled cloud backup contains, and nothing else. ${appName}'s full data handling is set out in its privacy policy and in its Data Safety section on Google Play.`
+      : `Nothing. ${appName} contains no analytics, no advertising and no tracking SDKs, and it does not use the Android advertising ID.`
+  }${
     hasSubscription
       ? ' The only network traffic it generates is Google Play Billing, which Google operates; we never see your payment details.'
       : ''

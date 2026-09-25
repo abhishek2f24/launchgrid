@@ -74,6 +74,19 @@ export interface AppEntry {
   installs?: string;
   /** Free, or the paid entry point. */
   price: string;
+  /**
+   * The app's actual data handling, in one or two sentences.
+   *
+   * MUST MATCH THE APP'S PLAY DATA SAFETY DECLARATION. This was previously a
+   * sentence hardcoded into the page template claiming every app kept
+   * everything on-device. That is true of GST Sahayak and false of Kinly and
+   * CycleCare, both of which declare data collection on Play. A privacy claim
+   * on a public page that contradicts the same app's Data Safety section is
+   * wrong on its face and is a Play policy risk.
+   */
+  privacySummary: string;
+  /** Whether the free tier shows ads. Checked against the store listing. */
+  hasAds: boolean;
   /** Sitemap priority. */
   priority: number;
 }
@@ -81,7 +94,7 @@ export interface AppEntry {
 export const APPS: AppEntry[] = [
   {
     slug: 'gst-sahayak',
-    name: 'GST Sahayak',
+    name: 'GST Sahayak – Offline GST App',
     tagline: 'Keep every client’s GST filing on track.',
     description:
       'GST Sahayak is a compliance workspace for Indian tax practitioners and business owners. Track clients, validate GSTINs, work through reconciliation checklists, and keep filing deadlines visible — all stored on your device, with nothing sent to a server.',
@@ -122,13 +135,18 @@ export const APPS: AppEntry[] = [
     ],
     privacyPolicyUrl: '/apps/gst-sahayak/privacy-policy.html',
     deleteAccountUrl: '/apps/gst-sahayak/delete-account.html',
-    price: 'Free with paid plans',
+    price: 'Free with Premium',
+    hasAds: false,
+    privacySummary:
+      'Works fully offline. Play Data Safety declares no data collected and none shared — client records, GSTINs and checklists stay in the app’s private storage on your device.',
+    playStoreUrl:
+      'https://play.google.com/store/apps/details?id=in.launchgrid.gstsahayak',
     priority: 0.8,
   },
 
   {
     slug: 'kinly',
-    name: 'Kinly',
+    name: 'Kinly: Family Calendar',
     tagline: 'One place for everything your family is juggling.',
     description:
       'Kinly is a shared family organiser: a calendar everyone can see, tasks that get assigned, shopping lists that update live, and expenses that stay settled. Built so a household stops coordinating across four different chat threads.',
@@ -141,7 +159,8 @@ export const APPS: AppEntry[] = [
       'Tasks and chores, assigned to whoever owns them',
       'Live shopping lists',
       'Shared expenses and settling up',
-      'Built for a household, not a workplace',
+      'Real-time sync across every family member’s device',
+      'Free with ads; Plus and Premium remove them and raise storage limits',
     ],
     faqs: [
       {
@@ -164,7 +183,12 @@ export const APPS: AppEntry[] = [
     ],
     privacyPolicyUrl: '/apps/kinly/privacy-policy.html',
     deleteAccountUrl: '/apps/kinly/delete-account.html',
-    price: 'Free',
+    price: 'Free with Plus and Premium',
+    hasAds: true,
+    privacySummary:
+      'Kinly syncs across your family’s devices, so it does hold an account and shared family data on a server. Play Data Safety lists Personal info, Financial info and six other types, encrypted in transit and never shared with third parties. You can request deletion at any time.',
+    playStoreUrl:
+      'https://play.google.com/store/apps/details?id=in.launchgrid.kinly',
     priority: 0.8,
   },
 
@@ -175,6 +199,8 @@ export const APPS: AppEntry[] = [
     description:
       'Nyaya is a professional reference and matter-tracking tool for legal practitioners. Keep matters, parties, courts, case numbers and hearing dates in order, bookmark what you need from the research library, and draft from templates — with every record held on your own device.',
     packageId: 'in.launchgrid.nyayaai',
+    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
+    // The page shows "Coming to Google Play" until a playStoreUrl is added.
     platforms: ['android'],
     icon: Scale,
     category: 'Legal & professional',
@@ -206,6 +232,9 @@ export const APPS: AppEntry[] = [
     privacyPolicyUrl: '/apps/nyayai/privacy-policy.html',
     deleteAccountUrl: '/apps/nyayai/delete-account.html',
     price: 'Free with paid plans',
+    hasAds: false,
+    privacySummary:
+      'Nyaya does not transmit your legal data. Matters, notes and bookmarks stay in the app’s private storage on your device; the only network use is Google Play Billing.',
     priority: 0.8,
   },
 
@@ -254,6 +283,9 @@ export const APPS: AppEntry[] = [
     privacyPolicyUrl: '/apps/whatsapp/privacy-policy.html',
     deleteAccountUrl: '/apps/whatsapp/delete-account.html',
     price: 'Free with Pro subscription',
+    hasAds: false,
+    privacySummary:
+      'Contacts, message text, schedules and delivery history stay in the app’s private storage on your device. No account, no analytics, no advertising ID.',
     priority: 0.9,
   },
 
@@ -264,6 +296,8 @@ export const APPS: AppEntry[] = [
     description:
       'MediRemind is a medication organiser: schedule what you take and when, get reminded on time, and keep a record of what was actually taken. A consumer organiser, not a clinical system — and everything stays on your device.',
     packageId: 'in.launchgrid.medicine',
+    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
+    // The page shows "Coming to Google Play" until a playStoreUrl is added.
     platforms: ['android'],
     icon: Pill,
     category: 'Health & reminders',
@@ -294,15 +328,18 @@ export const APPS: AppEntry[] = [
     privacyPolicyUrl: '/apps/medicine/privacy-policy.html',
     deleteAccountUrl: '/apps/medicine/delete-account.html',
     price: 'Free',
+    hasAds: false,
+    privacySummary:
+      'Medications, reminders and dose history stay in the app’s private storage on your device.',
     priority: 0.7,
   },
 
   {
     slug: 'periods',
-    name: 'Know Your Cycle',
+    name: 'CycleCare: Period Tracker',
     tagline: 'Understand your cycle, privately.',
     description:
-      'Know Your Cycle logs your periods and shows what your own history suggests about the weeks ahead. Health data of this kind should never leave your phone, so it does not: there is no account and no server.',
+      'CycleCare logs your periods, flow, symptoms and moods, and shows what your own history suggests about the weeks ahead. Core tracking is local-first and needs no account; cloud backup exists only if you switch it on.',
     packageId: 'in.launchgrid.periods',
     platforms: ['android'],
     icon: Baby,
@@ -311,7 +348,9 @@ export const APPS: AppEntry[] = [
       'Period logging and cycle history',
       'Estimates based on your own recorded cycles',
       'Reminders for upcoming dates',
-      'No account, and nothing leaves the device',
+      'Local-first: no account needed for core tracking',
+      'Optional cloud backup, off unless you turn it on',
+      'Free version carries ads away from logging screens; Premium is ad-free',
     ],
     faqs: [
       {
@@ -322,7 +361,7 @@ export const APPS: AppEntry[] = [
       {
         question: 'Where is my cycle data stored?',
         answer:
-          'Only on your phone, in the app’s private storage. It is never uploaded — which matters more for this category of data than almost any other.',
+          'Cycle logging is local-first, so it stays on your phone unless you explicitly turn on cloud backup. You can export or delete everything from inside the app at any time.',
       },
     ],
     keywords: [
@@ -333,7 +372,12 @@ export const APPS: AppEntry[] = [
     ],
     privacyPolicyUrl: '/apps/periods/privacy-policy.html',
     deleteAccountUrl: '/apps/periods/delete-account.html',
-    price: 'Free',
+    price: 'Free with ads; Premium removes them',
+    hasAds: true,
+    privacySummary:
+      'Cycle logging is local-first and needs no account. Cloud backup exists but is used only when you explicitly enable it. Play Data Safety lists Personal info, Health and fitness, and Device or other IDs, encrypted in transit and not shared with third parties; sensitive cycle details are not used to personalise ads. You can export or delete your data from inside the app.',
+    playStoreUrl:
+      'https://play.google.com/store/apps/details?id=in.launchgrid.periods',
     priority: 0.7,
   },
 
@@ -344,6 +388,8 @@ export const APPS: AppEntry[] = [
     description:
       'Hydrate is a local-only hydration companion. Set a daily goal, log a glass in one tap, and get nudged when you are behind. No sign-up, no ads, no tracking — the whole app works offline.',
     packageId: 'in.launchgrid.water',
+    // NOT FOUND in the LaunchGrid Play Console account (checked 25 Sep 2026).
+    // The page shows "Coming to Google Play" until a playStoreUrl is added.
     platforms: ['android', 'ios'],
     icon: Droplets,
     category: 'Health & reminders',
@@ -375,6 +421,9 @@ export const APPS: AppEntry[] = [
     privacyPolicyUrl: '/apps/water/privacy-policy.html',
     deleteAccountUrl: '/apps/water/delete-account.html',
     price: 'Free',
+    hasAds: false,
+    privacySummary:
+      'Entirely local. No account, no ads, no advertising ID — your goal and intake log never leave the device.',
     priority: 0.7,
   },
 ];

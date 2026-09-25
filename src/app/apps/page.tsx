@@ -75,9 +75,8 @@ export default function AppsDirectoryPage() {
               Apps that keep your data on your phone.
             </h1>
             <p className="font-inter text-sm md:text-base text-[var(--color-mark-secondary)] leading-relaxed">
-              Every app here works without an account, without ads, and without
-              sending what you enter to a server. Pick the one that solves your
-              problem.
+              Built for people who would rather their data stayed on their phone.
+              Each page says plainly what that app does and does not collect.
             </p>
           </header>
 
@@ -135,14 +134,15 @@ export default function AppsDirectoryPage() {
 
           <section className="mt-20 pt-10 border-t border-[var(--color-mark-default)] max-w-2xl">
             <h2 className="font-playfair text-xl font-bold text-[var(--color-mark-ink)] mb-3">
-              Why none of them ask you to sign up
+              Local-first where it counts
             </h2>
             <p className="font-inter text-xs text-[var(--color-mark-secondary)] leading-relaxed">
-              An app that stores your medication schedule, your cycle, your
-              clients&rsquo; GSTINs or your case notes has no business keeping them on
-              someone else&rsquo;s server. Each of these apps holds its data in private
-              storage on your own device, which is also why none of them need an
-              account and none of them carry ads.
+              An app holding your medication schedule, your cycle or your
+              clients&rsquo; GSTINs should keep them on your phone, and most of these
+              do. The ones that genuinely need a server &mdash; Kinly syncs a
+              calendar across a whole family &mdash; say so on their own page, along
+              with what they collect and how to have it deleted. No app here is
+              described as more private than it is.
             </p>
             <p className="mt-4 font-inter text-[11px] text-[var(--color-mark-subtle-text)]">
               Looking for browser tools instead?{' '}

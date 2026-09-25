@@ -19,10 +19,14 @@ const HTML = buildDeletionPage({
     'The cycle dates you logged',
     'Any symptoms or notes you recorded',
     'Your reminder settings',
+    'Any cloud backup, if you explicitly enabled it',
   ],
   inAppPath:
     'Delete an individual logged cycle or symptom entry from its record in the app.',
-  hasSubscription: false,
+  hasCloudCopy: true,
+  cloudCopyNote:
+    'CycleCare offers an optional cloud backup that is used only when you explicitly turn it on.',
+  hasSubscription: true,
   lastUpdated: '25 September 2026',
 })
 

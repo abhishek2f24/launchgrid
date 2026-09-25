@@ -247,11 +247,13 @@ export default async function AppPage(props: {
           {/* Privacy */}
           <section className="mb-14 bg-[var(--color-mark-subtle)] border border-[var(--color-mark-default)] rounded-[1.5rem] p-6">
             <h2 className="flex items-center gap-2 font-playfair text-lg font-bold text-[var(--color-mark-ink)] mb-2">
-              <ShieldCheck className="w-4 h-4" aria-hidden="true" /> Your data stays on your device
+              <ShieldCheck className="w-4 h-4" aria-hidden="true" /> How your data is handled
             </h2>
+            {/* Per-app, from the registry — NOT a blanket claim. Two of these
+                apps declare data collection on Play, and a page asserting
+                otherwise would contradict their own Data Safety section. */}
             <p className="font-inter text-xs text-[var(--color-mark-secondary)] leading-relaxed mb-4">
-              {app.name} stores what you enter in the app&rsquo;s private storage on your
-              phone. There is no account to create, and no server of ours receives it.
+              {app.privacySummary}
             </p>
             <div className="flex flex-wrap gap-4">
               <a href={app.privacyPolicyUrl} className="inline-flex items-center gap-1 font-inter text-[11px] font-bold text-[var(--color-mark-secondary)] hover:text-[var(--color-mark-ink)] transition-colors">
