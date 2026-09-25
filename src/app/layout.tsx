@@ -75,7 +75,7 @@ export default function RootLayout({
         "@id": "https://launchgrid.in/#organization",
         "name": "LaunchGrid",
         "url": "https://launchgrid.in",
-        "logo": "https://launchgrid.in/logo.svg",
+        "logo": "https://launchgrid.in/logo.svg", "founder": { "@type": "Person", "name": "Abhishek Maurya" }, "address": { "@type": "PostalAddress", "addressLocality": "Vadodara", "addressRegion": "Gujarat", "addressCountry": "IN" },
         "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@launchgrid.in", "telephone": "+91-9506212886", "areaServed": "IN", "availableLanguage": ["en", "hi"] },
         "sameAs": ["https://twitter.com/launchgrid_in", "https://instagram.com/launchgrid.in"]
       },

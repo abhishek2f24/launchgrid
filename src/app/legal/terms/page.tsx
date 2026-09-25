@@ -13,7 +13,7 @@ export default function TermsPage() {
       <p><strong>Effective Date:</strong> June 7, 2026</p>
       
       <h2>1. Introduction</h2>
-      <p>Welcome to LaunchGrid. LaunchGrid Software Pvt. Ltd. ("we", "us", "our") operates strictly as an Intermediary under the Information Technology Act, 2000. We provide software-as-a-service (SaaS) tools enabling merchants to build their own e-commerce websites.</p>
+      <p>Welcome to LaunchGrid. LaunchGrid, a business operated by Abhishek Maurya (sole proprietor), Vadodara, Gujarat, India ("we", "us", "our"), operates strictly as an Intermediary under the Information Technology Act, 2000. We provide software-as-a-service (SaaS) tools enabling merchants to build their own e-commerce websites.</p>
       
       <h2>2. Platform Status & Liability</h2>
       <p>LaunchGrid is a technology platform, NOT a marketplace. We do not process payments on behalf of merchants for their end-customers, nor do we control inventory, shipping, or fulfillment. Each merchant is an independent business entity.</p>

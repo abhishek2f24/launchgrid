@@ -13,6 +13,9 @@ export default function ContactPage() {
       
       <p>If you have any questions, disputes, or wish to report a violation of our terms, please contact us using the details below.</p>
       
+      <h3>Business Details</h3>
+      <p>LaunchGrid is operated by <strong>Abhishek Maurya</strong> (sole proprietor), Vadodara, Gujarat, India.</p>
+
       <h3>Contact Channels</h3>
       <ul>
         <li><strong>Support Email:</strong> support@launchgrid.in</li>
