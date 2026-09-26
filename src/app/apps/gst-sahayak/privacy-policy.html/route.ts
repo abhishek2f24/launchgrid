@@ -16,10 +16,10 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Privacy Policy — GST Sahayak</h1>
-<p class="meta">Last updated: 12 June 2026 &middot; App: GST Sahayak (in.launchgrid.gstsahayak) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Last updated: 12 June 2026 &middot; App: GST Sahayak (in.launchgrid.gstsahayak) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>1. Who we are</h2>
-<p>GST Sahayak ("the App") is published by LaunchGrid, Mumbai, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
+<p>GST Sahayak ("the App") is published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. The short version: we collect nothing</h2>
 <p>The App requests internet access solely so Google Play can process subscription and one-time purchases (Google Play Billing). Your business data &mdash; clients, GSTINs, checklists &mdash; is never transmitted by the App; it is not sent to us or to any server we control. There are no analytics, no trackers, no ads SDKs, and no crash reporters. Payment processing itself is handled entirely by Google Play under Google's own privacy policy; we never see your payment details.</p>
@@ -53,7 +53,7 @@ const HTML = `<!DOCTYPE html>
 <p>Material changes will be reflected in an updated App version with a revised "Last updated" date.</p>
 
 <h2>9. Contact</h2>
-<p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
+<p>LaunchGrid (Abhishek Maurya), Vadodara, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
 </body>
 </html>
 `

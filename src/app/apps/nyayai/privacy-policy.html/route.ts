@@ -16,7 +16,7 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Privacy Policy — Nyaya</h1>
-<p class="meta">Effective date: 12 June 2026 &middot; App: Nyaya, formerly "NyayaAI" (in.launchgrid.nyayaai) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Effective date: 12 June 2026 &middot; App: Nyaya, formerly "NyayaAI" (in.launchgrid.nyayaai) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>The short version</h2>
 <p>Nyaya does not transmit your legal data anywhere. The app requests internet access solely so Google Play can process subscription and one-time purchases; that permission is used only for Play Billing, never to send your matters, bookmarks or drafts anywhere.</p>
@@ -51,7 +51,7 @@ const HTML = `<!DOCTYPE html>
 <p>If a future version changes how the app uses network access, that version will declare it visibly in its Play listing, update this policy first, and the change will require an explicit app update that you choose to install.</p>
 
 <h2>7. Contact / grievance</h2>
-<p>Publisher: LaunchGrid, Mumbai, India.<br/>For privacy questions or grievances under the DPDP Act, 2023, write to: <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
+<p>Publisher: LaunchGrid (Abhishek Maurya), Vadodara, India.<br/>For privacy questions or grievances under the DPDP Act, 2023, write to: <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
 </body>
 </html>
 `

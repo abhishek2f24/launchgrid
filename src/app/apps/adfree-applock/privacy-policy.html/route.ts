@@ -57,10 +57,10 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Privacy Policy — ${APP_NAME}</h1>
-<p class="meta">Last updated: ${LAST_UPDATED} &middot; App: ${APP_NAME} (${PACKAGE}) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Last updated: ${LAST_UPDATED} &middot; App: ${APP_NAME} (${PACKAGE}) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>1. Who we are</h2>
-<p>${APP_NAME} ("the App") is published by LaunchGrid, Mumbai, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
+<p>${APP_NAME} ("the App") is published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. The short version: we collect nothing</h2>
 <p class="note">The App collects no personal data and shares none with third parties. There is no account, no sign-up, <strong>no ads</strong> and no analytics or tracking SDK. Your lock settings, vault contents and intruder photos never leave your device, and we have no server that could receive them.</p>
@@ -119,7 +119,7 @@ const HTML = `<!DOCTYPE html>
 <p>Material changes will be reflected in an updated App version with a revised "Last updated" date.</p>
 
 <h2>11. Contact</h2>
-<p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a> &middot; Support: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></p>
+<p>LaunchGrid (Abhishek Maurya), Vadodara, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a> &middot; Support: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></p>
 
 <footer>
   <p>LaunchGrid &middot; <a href="https://launchgrid.in">launchgrid.in</a> &middot; <a href="/apps/adfree-applock">About ${APP_NAME}</a></p>

@@ -16,10 +16,10 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Privacy Policy — Kinly</h1>
-<p class="meta">Last updated: 5 July 2026 &middot; App: Kinly (in.launchgrid.kinly) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Last updated: 5 July 2026 &middot; App: Kinly (in.launchgrid.kinly) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>1. Who we are</h2>
-<p>Kinly ("the App") is a shared family organizer &mdash; calendar, tasks, shopping lists, expenses, and related family-coordination tools &mdash; published by LaunchGrid, Mumbai, India ("we", "us"). This policy explains how the App collects, uses, and protects your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
+<p>Kinly ("the App") is a shared family organizer &mdash; calendar, tasks, shopping lists, expenses, and related family-coordination tools &mdash; published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). This policy explains how the App collects, uses, and protects your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. What the App is, in short</h2>
 <p>Unlike a single-user tool, Kinly is built around a shared family account: the data you and your family members add is synced to our servers (hosted on Supabase) so everyone in the family sees the same up-to-date calendar, tasks, expenses, and other content in real time. This section explains exactly what that includes.</p>
@@ -71,7 +71,7 @@ const HTML = `<!DOCTYPE html>
 <p>Material changes will be reflected here with a revised "Last updated" date.</p>
 
 <h2>13. Contact</h2>
-<p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
+<p>LaunchGrid (Abhishek Maurya), Vadodara, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a></p>
 </body>
 </html>
 `

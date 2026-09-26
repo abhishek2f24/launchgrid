@@ -45,10 +45,10 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Privacy Policy — ${APP_NAME}</h1>
-<p class="meta">Last updated: ${LAST_UPDATED} &middot; App: ${APP_NAME} (${PACKAGE}) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Last updated: ${LAST_UPDATED} &middot; App: ${APP_NAME} (${PACKAGE}) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>1. Who we are</h2>
-<p>${APP_NAME} ("the App", "${SHORT_NAME}") is published by LaunchGrid, Mumbai, India ("we", "us"). The App lets you write a message now and have it go out at a time you choose. This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
+<p>${APP_NAME} ("the App", "${SHORT_NAME}") is published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). The App lets you write a message now and have it go out at a time you choose. This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. The short version: we collect nothing</h2>
 <p>The contacts you pick, the messages you write, your schedules and your delivery history are stored only on your device. They are never uploaded to us or to any server we control &mdash; we do not operate a server that receives your data. There is no account and no sign-up. The App contains no advertising, no analytics and no tracking SDKs, and it does not use the Android advertising ID. The only third-party library that reaches the internet is Google Play Billing, which Google operates to process subscriptions.</p>
@@ -108,7 +108,7 @@ const HTML = `<!DOCTYPE html>
 <p>WhatsApp is a trademark of WhatsApp LLC. ${SHORT_NAME} is not affiliated with, endorsed by, or sponsored by WhatsApp LLC or Meta Platforms, Inc.</p>
 
 <h2>13. Contact</h2>
-<p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a> &middot; Support: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></p>
+<p>LaunchGrid (Abhishek Maurya), Vadodara, India &mdash; <a href="mailto:privacy@launchgrid.in">privacy@launchgrid.in</a> &middot; Support: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></p>
 
 <footer>
   <p>LaunchGrid &middot; <a href="https://launchgrid.in">launchgrid.in</a></p>

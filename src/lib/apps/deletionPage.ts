@@ -78,7 +78,7 @@ export function buildDeletionPage(config: DeletionPageConfig): string {
 </head>
 <body>
 <h1>Delete Your ${appName} Data</h1>
-<p class="meta">Last updated: ${lastUpdated} &middot; App: ${appName} (${packageId}) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">Last updated: ${lastUpdated} &middot; App: ${appName} (${packageId}) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 ${
     config.hasCloudCopy
@@ -139,7 +139,7 @@ ${
 <p>The full policy for ${appName} is at <a href="/apps/${config.slug}/privacy-policy.html">launchgrid.in/apps/${config.slug}/privacy-policy.html</a>.</p>
 
 <footer>
-  <p>LaunchGrid, Mumbai, India &middot; <a href="https://launchgrid.in">launchgrid.in</a> &middot; <a href="/apps/${config.slug}">About ${appName}</a></p>
+  <p>LaunchGrid (Abhishek Maurya), Vadodara, India &middot; <a href="https://launchgrid.in">launchgrid.in</a> &middot; <a href="/apps/${config.slug}">About ${appName}</a></p>
 </footer>
 </body>
 </html>
