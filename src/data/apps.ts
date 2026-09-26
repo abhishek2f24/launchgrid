@@ -26,6 +26,7 @@
 
 import {
   Baby,
+  BellRing,
   Lock,
   Droplets,
   MessageSquare,
@@ -453,6 +454,65 @@ export const APPS: AppEntry[] = [
     playStoreUrl:
       'https://play.google.com/store/apps/details?id=in.launchgrid.periods',
     priority: 0.7,
+  },
+
+  {
+    slug: 'snapdue',
+    name: 'Snapdue: Screenshot Reminder',
+    tagline: 'Screenshot it. Snapdue reminds you.',
+    description:
+      'Snapdue turns screenshots and shared text into reminders. Share a bill, ticket or message and it finds the date, time, amount and place on your phone, then alerts you at the right minute. No internet permission, no ads, no trackers.',
+    packageId: 'in.launchgrid.snapdue',
+    // Owner has not shared a Play listing yet. Add playStoreUrl (and drop
+    // `unreleased`) once it is live.
+    unreleased: true,
+    platforms: ['android'],
+    icon: BellRing,
+    category: 'Health & reminders',
+    features: [
+      'Share a screenshot or text and get a reminder with the date and time filled in',
+      'Finds dates, times, amounts, merchants and locations on your phone with on-device text recognition',
+      'Exact-minute alerts, re-scheduled automatically after a restart',
+      'Repeating reminders and categories',
+      'Picks one screenshot through the Android photo picker, with no access to your photo library',
+      'No internet permission, no ads, no analytics',
+    ],
+    faqs: [
+      {
+        question: 'Does Snapdue upload my screenshots?',
+        answer:
+          'No. Snapdue does not request the internet permission, so it cannot upload anything. Text recognition runs on your phone with a bundled Google ML Kit model, and the original image is read once and not stored.',
+      },
+      {
+        question: 'What kind of screenshots can it turn into reminders?',
+        answer:
+          'Anything with a date or time in it: bills and due dates, tickets and bookings, appointment messages, event invites. It also picks up amounts, merchants and locations when they are there, and you can keep or remove them before saving.',
+      },
+      {
+        question: 'Why does it need the Alarms & reminders permission?',
+        answer:
+          'So the alert arrives at the exact minute you set. If you turn it off, reminders still work but may arrive a few minutes late.',
+      },
+      {
+        question: 'Is Snapdue free?',
+        answer:
+          'Yes. The free plan has a monthly limit on screenshot extractions, and Snapdue Pro is an optional subscription handled by Google Play. There are no ads in either version.',
+      },
+    ],
+    keywords: [
+      'screenshot reminder app',
+      'bill due date reminder app',
+      'turn screenshot into reminder',
+      'reminder app no internet permission',
+      'offline reminder app android',
+    ],
+    privacyPolicyUrl: '/apps/snapdue/privacy-policy.html',
+    deleteAccountUrl: '/apps/snapdue/delete-account.html',
+    price: 'Free with optional Snapdue Pro subscription',
+    hasAds: false,
+    privacySummary:
+      'Nothing leaves the device: Snapdue has no internet permission and no servers. Screenshots are read on the phone with a bundled ML Kit model and not stored; reminders and settings live in the app’s private storage. No ads, analytics or trackers.',
+    priority: 0.8,
   },
 
   {

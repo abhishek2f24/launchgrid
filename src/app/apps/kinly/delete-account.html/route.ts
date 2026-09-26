@@ -18,7 +18,7 @@ const HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>Delete Your Kinly Account</h1>
-<p class="meta">App: Kinly (in.launchgrid.kinly) &middot; Published by LaunchGrid, Mumbai, India</p>
+<p class="meta">App: Kinly (in.launchgrid.kinly) &middot; Published by LaunchGrid (Abhishek Maurya), Vadodara, India</p>
 
 <h2>How to request deletion</h2>
 <p>To request deletion of your Kinly account and associated personal data, send an email to <a href="mailto:grievance@launchgrid.in?subject=Kinly%20account%20deletion%20request">grievance@launchgrid.in</a> from the email address registered on your account (or including your registered phone number, if you signed in with phone).</p>
@@ -41,7 +41,7 @@ const HTML = `<!DOCTYPE html>
 <p>You can also leave a family at any time from <strong>More &rarr; Family &amp; profile &rarr; Leave family</strong> inside the app, which immediately removes your access to that family's data. This does not delete your account entirely — use the email request above for full account deletion.</p>
 
 <h2>Contact</h2>
-<p>LaunchGrid, Mumbai, India &mdash; <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a></p>
+<p>LaunchGrid (Abhishek Maurya), Vadodara, India &mdash; <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a></p>
 </body>
 </html>
 `
