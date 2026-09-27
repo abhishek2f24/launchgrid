@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition, useRef } from 'react'
+import { checkUploadableImage, RENDERABLE_IMAGE_ACCEPT } from '@/lib/images/renderable'
 import { Palette, Layout, Type, ExternalLink, Check, Loader2, Sparkles, Camera, ThumbsUp, AtSign, Megaphone, Images, Plus, Trash2, Timer } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 
@@ -215,20 +216,29 @@ export function StorefrontDesigner({
   const [sliderEnabled, setSliderEnabled] = useState(initialSliderEnabled || false)
   const [sliderImages,  setSliderImages]  = useState<SliderImage[]>(initialSliderImages || [])
   const [uploadingSlide, setUploadingSlide] = useState(false)
+  // Upload problems used to go only to console.error, so a merchant whose
+  // iPhone photos were rejected saw nothing happen and no reason why.
+  const [sliderError, setSliderError] = useState<string | null>(null)
   const sliderFileRef = useRef<HTMLInputElement>(null)
 
   const activeColor = COLORS.find(c => c.id === color)?.hex || '#8b5cf6'
 
   async function handleSliderUpload(files: FileList | null) {
     if (!files || files.length === 0) return
+    setSliderError(null)
     setUploadingSlide(true)
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Sign in again to upload images')
       const uploaded: SliderImage[] = []
+      const rejected: string[] = []
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith('image/')) continue
+        const problem = await checkUploadableImage(file)
+        if (problem) {
+          rejected.push(`${file.name}: ${problem}`)
+          continue
+        }
         const path = `${user.id}/slider-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`
         const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { upsert: false })
         if (uploadError) throw uploadError
@@ -236,8 +246,10 @@ export function StorefrontDesigner({
         uploaded.push({ image_url: data.publicUrl })
       }
       setSliderImages(prev => [...prev, ...uploaded].slice(0, 5))
+      if (rejected.length > 0) setSliderError(rejected.join('\n'))
     } catch (err) {
       console.error('Slider upload failed:', err)
+      setSliderError(err instanceof Error ? err.message : 'Image upload failed')
     } finally {
       setUploadingSlide(false)
       if (sliderFileRef.current) sliderFileRef.current.value = ''
@@ -506,8 +518,15 @@ export function StorefrontDesigner({
                     <span className="text-[10px] font-bold">{uploadingSlide ? 'Uploading' : 'Add image'}</span>
                   </button>
                 )}
-                <input ref={sliderFileRef} type="file" accept="image/*" multiple hidden
+                <input ref={sliderFileRef} type="file" accept={RENDERABLE_IMAGE_ACCEPT} multiple hidden
                   onChange={e => handleSliderUpload(e.target.files)} />
+              </div>
+              {sliderError && (
+                <div className="mt-3 p-3 rounded-xl border border-red-200 bg-red-50 text-red-800 text-[11px] leading-relaxed whitespace-pre-line">
+                  {sliderError}
+                </div>
+              )}
+              <div className="hidden">
               </div>
               <p className="text-[10px] text-[var(--color-mark-secondary)]/40">{sliderImages.length}/5 images</p>
             </div>

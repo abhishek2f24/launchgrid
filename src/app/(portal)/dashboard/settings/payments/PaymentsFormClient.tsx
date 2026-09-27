@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { ShieldCheck, Zap, CreditCard, ArrowRight, Loader2, CheckCircle2, AlertCircle, Truck, QrCode, X } from 'lucide-react'
 import { savePaymentConfigAction } from '@/actions/portal'
 import { createClient } from '@/utils/supabase/client'
+import { checkUploadableImage, RENDERABLE_IMAGE_ACCEPT } from '@/lib/images/renderable'
 
 interface Props {
   config: {
@@ -33,8 +34,13 @@ export function PaymentsFormClient({ config, feeOwedThisMonth }: Props) {
 
   async function handleQrUpload(file: File | null) {
     if (!file) return
+    setMessage(null)
     setQrUploading(true)
     try {
+      // A QR the buyer's browser cannot render is worse than no QR at all:
+      // checkout shows an empty box and the payment silently never happens.
+      const problem = await checkUploadableImage(file)
+      if (problem) throw new Error(problem)
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Sign in again to upload a QR code')
@@ -200,7 +206,9 @@ export function PaymentsFormClient({ config, feeOwedThisMonth }: Props) {
                   {qrUploading ? 'Uploading…' : 'Upload QR image'}
                 </button>
               )}
-              <input ref={qrFileInputRef} type="file" accept="image/*" onChange={(e) => handleQrUpload(e.target.files?.[0] ?? null)} className="hidden" />
+              {/* Named formats rather than image/* so the OS picker greys out
+                  HEIC photos instead of offering them and failing later. */}
+              <input ref={qrFileInputRef} type="file" accept={RENDERABLE_IMAGE_ACCEPT} onChange={(e) => handleQrUpload(e.target.files?.[0] ?? null)} className="hidden" />
             </div>
           </div>
 

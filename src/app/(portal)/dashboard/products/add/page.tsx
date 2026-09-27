@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ImagePlus, Tag, FileText, IndianRupee, Layers, CheckCircle2, Loader2, X } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { checkUploadableImage, RENDERABLE_IMAGE_ACCEPT } from '@/lib/images/renderable'
 
 const CATEGORIES = [
   'Electronics', 'Fashion', 'Home & Kitchen', 'Beauty & Personal Care',
@@ -40,8 +41,16 @@ export default function AddProductPage() {
       if (!user) throw new Error('Sign in again to upload images')
 
       const uploaded: string[] = []
+      // Files the browser cannot decode are reported, never skipped in
+      // silence. Dropping them quietly is how a merchant ends up selecting
+      // three iPhone photos, seeing nothing happen, and having no idea why.
+      const rejected: string[] = []
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith('image/')) continue
+        const problem = await checkUploadableImage(file)
+        if (problem) {
+          rejected.push(`${file.name}: ${problem}`)
+          continue
+        }
         const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`
         const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { upsert: false })
         if (uploadError) throw uploadError
@@ -49,6 +58,7 @@ export default function AddProductPage() {
         uploaded.push(data.publicUrl)
       }
       setImageUrls((prev) => [...prev, ...uploaded])
+      if (rejected.length > 0) setError(rejected.join('\n'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Image upload failed')
     } finally {
@@ -268,7 +278,7 @@ export default function AddProductPage() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept={RENDERABLE_IMAGE_ACCEPT}
               multiple
               onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
