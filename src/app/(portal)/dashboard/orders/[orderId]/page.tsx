@@ -175,6 +175,7 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
           <OrderActionsClient 
             orderId={order.id}
             initialPaymentStatus={order.payment_status}
+            initialPaymentReference={order.payment_reference ?? null}
             initialFulfillmentStatus={order.fulfillment_status}
             subdomain={tenant.subdomain}
           />

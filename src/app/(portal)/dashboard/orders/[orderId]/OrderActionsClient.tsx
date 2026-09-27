@@ -7,6 +7,8 @@ import { CreditCard, CheckCircle, Package, Truck, Printer, Loader2, ExternalLink
 interface OrderActionsClientProps {
   orderId: string
   initialPaymentStatus: string
+  /** UTR or bank reference recorded when this order was confirmed paid. */
+  initialPaymentReference?: string | null
   initialFulfillmentStatus: string
   subdomain: string
 }
@@ -14,6 +16,7 @@ interface OrderActionsClientProps {
 export function OrderActionsClient({
   orderId,
   initialPaymentStatus,
+  initialPaymentReference = null,
   initialFulfillmentStatus,
   subdomain,
 }: OrderActionsClientProps) {
@@ -21,6 +24,11 @@ export function OrderActionsClient({
   const [paymentStatus, setPaymentStatus] = useState(initialPaymentStatus)
   const [fulfillmentStatus, setFulfillmentStatus] = useState(initialFulfillmentStatus)
   const [loadingPayment, setLoadingPayment] = useState(false)
+  // The UPI reference the seller reads off their payment app. Optional on
+  // purpose: a seller staring at a customer's screenshot should never be
+  // blocked from recording the payment because they cannot find the UTR.
+  const [paymentReference, setPaymentReference] = useState('')
+  const [savedReference, setSavedReference] = useState<string | null>(initialPaymentReference)
   const [loadingFulfill, setLoadingFulfill] = useState(false)
   const [trackingInfo, setTrackingInfo] = useState<{ awb: string; courier: string; url: string } | null>(null)
   const [error, setError] = useState('')
@@ -32,12 +40,13 @@ export function OrderActionsClient({
       const res = await fetch('/api/orders/mark-paid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId }),
+        body: JSON.stringify({ orderId, paymentReference }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to update payment status')
-      
+
       setPaymentStatus('paid')
+      setSavedReference(paymentReference.trim() || null)
       router.refresh()
     } catch (err: any) {
       setError(err.message)
@@ -147,6 +156,41 @@ export function OrderActionsClient({
             </span>
           )}
         </div>
+        {paymentStatus === 'paid' && savedReference && (
+          <div className="px-4 py-3 bg-white border border-black/5 rounded-xl">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]">
+              UPI / Bank reference
+            </div>
+            <div className="mt-1 text-xs font-mono break-all text-[var(--color-mark-ink)]">
+              {savedReference}
+            </div>
+          </div>
+        )}
+        {paymentStatus !== 'paid' && (
+          <div className="space-y-2">
+            <label
+              htmlFor="payment-reference"
+              className="block text-[10px] font-bold uppercase tracking-widest text-[var(--color-mark-secondary)]"
+            >
+              UPI / Bank reference <span className="font-medium normal-case tracking-normal">(optional)</span>
+            </label>
+            <input
+              id="payment-reference"
+              type="text"
+              inputMode="text"
+              autoComplete="off"
+              maxLength={64}
+              value={paymentReference}
+              onChange={(e) => setPaymentReference(e.target.value)}
+              placeholder="e.g. 431209876543"
+              className="w-full px-3 py-2.5 text-xs bg-white border border-black/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-mark-ink)]/15"
+            />
+            <p className="text-[10px] leading-relaxed text-[var(--color-mark-secondary)]">
+              The UTR shown in your UPI app next to this payment. Saving it now
+              is what lets you prove the payment later if the customer disputes it.
+            </p>
+          </div>
+        )}
         {paymentStatus !== 'paid' && (
           <button
             onClick={handleMarkAsPaid}
