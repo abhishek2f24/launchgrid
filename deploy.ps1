@@ -40,6 +40,27 @@ if (-not (Test-Path ".vercel\project.json")) {
     Write-Host "Project already linked." -ForegroundColor Green
 }
 
+# ── Secrets ──────────────────────────────────────────────────────────────────
+# Values live in .env.deploy.local (git-ignored), NEVER in this file. The
+# credentials that used to be hardcoded here were committed to a public
+# repository and must be treated as compromised; rotate them before deploying.
+$secretsFile = Join-Path $dir ".env.deploy.local"
+if (-not (Test-Path $secretsFile)) {
+    Write-Host "Missing .env.deploy.local - copy .env.deploy.local.example and fill it in." -ForegroundColor Red
+    exit 1
+}
+$Secrets = @{}
+Get-Content $secretsFile | ForEach-Object {
+    if ($_ -match '^\s*([A-Z_0-9]+)\s*=\s*(.*)$') { $Secrets[$Matches[1]] = $Matches[2].Trim() }
+}
+function Get-Secret($name) {
+    if (-not $Secrets.ContainsKey($name) -or [string]::IsNullOrWhiteSpace($Secrets[$name])) {
+        Write-Host "  [fail] $name is not set in .env.deploy.local" -ForegroundColor Red
+        exit 1
+    }
+    return $Secrets[$name]
+}
+
 # ── 4. Set environment variables ─────────────────────────────────────────────
 Write-Host ""
 Write-Host "Setting environment variables..." -ForegroundColor Yellow
@@ -56,39 +77,39 @@ function Set-VercelEnv($name, $value) {
 }
 
 # Critical new vars
-Set-VercelEnv "ENCRYPTION_KEY"   "a9116c10aafefba3becc1a27e796a01251ae64b4b19785ae16e12ef64aad3915"
-Set-VercelEnv "CRON_SECRET"      "10a1b8e5b5c8a827572cd8562a0a9b5ad734da9266abc23e"
+Set-VercelEnv "ENCRYPTION_KEY"                    (Get-Secret "ENCRYPTION_KEY")
+Set-VercelEnv "CRON_SECRET"                       (Get-Secret "CRON_SECRET")
 
 # Core Supabase
-Set-VercelEnv "NEXT_PUBLIC_SUPABASE_URL"         "https://pxbyhxjjepjuchalaola.supabase.co"
-Set-VercelEnv "NEXT_PUBLIC_SUPABASE_ANON_KEY"    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4YnloeGpqZXBqdWNoYWxhb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NDUyMDQsImV4cCI6MjA5NjMyMTIwNH0.emx4O5RyHGCWc4B-_jyFNgR2LOCHmo2lUNd9fu3SVbo"
-Set-VercelEnv "SUPABASE_SERVICE_ROLE_KEY"        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4YnloeGpqZXBqdWNoYWxhb2xhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDc0NTIwNCwiZXhwIjoyMDk2MzIxMjA0fQ.OvztMJ4MeOU0qxOhWee5xe18YSzZdNKl8Inv7Gt8WjA"
-Set-VercelEnv "SUPABASE_JWT_SECRET"              "+0gsKx9HrFc1tOmCwQ+bUf0XP0uhmvp9aPQ+vpWzV7IIEr5DrDqrWaWAxM3b7Z0tvcn+4MWnNHq2jbN4+JhefQ=="
+Set-VercelEnv "NEXT_PUBLIC_SUPABASE_URL"          (Get-Secret "NEXT_PUBLIC_SUPABASE_URL")
+Set-VercelEnv "NEXT_PUBLIC_SUPABASE_ANON_KEY"     (Get-Secret "NEXT_PUBLIC_SUPABASE_ANON_KEY")
+Set-VercelEnv "SUPABASE_SERVICE_ROLE_KEY"         (Get-Secret "SUPABASE_SERVICE_ROLE_KEY")
+Set-VercelEnv "SUPABASE_JWT_SECRET"               (Get-Secret "SUPABASE_JWT_SECRET")
 
 # Postgres (direct)
-Set-VercelEnv "POSTGRES_URL"                     "postgres://postgres.pxbyhxjjepjuchalaola:oOsPvLg5FJKzC5Sb@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x"
-Set-VercelEnv "POSTGRES_URL_NON_POOLING"         "postgres://postgres.pxbyhxjjepjuchalaola:oOsPvLg5FJKzC5Sb@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
-Set-VercelEnv "POSTGRES_PRISMA_URL"              "postgres://postgres.pxbyhxjjepjuchalaola:oOsPvLg5FJKzC5Sb@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true"
-Set-VercelEnv "POSTGRES_USER"                    "postgres"
-Set-VercelEnv "POSTGRES_PASSWORD"                "oOsPvLg5FJKzC5Sb"
-Set-VercelEnv "POSTGRES_HOST"                    "db.pxbyhxjjepjuchalaola.supabase.co"
-Set-VercelEnv "POSTGRES_DATABASE"                "postgres"
+Set-VercelEnv "POSTGRES_URL"                      (Get-Secret "POSTGRES_URL")
+Set-VercelEnv "POSTGRES_URL_NON_POOLING"          (Get-Secret "POSTGRES_URL_NON_POOLING")
+Set-VercelEnv "POSTGRES_PRISMA_URL"               (Get-Secret "POSTGRES_PRISMA_URL")
+Set-VercelEnv "POSTGRES_USER"                     (Get-Secret "POSTGRES_USER")
+Set-VercelEnv "POSTGRES_PASSWORD"                 (Get-Secret "POSTGRES_PASSWORD")
+Set-VercelEnv "POSTGRES_HOST"                     (Get-Secret "POSTGRES_HOST")
+Set-VercelEnv "POSTGRES_DATABASE"                 (Get-Secret "POSTGRES_DATABASE")
 
 # Razorpay
-Set-VercelEnv "RAZORPAY_KEY_ID"                  "rzp_live_SySjXALrPy5qFv"
-Set-VercelEnv "RAZORPAY_KEY_SECRET"              "TQP2xED0nYIOltT2h0f66hfO"
-Set-VercelEnv "NEXT_PUBLIC_RAZORPAY_KEY_ID"      "rzp_live_SySjXALrPy5qFv"
-Set-VercelEnv "RAZORPAY_WEBHOOK_SECRET"          "whsec_local_testing_secret"
+Set-VercelEnv "RAZORPAY_KEY_ID"                   (Get-Secret "RAZORPAY_KEY_ID")
+Set-VercelEnv "RAZORPAY_KEY_SECRET"               (Get-Secret "RAZORPAY_KEY_SECRET")
+Set-VercelEnv "NEXT_PUBLIC_RAZORPAY_KEY_ID"       (Get-Secret "NEXT_PUBLIC_RAZORPAY_KEY_ID")
+Set-VercelEnv "RAZORPAY_WEBHOOK_SECRET"           (Get-Secret "RAZORPAY_WEBHOOK_SECRET")
 
 # Email
-Set-VercelEnv "RESEND_API_KEY"                   "re_XwVzLNxh_6AQ925F5CpZC1y4B2n7SfLse"
-Set-VercelEnv "FROM_EMAIL"                       "help@launchgrid.in"
-Set-VercelEnv "ADMIN_EMAIL"                      "abhishek2f24@gmail.com"
-Set-VercelEnv "SUPPORT_EMAIL"                    "support@launchgrid.in"
+Set-VercelEnv "RESEND_API_KEY"                    (Get-Secret "RESEND_API_KEY")
+Set-VercelEnv "FROM_EMAIL"                        (Get-Secret "FROM_EMAIL")
+Set-VercelEnv "ADMIN_EMAIL"                       (Get-Secret "ADMIN_EMAIL")
+Set-VercelEnv "SUPPORT_EMAIL"                     (Get-Secret "SUPPORT_EMAIL")
 
 # App
-Set-VercelEnv "NEXT_PUBLIC_APP_URL"              "https://launchgrid.in"
-Set-VercelEnv "NEXT_PUBLIC_WHATSAPP_NUMBER"      "919506212886"
+Set-VercelEnv "NEXT_PUBLIC_APP_URL"               (Get-Secret "NEXT_PUBLIC_APP_URL")
+Set-VercelEnv "NEXT_PUBLIC_WHATSAPP_NUMBER"       (Get-Secret "NEXT_PUBLIC_WHATSAPP_NUMBER")
 
 Write-Host ""
 Write-Host "All env vars set." -ForegroundColor Green

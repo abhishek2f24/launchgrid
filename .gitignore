@@ -52,3 +52,14 @@ launchgrid-mobile/tsconfig.check*.json
 
 # build runner logs (read by Claude, not for the repo)
 build-logs/
+
+# Deploy secrets — added 2026-09-30 after production credentials were found
+# hardcoded in deploy.ps1 and published to a public repository.
+.env.deploy.local
+*.local
+!.env.deploy.local.example
+
+# Signing keystores — never commit these
+keystore/
+*.jks
+*.keystore
