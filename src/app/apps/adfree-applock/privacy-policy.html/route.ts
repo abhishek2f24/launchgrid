@@ -3,11 +3,17 @@ import { NextResponse } from 'next/server'
 /**
  * Privacy policy for AdFree AppLock.
  *
- * Written to match the app's Play Data Safety declaration ("No data collected",
- * "No data shared with third parties") and its store description, both checked
- * on 25 September 2026. If the app's behaviour changes, this page and that
- * declaration have to move together — a policy that contradicts Data Safety is
- * a policy violation regardless of which one is right.
+ * CORRECTED 10 OCTOBER 2026 — FIREBASE IS DISCLOSED
+ *   The 25 September version said "no analytics SDK" and "we collect nothing",
+ *   matching a "No data collected" Data Safety declaration. Both were wrong: the
+ *   app has shipped Firebase Analytics, Crashlytics, Remote Config and Cloud
+ *   Messaging throughout (see app/build.gradle.kts in the AppLock repo). Play
+ *   checks bundled SDKs against Data Safety, so that mismatch was a live policy
+ *   risk. This page now describes what those SDKs send, and the Data Safety form
+ *   is updated to match. The app's own PRIVACY_POLICY.md (4 Oct) already did.
+ *
+ *   The rule stands: if the app's behaviour changes, this page and the Data
+ *   Safety declaration move together, before the release ships.
  *
  * PLAY CONSOLE CURRENTLY POINTS AT A PRIVATE GITHUB REPO
  *   github.com/abhishek2f24/AppLock/blob/main/PRIVACY_POLICY.md is private, so
@@ -34,7 +40,7 @@ import { NextResponse } from 'next/server'
 
 const APP_NAME = 'AdFree AppLock: App Locker'
 const PACKAGE = 'com.nomadiccharts.applock'
-const LAST_UPDATED = '25 September 2026'
+const LAST_UPDATED = '10 October 2026'
 
 const HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -42,7 +48,7 @@ const HTML = `<!DOCTYPE html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Privacy Policy — ${APP_NAME}</title>
-<meta name="description" content="Privacy policy for ${APP_NAME} by LaunchGrid. No data collected, no ads, no tracking — everything stays encrypted on your device." />
+<meta name="description" content="Privacy policy for ${APP_NAME} by LaunchGrid. No ads and no account; your lock settings, vault and intruder photos stay encrypted on your device. Explains the Firebase crash reporting and optional analytics the app uses." />
 <style>
   body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1a1a1a; }
   h1 { font-size: 1.6rem; margin-bottom: 4px; }
@@ -62,8 +68,8 @@ const HTML = `<!DOCTYPE html>
 <h2>1. Who we are</h2>
 <p>${APP_NAME} ("the App") is published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
-<h2>2. The short version: we collect nothing</h2>
-<p class="note">The App collects no personal data and shares none with third parties. There is no account, no sign-up, <strong>no ads</strong> and no analytics or tracking SDK. Your lock settings, vault contents and intruder photos never leave your device, and we have no server that could receive them.</p>
+<h2>2. The short version</h2>
+<p class="note">There is no account, no sign-up and <strong>no ads</strong>. Your lock credentials, the list of apps you lock, your vault files and your intruder photos <strong>never leave your device</strong>, and we have no server that could receive them. The App does use Google&rsquo;s Firebase services for crash reports, optional usage analytics, remote settings and optional announcements; those receive limited technical data described in <a href="#analytics">section 7</a>, never any of the things above. We do not sell data or track you across other apps or websites.</p>
 
 <h2>3. What the App stores, on your device only</h2>
 <ul>
@@ -97,23 +103,33 @@ const HTML = `<!DOCTYPE html>
 <ul>
   <li><strong>Google Play Billing</strong> &mdash; processes purchases and checks subscription status.</li>
   <li><strong>Google Play Integrity</strong> &mdash; verifies the App was installed from Google Play.</li>
-  <li><strong>Google Play In-App Updates</strong> &mdash; checks for and delivers updates.</li>
+  <li><strong>Google Play In-App Updates and In-App Review</strong> &mdash; checks for updates and shows Google&rsquo;s rating prompt.</li>
+  <li><strong>Firebase Crashlytics, Analytics, Remote Config and Cloud Messaging</strong> &mdash; described in <a href="#analytics">section 7</a>.</li>
 </ul>
-<p>These are operated by Google and governed by <a href="https://policies.google.com/privacy">Google&rsquo;s privacy policy</a>. We do not receive or store your payment details.</p>
+<p>These are operated by Google and governed by <a href="https://policies.google.com/privacy">Google&rsquo;s privacy policy</a> and the <a href="https://firebase.google.com/support/privacy">Firebase privacy information</a>. We do not receive or store your payment details.</p>
 
-<h2>7. Advertising and analytics</h2>
-<p class="note"><strong>The App contains no advertising.</strong> There is no advertising SDK, no analytics SDK and no tracking SDK of any kind, and the App does not use the Android advertising ID. This is true of the free version as well as the paid one &mdash; there is no ad-supported tier.</p>
-<p>An earlier version of this policy described Google AdMob on the free tier. AdMob has since been removed from the App entirely. This page reflects the App as it ships today, and matches its Data Safety declaration on Google Play, which states that no data is collected and none is shared with third parties.</p>
+<h2 id="analytics">7. Advertising, analytics and crash reports</h2>
+<p class="note"><strong>The App contains no advertising</strong> and no advertising SDK, and it does not use the Android advertising ID (the permission is removed from the App). There is no ad-supported tier.</p>
+<p>The App uses these Google Firebase services. None of them receives your credentials, locked-app list, vault files, intruder photos or notification content.</p>
+<ul>
+  <li><strong>Firebase Crashlytics</strong> &mdash; when the App crashes it sends the crash stack trace, the App&rsquo;s state at the time, device model and OS version, and a random Crashlytics installation ID, so the crash can be fixed.</li>
+  <li><strong>Firebase Analytics</strong> &mdash; usage events such as which setup step was reached, whether a permission was granted, and whether the trial converted. Events carry no app names, file names or content (a count of chosen apps is sent only as a range such as &ldquo;2&ndash;3&rdquo;). They are identified by a random app-instance ID, not your name, email or advertising ID, and Google derives approximate location (country or city) from your connection. <strong>You can turn analytics off in Settings &rarr; Privacy.</strong></li>
+  <li><strong>Firebase Remote Config</strong> &mdash; fetches app settings (for example a required minimum version). Sends country and language code, time zone, OS and app version, and a Firebase installation ID.</li>
+  <li><strong>Firebase Cloud Messaging</strong> &mdash; delivers optional &ldquo;News and updates&rdquo; notifications, using a Firebase installation ID and messaging token. <strong>You can turn announcements off in Settings.</strong></li>
+</ul>
+<p>This data is encrypted in transit, processed by Google as our service provider, and not shared with anyone else. The Data Safety section of the App&rsquo;s Google Play listing declares the same data.</p>
+<p>An earlier version of this policy described Google AdMob on a free tier; AdMob was removed from the App entirely. A later version (25 September 2026) said the App had no analytics SDK and collected no data, which was incorrect: the Firebase services above were already included. This version corrects that.</p>
 
 <h2>8. Your rights under the DPDP Act, 2023</h2>
 <ul>
   <li><strong>Access:</strong> everything the App holds is visible inside the App on your device.</li>
-  <li><strong>Erasure:</strong> delete items in the App, clear the App&rsquo;s data in Android Settings, or uninstall. Nothing is held anywhere else. See the <a href="/apps/adfree-applock/delete-account.html">data deletion page</a>.</li>
+  <li><strong>Erasure:</strong> delete items in the App, clear the App&rsquo;s data in Android Settings, or uninstall &mdash; your vault, photos and settings are held nowhere else. Analytics and crash data are tied only to random installation IDs; clearing the App&rsquo;s data or reinstalling starts new ones, and you can ask us to delete what Firebase holds by writing to the address below. See the <a href="/apps/adfree-applock/delete-account.html">data deletion page</a>.</li>
+  <li><strong>Objection:</strong> turn off analytics and announcements in the App&rsquo;s Settings at any time.</li>
   <li><strong>Grievance redressal:</strong> write to <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a>. We respond within 30 days.</li>
 </ul>
 
 <h2>9. Children</h2>
-<p>The App is intended for general audiences and collects no data from anyone, including children.</p>
+<p>The App is intended for general audiences and is not directed at children. It collects only the limited technical data described in section 7, from anyone.</p>
 
 <h2>10. Changes to this policy</h2>
 <p>Material changes will be reflected in an updated App version with a revised "Last updated" date.</p>

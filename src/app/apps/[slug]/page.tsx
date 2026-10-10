@@ -41,6 +41,10 @@ export async function generateMetadata(props: {
   if (!app) return {};
 
   const title = `${app.name} — ${app.tagline}`;
+  // The link preview (WhatsApp, X, Telegram, Slack): the feature graphic when one
+  // has been added under public/apps/<slug>/, otherwise none.
+  const feature = appFeatureGraphic(app.slug);
+  const previewImage = feature ? `${SITE}${feature}` : undefined;
   return {
     title,
     description: app.description,
@@ -51,11 +55,16 @@ export async function generateMetadata(props: {
       url: `${SITE}/apps/${app.slug}`,
       siteName: 'LaunchGrid',
       type: 'website',
-      images: appFeatureGraphic(app.slug)
-        ? [{ url: `${SITE}${appFeatureGraphic(app.slug)}` }]
-        : undefined,
+      images: previewImage ? [{ url: previewImage, alt: `${app.name} — ${app.tagline}` }] : undefined,
     },
-    twitter: { card: 'summary_large_image', title, description: app.description },
+    // Set explicitly: a summary_large_image card without an image renders as a
+    // bare text card on X rather than falling back to og:image everywhere.
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: app.description,
+      images: previewImage ? [previewImage] : undefined,
+    },
     alternates: { canonical: `${SITE}/apps/${app.slug}` },
   };
 }

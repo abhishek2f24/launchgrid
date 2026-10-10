@@ -196,3 +196,32 @@ workflow in P1 being worth anything.
 
 The credential rotation is more urgent, but it is a human task requiring console
 access, not an agent one.
+
+## 2026-10-10 — AdFree AppLock page: preview image, truthful claims, Firebase disclosure (Claude Opus 5.5)
+
+Worked from the AppLock repo session; only AdFree AppLock files and the shared
+app-page/deletion helpers changed.
+
+- **Privacy policy** (`src/app/apps/adfree-applock/privacy-policy.html/route.ts`):
+  the 25 Sep version said "no analytics SDK" / "we collect nothing", but the app
+  ships Firebase Analytics, Crashlytics, Remote Config and Cloud Messaging. Now
+  discloses each (data, purpose, opt-outs), dated 10 Oct 2026. **Play Data Safety
+  must say the same** — being updated in Play Console in the same change.
+- **Deletion page:** `buildDeletionPage` gained an optional `serviceProviderNote`
+  (only AppLock sets it) so the page no longer says "Nothing… no analytics".
+  Other apps render exactly as before.
+- **`src/data/apps.ts` AppLock entry:** removed false claims (PIN "4–12 digits",
+  "auto-lock newly installed apps", "no data collected"); rating updated to the
+  real Play figure (3.6 from 68, checked 10 Oct).
+- **Preview image:** added `public/apps/adfree-applock/{icon.png, feature.png,
+  screenshots/01-06.jpg}` (real current-UI screenshots from the app). The page
+  now emits og:image / twitter:image (feature graphic) and screenshot + image in
+  SoftwareApplication JSON-LD. `[slug]/page.tsx` now sets `twitter.images`
+  explicitly for every app that has a feature graphic.
+
+Verified: `npm test` 47/47, `src/**` tests 116/116, eslint on changed files,
+`npm run build`, and the rendered HTML via `next start` — NOTE the proxy only
+treats `localhost:3000` as the main domain; on any other port send
+`Host: launchgrid.in` or every route 404s as a "merchant subdomain".
+
+Not done here: deploying (push to main), Google Search Console indexing request.

@@ -42,6 +42,15 @@ export interface DeletionPageConfig {
   hasCloudCopy?: boolean;
   /** Shown when hasCloudCopy: how to remove the off-device copy. */
   cloudCopyNote?: string;
+  /**
+   * What a service provider (e.g. Firebase crash reporting / analytics) holds,
+   * and how to have it removed. Set it for any app that bundles such an SDK.
+   *
+   * Without it the page says "Nothing ... no analytics SDKs", which was printed
+   * for AdFree AppLock while that app shipped Firebase Analytics and Crashlytics
+   * — the same contradiction with its own build that the privacy policy had.
+   */
+  serviceProviderNote?: string;
   lastUpdated: string;
 }
 
@@ -125,12 +134,16 @@ ${
 <p>${
     config.hasCloudCopy
       ? `Only what an enabled cloud backup contains, and nothing else. ${appName}'s full data handling is set out in its privacy policy and in its Data Safety section on Google Play.`
-      : `Nothing. ${appName} contains no analytics, no advertising and no tracking SDKs, and it does not use the Android advertising ID.`
+      : config.serviceProviderNote
+        ? `None of your content. ${config.serviceProviderNote}`
+        : `Nothing. ${appName} contains no analytics, no advertising and no tracking SDKs, and it does not use the Android advertising ID.`
   }${
-    hasSubscription
+    hasSubscription && !config.serviceProviderNote
       ? ' The only network traffic it generates is Google Play Billing, which Google operates; we never see your payment details.'
-      : ''
-  } There is no profile, no usage record and no backup of your content on any system we control.</p>
+      : hasSubscription
+        ? ' Purchases go through Google Play Billing, which Google operates; we never see your payment details.'
+        : ''
+  } There is no profile${config.serviceProviderNote ? '' : ', no usage record'} and no backup of your content on any system we control.</p>
 
 <h2>Questions</h2>
 <p>If something here is unclear, or you believe we hold data about you, write to <a href="mailto:grievance@launchgrid.in?subject=${encodeURIComponent(`${appName} data deletion question`)}">grievance@launchgrid.in</a>. We respond within 30 days, as required by the Digital Personal Data Protection Act, 2023.</p>

@@ -7,8 +7,10 @@ import {
 /**
  * Data-deletion page for AdFree AppLock.
  *
- * Play Data Safety declares no data collected, so this explains on-device
- * removal rather than offering a request form we could not action.
+ * Everything the user creates lives on the device, so this explains on-device
+ * removal. The Firebase crash/analytics data the app sends is tied only to
+ * random installation IDs; serviceProviderNote says so and how to remove it
+ * (corrected 10 Oct 2026 — this page used to say "Nothing ... no analytics").
  */
 
 const HTML = buildDeletionPage({
@@ -24,7 +26,9 @@ const HTML = buildDeletionPage({
   inAppPath:
     'Settings → Privacy & Data → Delete All Data removes everything at once, from inside the app.',
   hasSubscription: true,
-  lastUpdated: '25 September 2026',
+  serviceProviderNote:
+    'The app uses Google Firebase for crash reports and, unless you turn it off in Settings → Privacy, usage analytics. Google holds that data for us, tied only to random installation IDs — never your name, email, advertising ID, locked apps or files. Clearing the app’s data or reinstalling starts new IDs; to have existing Firebase data deleted, email grievance@launchgrid.in.',
+  lastUpdated: '10 October 2026',
 })
 
 export async function GET() {

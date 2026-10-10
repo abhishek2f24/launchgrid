@@ -104,24 +104,24 @@ export const APPS: AppEntry[] = [
     name: 'AdFree AppLock: App Locker',
     tagline: 'Lock any app. No ads, ever.',
     description:
-      'AdFree AppLock locks any app behind a fingerprint, PIN, pattern or password, hides private photos in an AES-256 vault, and photographs whoever gets the PIN wrong. No ads, no tracking, and Play Data Safety declares no data collected.',
+      'AdFree AppLock locks any app behind a fingerprint, PIN, pattern or password, hides private photos in an AES-256 vault, and photographs whoever gets the PIN wrong. No ads, no ad SDK and no sign-in, and your vault and intruder photos never leave your phone.',
     packageId: 'com.nomadiccharts.applock',
     platforms: ['android'],
     icon: Lock,
     category: 'Privacy & security',
     features: [
-      'Lock any app with fingerprint, PIN (4–12 digits), pattern or password',
+      'Lock any app with a 4-digit PIN, a pattern, a password or your fingerprint',
       'Randomised keypad so nobody reads your PIN over your shoulder',
       'Intruder selfie: a silent front-camera photo on a wrong PIN',
       'AES-256 encrypted photo and video vault, hidden from the gallery',
       'Fake crash screen, hidden notification content, uninstall protection',
-      'Auto-lock newly installed apps, and quick templates for Social, Finance and Messaging',
+      'Lock a whole category — Social, Finance or Messaging — in one tap',
     ],
     faqs: [
       {
         question: 'Does AdFree AppLock show ads?',
         answer:
-          'No — that is the point of it. There are no ads, no tracking SDKs and no data collection. Google Play Data Safety declares no data collected and none shared with third parties.',
+          'No — that is the point of it. There are no ads and no ad SDK, and the app does not use the Android advertising ID. It does send crash reports and, unless you switch it off in Settings, anonymous usage analytics to Google Firebase; its privacy policy and Play Data Safety section list exactly what.',
       },
       {
         question: 'Where are my locked photos stored?',
@@ -136,7 +136,7 @@ export const APPS: AppEntry[] = [
       {
         question: 'Can I use a longer PIN?',
         answer:
-          'Yes. PINs can be 4 to 12 digits, so 6 is supported. You can also use a pattern or a full password instead.',
+          'PINs are 4 digits. For a longer secret, choose a password (6 characters or more) or a pattern instead — both work everywhere a PIN does.',
       },
     ],
     keywords: [
@@ -150,16 +150,17 @@ export const APPS: AppEntry[] = [
       'https://play.google.com/store/apps/details?id=com.nomadiccharts.applock',
     privacyPolicyUrl: '/apps/adfree-applock/privacy-policy.html',
     deleteAccountUrl: '/apps/adfree-applock/delete-account.html',
-    // Real figures from the public Play listing, checked 25 Sep 2026.
-    rating: 3.5,
-    ratingCount: 54,
+    // Real figures from the public Play listing, checked 10 Oct 2026 (3.59 from
+    // 68 ratings; Play displays 3.6).
+    rating: 3.6,
+    ratingCount: 68,
     // `installs` deliberately left unset: Play shows "10K+", which is a bucket,
     // and a landing page that quotes it invites the comparison with apps that
     // have millions. The rating is the useful signal here.
     price: 'Free with in-app purchases',
     hasAds: false,
     privacySummary:
-      'Nothing leaves the device. Play Data Safety declares no data collected and none shared. Credentials are hashed with PBKDF2 (210,000 iterations) and vault files encrypted with Android Keystore AES-256.',
+      'Your PIN, locked-app list, vault files and intruder photos never leave the device. The app sends crash reports and, unless you turn it off, anonymous usage analytics to Google Firebase — no name, account or advertising ID. Credentials are hashed with PBKDF2 (210,000 iterations) and vault files encrypted with Android Keystore AES-256.',
     priority: 1.0,
   },
 
