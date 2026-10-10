@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - CycleCare: Period Tracker</title>
+    <title>Privacy Policy - Know Your Cycle Period Tracker</title>
     <style>
         :root {
             --color-base: #FAFAF8;
@@ -12,7 +12,7 @@
             --color-primary: #1A1A18;
             --color-secondary: #4A4A44;
             --color-subtle-text: #696966;
-            --accent: #8b5cf6; /* Electric Violet */
+            --accent: #8b5cf6;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -39,13 +39,11 @@
             text-decoration: none;
             color: var(--color-primary);
         }
-        .brand img {
-            height: 24px;
-        }
+        .brand img { height: 24px; }
         .container {
             max-width: 768px;
             margin: 3rem auto;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
         }
         .card {
             background-color: var(--color-surface);
@@ -54,6 +52,7 @@
             padding: 2.5rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
+        @media (max-width: 600px) { .card { padding: 1.25rem; } }
         h1 {
             font-size: 2.25rem;
             margin-top: 0;
@@ -79,15 +78,12 @@
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
         }
-        p, li {
-            color: var(--color-secondary);
-        }
-        ul, ol {
-            padding-left: 1.5rem;
-        }
-        li {
-            margin-bottom: 0.5rem;
-        }
+        p, li, td { color: var(--color-secondary); }
+        ul, ol { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+        th { color: var(--color-primary); }
         .disclaimer {
             background-color: rgba(217, 119, 6, 0.05);
             border-left: 4px solid #D97706;
@@ -95,11 +91,7 @@
             border-radius: 6px;
             margin: 1.5rem 0;
         }
-        .disclaimer p {
-            margin: 0;
-            color: #B45309;
-            font-weight: 500;
-        }
+        .disclaimer p { margin: 0; color: #B45309; font-weight: 500; }
         footer {
             margin-top: 4rem;
             text-align: center;
@@ -108,14 +100,8 @@
             border-top: 1px solid var(--color-border);
             padding-top: 2rem;
         }
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
+        a { color: var(--accent); text-decoration: none; font-weight: 500; overflow-wrap: anywhere; }
+        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -130,56 +116,136 @@
         <div class="card">
             <h1>Privacy Policy</h1>
             <div class="meta">
-                <span>App: <strong>CycleCare: Period Tracker</strong> (Period Tracker)</span> &bull; 
-                <span>Application ID: <code>in.launchgrid.periods</code></span> &bull; 
-                <span>Last Updated: July 18, 2026</span>
+                <span>App: <strong>Know Your Cycle Period Tracker</strong></span> &bull;
+                <span>Application ID: <code>in.launchgrid.periods</code></span> &bull;
+                <span>Last updated: October 11, 2026</span>
             </div>
 
             <div class="disclaimer">
-                <p><strong>Medical Disclaimer:</strong> Fertility estimates are based on cycle history. They cannot confirm ovulation and must not be used as contraception or as a guarantee of conception.</p>
+                <p><strong>Medical disclaimer:</strong> Know Your Cycle is for tracking and information only. Predictions, including the estimated fertile window and estimated ovulation day, are calculated from your own history. They cannot confirm ovulation and must not be used as contraception or as a guarantee of conception.</p>
             </div>
 
-            <h2>1. Introduction</h2>
-            <p>Welcome to <strong>CycleCare: Period Tracker</strong> (also referred to as "Period Tracker"), published by LaunchGrid. Your privacy is paramount to us. This privacy policy describes how we handle the cycle, bleeding, symptom, mood, wellness, calendar, and private note data that you enter into the application.</p>
-
-            <h2>2. Local-First Data Storage</h2>
-            <p>CycleCare: Period Tracker is built to be a private, local-first cycle tracking application:</p>
+            <h2>1. Summary</h2>
             <ul>
-                <li><strong>On-Device Storage:</strong> All cycle data, symptom logs, notes, and prediction history are stored locally on your device by default using an encrypted database (SQLCipher) and secure storage.</li>
-                <li><strong>No Advertising Personalisation:</strong> We do not sell reproductive-health data. Your personal log history is never used to personalize advertisements.</li>
+                <li>What you log is stored <strong>encrypted on your phone</strong>.</li>
+                <li>Nothing leaves your phone unless you <strong>sign in</strong> and turn on <strong>cloud backup</strong> or <strong>partner sharing</strong>, apart from crash reports and announcement messages, which you can switch off.</li>
+                <li>Cloud backups are encrypted in transit and at rest, but they are <strong>not end-to-end encrypted</strong>.</li>
+                <li>We do <strong>not</strong> sell your data, show ads, or use your data for advertising.</li>
+                <li>Under-18 profiles stay on the phone: no backup and no sharing.</li>
+                <li>You can export or delete everything at any time.</li>
             </ul>
 
-            <h2>3. Optional Cloud Backup</h2>
-            <p>We provide a cloud backup feature so you can restore or sync your data across devices:</p>
+            <h2>2. What the app stores on your phone</h2>
             <ul>
-                <li><strong>User-Initiated Backup:</strong> Cloud backup is completely optional. It is only activated if you choose to sign in to your backup account via the application settings.</li>
-                <li><strong>Secure Storage:</strong> Cloud backup is powered by secure cloud database infrastructure (Firebase Auth and Cloud Firestore) to protect your data during transit and rest.</li>
+                <li><strong>Cycle data:</strong> period start dates, flow, spotting and bleeding days, and the estimates calculated from them.</li>
+                <li><strong>Daily logs:</strong> moods, symptoms and their strength, notes, sleep, water, energy, weight, temperature, and any other sections you switch on. Some of these are sensitive (for example intimacy, medicine, tests and pregnancy).</li>
+                <li><strong>Private notes, custom items, reminders and settings.</strong></li>
+                <li><strong>Profile:</strong> an optional name, and an age band worked out from the birth date you enter at setup (the birth date itself is not stored). In Profile you can optionally add a birth date, email address, phone number and photo.</li>
+            </ul>
+            <p>This data is kept in an encrypted database (SQLCipher). Its key is held in the Android Keystore or iOS Keychain. The optional app lock (PIN or biometrics) controls access to the app; your data is encrypted whether or not it is on.</p>
+
+            <h2>3. Data that leaves your phone</h2>
+
+            <h3>3.1 Account (optional)</h3>
+            <p>You can create an account with <strong>Google sign-in</strong> or a <strong>one-time code sent to your email</strong>. Our backend provider, Supabase, stores your email address and a user ID. With Google sign-in, Google also passes your name and profile picture link. An account is needed only for cloud backup and partner sharing.</p>
+
+            <h3>3.2 Cloud backup (optional, adults only)</h3>
+            <p>When you turn backup on, a copy of the app's data is uploaded to your account shortly after each change. It includes everything listed in section 2, including sensitive sections, private notes and the profile details you added. It never includes your app lock PIN or your profile photo.</p>
+            <ul>
+                <li>It is stored by Supabase on servers in Singapore, encrypted in transit (TLS) and at rest, and protected so that only your signed-in account can read or change it.</li>
+                <li><strong>It is not end-to-end encrypted.</strong> The provider's systems, and people with administrative access to the database, could technically read it. We do not look at it. If that is not acceptable to you, leave backup off.</li>
+                <li>Each account holds one backup, replaced by each newer one.</li>
             </ul>
 
-            <h2>4. Third-Party Services & Ads</h2>
-            <p>To support the free version of the application, we display ads:</p>
+            <h3>3.3 Partner sharing (optional, adults only)</h3>
+            <p>If you invite a partner (with a one-time code that expires after 24 hours), the partner's account can see, while sharing is on:</p>
             <ul>
-                <li><strong>Non-Personalized Ads:</strong> We use Google AdMob to serve ads. We configure our ad requests to use only contextual, non-personalized inventory. We <strong>never</strong> pass cycle logs or health metadata to ad networks or third parties.</li>
-                <li><strong>Subscriptions:</strong> If you purchase a premium subscription, billing is processed securely by the Apple App Store or Google Play Store, and ads are disabled.</li>
+                <li>your cycle day and a short status line (for example "3 more days of your period"), if you allow it;</li>
+                <li>your estimated next period date, if you allow it;</li>
+                <li>today's entries from the sections you choose. Sensitive sections can never be shared.</li>
+            </ul>
+            <p>This summary is stored by Supabase so your partner's app can read it. You can stop sharing at any time; your partner is not notified, loses access immediately, and the stored summary is cleared. While your tracking mode pauses estimates (for example pregnancy), no cycle estimate is shared.</p>
+
+            <h3>3.4 Crash reports (on by default, can be switched off)</h3>
+            <p>Firebase Crashlytics (Google) receives crash reports: stack traces, device model, operating system and app version, and an installation identifier. They contain none of your entries. Turn them off in Notifications &gt; Send crash reports. Google keeps crash reports for up to 90 days.</p>
+
+            <h3>3.5 Announcements (on by default, can be switched off)</h3>
+            <p>Firebase Cloud Messaging (Google) gives the app a device token so we can send announcements to all users. We cannot see who you are from it. Turn it off in Notifications &gt; Updates and tips.</p>
+
+            <h3>3.6 Subscriptions</h3>
+            <p>Purchases are processed by Google Play (or the Apple App Store). We never see your payment details. The app receives a purchase receipt, checks its signature on the phone, and stores it in secure storage to unlock premium access.</p>
+
+            <h3>3.7 Version check</h3>
+            <p>At launch the app asks our server which app versions are still supported. The request contains no personal data, though like any internet request it exposes your IP address to our provider.</p>
+            <p>Reminders and notifications are created on your phone; your notification privacy setting (Detailed, Discreet or Hidden) controls what a lock screen shows.</p>
+
+            <h2>4. What we do not do</h2>
+            <ul>
+                <li>No advertising and no advertising ID.</li>
+                <li>No analytics or tracking SDKs, and no selling or renting of data.</li>
+                <li>We do not use your data to train models or to profile you.</li>
+                <li>No access to your location, contacts, photos (other than the one you pick for your profile), or health data from other apps.</li>
             </ul>
 
-            <h2>5. Data Deletion & Retention</h2>
-            <p>You have full control over your data:</p>
+            <h2>5. Why we use data (legal bases)</h2>
             <ul>
-                <li><strong>Local Deletion:</strong> You can purge all local logs and data directly from the settings menu inside the application at any time.</li>
-                <li><strong>Cloud Backup Deletion:</strong> If you have enabled optional cloud backup, you can delete your cloud account and all associated backups from the application. Once triggered, all your backup data will be permanently deleted from our servers.</li>
+                <li><strong>Your consent:</strong> health data you choose to log, back up or share. You can withdraw it by turning backup or sharing off or deleting your data.</li>
+                <li><strong>To provide the service you ask for:</strong> account, backup, restore, sharing and subscriptions.</li>
+                <li><strong>Legitimate interests:</strong> keeping the app stable (crash reports, which you can switch off) and secure.</li>
             </ul>
 
-            <h2>6. Changes to This Privacy Policy</h2>
-            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+            <h2>6. Who processes data for us</h2>
+            <ul>
+                <li><strong>Supabase</strong> (database, sign-in and storage; servers in Singapore).</li>
+                <li><strong>Google</strong> (Firebase Crashlytics, Firebase Cloud Messaging, Google sign-in, Google Play billing).</li>
+            </ul>
+            <p>These providers process data on our behalf under their own terms and security practices. Your data may therefore be processed outside your country.</p>
 
-            <h2>7. Contact Us</h2>
-            <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:support@launchgrid.in">support@launchgrid.in</a>.</p>
+            <h2>7. How long we keep data</h2>
+            <table>
+                <tr><th>Data</th><th>Kept until</th></tr>
+                <tr><td>Data on your phone</td><td>You delete it in the app or uninstall the app</td></tr>
+                <tr><td>Cloud backup</td><td>You delete the backup or your account</td></tr>
+                <tr><td>Account (email, user ID)</td><td>You delete your account</td></tr>
+                <tr><td>Partner summary</td><td>You stop sharing or delete your account</td></tr>
+                <tr><td>Invite codes</td><td>Used, or 24 hours after creation</td></tr>
+                <tr><td>Crash reports</td><td>Up to 90 days</td></tr>
+            </table>
+            <p>Our providers may keep short-lived technical logs (such as IP address and request time) for security and abuse prevention.</p>
 
-            <footer>
-                <p>&copy; 2026 LaunchGrid. All rights reserved. <a href="/">Back to LaunchGrid</a></p>
-            </footer>
+            <h2 id="data-deletion">8. Your choices and rights</h2>
+            <p>In the app (More &gt; Data &amp; Privacy):</p>
+            <ul>
+                <li><strong>Export my data:</strong> everything on the phone as a JSON file.</li>
+                <li><strong>Delete data on this phone:</strong> wipes all local data. Your cloud backup is kept.</li>
+                <li><strong>Delete my cloud backup:</strong> removes the backup; local data is kept.</li>
+                <li><strong>Delete my account:</strong> removes your account, backup and sharing.</li>
+            </ul>
+            <p>You can also request deletion at <a href="https://launchgrid.in/apps/delete-account.html">launchgrid.in/apps/delete-account.html</a> or by emailing <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a> from the address on your account. We act on email requests within 30 days.</p>
+            <p>Depending on where you live (for example under India's Digital Personal Data Protection Act, 2023, or the GDPR), you may have the right to access, correct, delete or port your data, to withdraw consent, and to complain to a data protection authority. Contact us to exercise any of these rights.</p>
+
+            <h2>9. Children and teenagers</h2>
+            <p>The app is not for children under 13. For users aged 13 to 17 the app keeps all data on the phone: cloud backup and partner sharing are unavailable, sensitive sections are hidden, and notifications are always discreet. If you believe a child under 13 has created an account, contact us and we will delete it.</p>
+
+            <h2>10. Security</h2>
+            <p>Data is encrypted on the phone and in transit, and backups are encrypted at rest by our provider. No system is perfectly secure. If a breach affects your personal data, we will notify you and the relevant authorities as the law requires.</p>
+
+            <h2>11. Changes</h2>
+            <p>We will post changes on this page and update its "Last updated" date. For significant changes we will also email users who have an account before the change takes effect.</p>
+
+            <h2>12. Contact and grievances</h2>
+            <p>LaunchGrid (Abhishek Maurya), Vadodara, Gujarat, India</p>
+            <ul>
+                <li>Questions: <a href="mailto:support@launchgrid.in">support@launchgrid.in</a></li>
+                <li>Privacy requests, deletion and grievances: <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a></li>
+            </ul>
+            <p>We reply within 30 days.</p>
         </div>
+
+        <footer>
+            <p>&copy; 2026 LaunchGrid. All rights reserved.</p>
+            <p><a href="/">Back to LaunchGrid</a></p>
+        </footer>
     </div>
 </body>
 </html>
