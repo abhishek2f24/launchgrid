@@ -40,7 +40,7 @@ import { NextResponse } from 'next/server'
 
 const APP_NAME = 'AdFree AppLock: App Locker'
 const PACKAGE = 'com.nomadiccharts.applock'
-const LAST_UPDATED = '10 October 2026'
+const LAST_UPDATED = '11 October 2026'
 
 const HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -69,7 +69,7 @@ const HTML = `<!DOCTYPE html>
 <p>${APP_NAME} ("the App") is published by LaunchGrid (Abhishek Maurya), Vadodara, India ("we", "us"). This policy explains how the App handles your information, in line with the Digital Personal Data Protection Act, 2023 (DPDP Act).</p>
 
 <h2>2. The short version</h2>
-<p class="note">There is no account, no sign-up and <strong>no ads</strong>. Your lock credentials, the list of apps you lock, your vault files and your intruder photos <strong>never leave your device</strong>, and we have no server that could receive them. The App does use Google&rsquo;s Firebase services for crash reports, optional usage analytics, remote settings and optional announcements; those receive limited technical data described in <a href="#analytics">section 7</a>, never any of the things above. We do not sell data or track you across other apps or websites.</p>
+<p class="note">There is no account, no sign-up and <strong>no ads</strong>. Your lock credentials, the list of apps you lock, your vault files and your intruder photos <strong>never leave your device</strong>, and we have no server that could receive them. The App does use Google&rsquo;s Firebase services for crash reports, optional usage analytics, remote settings and optional announcements; those receive limited technical data described in <a href="#analytics">section 7</a>, never any of the things above. If you choose to give us your email address for an offer or early access, we keep it as described in <a href="#email">section 7a</a>. We do not sell data or track you across other apps or websites.</p>
 
 <h2>3. What the App stores, on your device only</h2>
 <ul>
@@ -120,11 +120,22 @@ const HTML = `<!DOCTYPE html>
 <p>This data is encrypted in transit, processed by Google as our service provider, and not shared with anyone else. The Data Safety section of the App&rsquo;s Google Play listing declares the same data.</p>
 <p>An earlier version of this policy described Google AdMob on a free tier; AdMob was removed from the App entirely. A later version (25 September 2026) said the App had no analytics SDK and collected no data, which was incorrect: the Firebase services above were already included. This version corrects that.</p>
 
+<h2 id="email">7a. Optional email sign-up</h2>
+<p>The App offers an optional email sign-up &mdash; for a discount on Premium, or for early access to new LaunchGrid apps. Nothing in the App requires it, and every feature works without it.</p>
+<ul>
+  <li><strong>What we collect:</strong> your email address, and your name only if you type one. With it we record your marketing choice, where in the App you signed up, the App version and your language setting &mdash; never anything about which apps you lock.</li>
+  <li><strong>How:</strong> we email a 6-digit code to confirm the address is yours. Only confirmed addresses are kept.</li>
+  <li><strong>What it is used for:</strong> applying the offer you asked for, and &mdash; only if you tick the box asking for it, which starts unticked &mdash; sending you news and offers about LaunchGrid apps.</li>
+  <li><strong>Purchases:</strong> when you subscribe after signing up, the App attaches a random reference derived from your email (never the address itself) to the Google Play purchase, so we can tell that the offer was used.</li>
+  <li><strong>Where it is kept:</strong> in LaunchGrid&rsquo;s own database (Supabase), sent there over HTTPS; codes are delivered by our email provider, Resend. We do not share or sell the list.</li>
+  <li><strong>Your choices:</strong> every marketing email has a one-click unsubscribe link. To have your address deleted entirely, write to <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a>.</li>
+</ul>
+
 <h2>8. Your rights under the DPDP Act, 2023</h2>
 <ul>
   <li><strong>Access:</strong> everything the App holds is visible inside the App on your device.</li>
   <li><strong>Erasure:</strong> delete items in the App, clear the App&rsquo;s data in Android Settings, or uninstall &mdash; your vault, photos and settings are held nowhere else. Analytics and crash data are tied only to random installation IDs; clearing the App&rsquo;s data or reinstalling starts new ones, and you can ask us to delete what Firebase holds by writing to the address below. See the <a href="/apps/adfree-applock/delete-account.html">data deletion page</a>.</li>
-  <li><strong>Objection:</strong> turn off analytics and announcements in the App&rsquo;s Settings at any time.</li>
+  <li><strong>Objection:</strong> turn off analytics and announcements in the App&rsquo;s Settings at any time, and unsubscribe from marketing email with the link in any message.</li>
   <li><strong>Grievance redressal:</strong> write to <a href="mailto:grievance@launchgrid.in">grievance@launchgrid.in</a>. We respond within 30 days.</li>
 </ul>
 
