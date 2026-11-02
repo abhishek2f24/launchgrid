@@ -267,3 +267,64 @@ Vercel deploy.
 **Consequences** — A 2.4 MB blob in git, and upgrading means downloading a new
 tarball rather than bumping a version. ExcelJS stays for writing, since the
 free SheetJS build cannot write cell styles; both are dynamically imported.
+
+## Decision: Prize categories are rules over the ranking, picked on the page
+
+**Date:** 2026-11-02
+**Context:** The first two versions of the prize tool asked the organiser to
+supply the prize money in a spreadsheet — either a ChessWinners workbook or a
+two-column "category, amount" sheet — and matched its category names to ours
+(`src/lib/chess/allocate.ts`, `matchCategory`). On the organiser's real list it
+kept failing on the categories every Indian tournament has: `F`, `Ph`, `Un`,
+`Below_1500`. Each failure was reported honestly and left an empty box, which
+is better than guessing but still left them typing.
+
+**Decision:** A category is now described as a **rule over the ranking list**
+(`src/lib/chess/categorySpec.ts`): overall, female, unrated, a rating band, or a
+value of the Type/Gr column. The rules are read off the ranking file and offered
+in a dropdown, one row per prize, so nothing has to be recognised from a
+spreadsheet. The ranking export is the only required upload.
+
+**Why:**
+- The ranking list already contains the sex column and the Type/Gr columns the
+  tournament software put the veterans and the PH players in. The information
+  was there; the vocabulary mismatch was self-inflicted.
+- Name matching fails silently in the direction that matters — an unmatched
+  female prize looks exactly like a female prize the organiser did not offer.
+- It also closes the "let organisers name a category the tool could not match"
+  TODO: an amount that cannot be placed arrives as a row with its money set and
+  the dropdown open, which is the same affordance as every other row.
+
+**Consequences:** The prize-sheet reader is kept, because an organiser who has
+one loses nothing — it now *seeds the rows* instead of being the only input.
+The ChessWinners workbook path is untouched. The rows live in localStorage,
+tagged with the tournament name, so a refresh does not cost the afternoon's
+typing; that is per-browser and per-laptop by design, since there is no account
+to attach it to and nothing is uploaded.
+
+## Decision: Rating prizes are bands, bounded by the next limit declared
+
+**Date:** 2026-11-02
+**Context:** With prizes for "under 1600" and "under 1500" on the same list, the
+chess-results path put a player rated 1452 in both, so they could take the
+larger under-1600 prize and leave the under-1500 prize to someone weaker. The
+legacy ChessWinners path had never done this — `closestLimit` in
+`src/lib/chess/winners.ts` has implemented the band rule since the first
+version, for Mode 1 — so the two paths through the tool disagreed.
+
+**Decision:** An "under N" category covers only the players between the
+next-lower declared limit and N-1. `closestLimit` is now shared from
+`src/lib/chess/categorySpec.ts` and both paths use the same rule. A bounded band
+prints its real range: `Under 1600 (1500–1599)`.
+
+**Why:** It is how tournaments are run — the bands sit beside each other rather
+than nesting, so the strongest player in each band wins its prize. A threshold
+reading does not just mis-sort; it hands the bigger prize to the lower-rated
+player, which is the complaint an organiser gets at the ceremony. Showing the
+resolved range back is part of the fix: adding an under-1500 prize silently
+narrows the under-1600 prize, and the organiser has to be able to see that.
+
+**Consequences:** A single "under N" prize with nothing beneath it still covers
+everyone below N, so the simple case is unchanged. Unrated players are in no
+band at all and need their own Unrated prize. Pinned in
+`tests/chessPrizePlan.test.ts` with the real 1452 case.

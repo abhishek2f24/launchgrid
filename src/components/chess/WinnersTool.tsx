@@ -13,7 +13,7 @@
  * in which category, and the only thing it does not know is the money.
  */
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   AlertTriangle,
@@ -26,14 +26,11 @@ import {
   Trophy,
 } from 'lucide-react';
 
-import {
-  type Category,
-  type CategoryAmounts,
-  allocate,
-  isCash,
-  parseAmounts,
-} from '@/lib/chess/allocate';
+import { allocate, isCash } from '@/lib/chess/allocate';
+import { buildCatalog } from '@/lib/chess/categorySpec';
 import { type ImportResult, importFiles } from '@/lib/chess/importFiles';
+import { type PrizeRow, buildPrizePlan, newRow, seedRows } from '@/lib/chess/prizePlan';
+import { clearSetup, matchesTournament, readSetup, saveSetup } from '@/lib/chess/savedSetup';
 import { legacySections } from '@/lib/chess/legacyAdapter';
 import { buildSampleWorkbook } from '@/lib/chess/sampleWorkbook';
 import {
@@ -48,6 +45,7 @@ import {
 } from '@/lib/chess/winners';
 import { type PrizeSection, buildWinnerWorkbook, outputFileName } from '@/lib/chess/workbook';
 
+import { PrizeBuilder, withTrailingBlank } from './PrizeBuilder';
 import { PrizeList, RankingTable, money } from './PrizeList';
 
 const KIND_LABELS: Record<string, string> = {
@@ -69,7 +67,8 @@ function downloadBlob(blob: Blob, fileName: string) {
 
 export function WinnersTool() {
   const [imported, setImported] = useState<ImportResult | null>(null);
-  const [amountsText, setAmountsText] = useState<Record<string, string>>({});
+  const [rows, setRows] = useState<PrizeRow[]>([newRow()]);
+  const [restoredAt, setRestoredAt] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(MODE_1);
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -88,11 +87,23 @@ export function WinnersTool() {
         ),
       );
       setImported(result);
-      setAmountsText(
-        Object.fromEntries(
-          result.amounts.map((entry) => [entry.categoryId, entry.amounts.join(', ')]),
-        ),
-      );
+
+      // The prize list the organiser typed last time is worth more than
+      // anything we can infer, so it wins — but only if it was typed for this
+      // tournament.
+      const saved = readSetup();
+      if (saved && matchesTournament(saved, result.tournament)) {
+        setRows(withTrailingBlank(saved.rows));
+        setRestoredAt(saved.savedAt);
+      } else {
+        const seeded = seedRows(
+          result.amounts,
+          result.categories,
+          result.unmatched.map((row) => row.prize),
+        );
+        setRows(withTrailingBlank(seeded));
+        setRestoredAt(null);
+      }
     } catch (e) {
       setImported(null);
       setError({
@@ -106,11 +117,26 @@ export function WinnersTool() {
 
   const reset = () => {
     setImported(null);
-    setAmountsText({});
+    setRows([newRow()]);
+    setRestoredAt(null);
     setError(null);
     setShowRanking(false);
+    clearSetup();
     if (inputRef.current) inputRef.current.value = '';
   };
+
+  // Remembered on this machine only, and only once there is something to
+  // remember: saving the empty form on first mount would wipe the setup we are
+  // about to restore.
+  useEffect(() => {
+    if (!imported) return;
+    saveSetup(imported.tournament, rows);
+  }, [imported, rows]);
+
+  const catalog = useMemo(
+    () => (imported ? buildCatalog(imported.ranking, imported.categories) : []),
+    [imported],
+  );
 
   // Results follow the amounts as they are typed: an organiser adjusting a
   // prize wants to see who it moves to, not to press a button each time.
@@ -132,6 +158,7 @@ export function WinnersTool() {
           totalCash,
           tournament: readTitle(titleSheet.name, titleSheet.rows) ?? imported.tournament,
           problem: null as string | null,
+          memberCounts: {} as Record<string, number>,
         };
       } catch (e) {
         return {
@@ -139,15 +166,13 @@ export function WinnersTool() {
           totalCash: 0,
           tournament: imported.tournament,
           problem: e instanceof Error ? e.message : String(e),
+          memberCounts: {} as Record<string, number>,
         };
       }
     }
 
-    const amounts: CategoryAmounts[] = imported.categories.map((category) => ({
-      categoryId: category.id,
-      amounts: parseAmounts(amountsText[category.id] ?? ''),
-    }));
-    const allocation = allocate(imported.categories, amounts);
+    const plan = buildPrizePlan(rows, imported.ranking, imported.categories);
+    const allocation = allocate(plan.categories, plan.amounts);
     return {
       sections: allocation.byCategory.map<PrizeSection>((entry) => ({
         label: entry.category.label,
@@ -156,8 +181,11 @@ export function WinnersTool() {
       totalCash: allocation.totalCash,
       tournament: imported.tournament,
       problem: null,
+      memberCounts: Object.fromEntries(
+        plan.categories.map((category) => [category.id, category.players.length]),
+      ) as Record<string, number>,
     };
-  }, [imported, amountsText, mode]);
+  }, [imported, rows, mode]);
 
   const download = async () => {
     if (!result) return;
@@ -200,12 +228,22 @@ export function WinnersTool() {
           <FileChips imported={imported} onReset={reset} />
           {imported.legacy ? (
             <LegacyControls mode={mode} onMode={setMode} />
+          ) : catalog.length === 0 ? (
+            <NoCategories />
           ) : (
-            <PrizeForm
-              categories={imported.categories}
-              amountsText={amountsText}
-              onChange={(id, value) => setAmountsText((prev) => ({ ...prev, [id]: value }))}
-            />
+            <>
+              {restoredAt ? <Restored savedAt={restoredAt} onClear={() => {
+                setRows([newRow()]);
+                setRestoredAt(null);
+              }} /> : null}
+              <PrizeBuilder
+                rows={rows}
+                catalog={catalog}
+                memberCounts={result?.memberCounts ?? {}}
+                onChange={setRows}
+                playerCount={imported.ranking.length}
+              />
+            </>
           )}
           {imported.notes.length > 0 ? <Notes notes={imported.notes} /> : null}
         </div>
@@ -322,12 +360,13 @@ function DropZone({
         {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Trophy className="h-5 w-5" />}
       </span>
       <h2 className="mt-4 text-[15px] font-bold">
-        {hasFiles ? 'Add or replace files' : 'Drop your chess-results exports here'}
+        {hasFiles ? 'Add or replace files' : 'Drop your Swiss-Manager exports here'}
       </h2>
       <p className="mx-auto mt-2 max-w-lg text-[13px] leading-relaxed text-[#5c564d]">
-        The <strong>Category prizes</strong> export says who is in each category and the{' '}
-        <strong>Final ranking</strong> export fills those lists out. Add your own prize sheet
-        (category and amount) and the amounts are filled in for you. .xls and .xlsx both work.
+        The <strong>Final ranking</strong> export is all you need; add the{' '}
+        <strong>Category prizes</strong> export too and its categories are offered as well. The
+        prizes themselves are typed in on this page, so there is no prize sheet to prepare. .xls
+        and .xlsx both work.
       </p>
       <button
         type="button"
@@ -376,53 +415,38 @@ function FileChips({ imported, onReset }: { imported: ImportResult; onReset: () 
   );
 }
 
-function PrizeForm({
-  categories,
-  amountsText,
-  onChange,
-}: {
-  categories: Category[];
-  amountsText: Record<string, string>;
-  onChange: (id: string, value: string) => void;
-}) {
-  if (categories.length === 0) {
-    return (
-      <p className="rounded-2xl bg-[#fdf9ef] p-4 text-[13px] text-[#6b5a2a]">
-        No categories were found. Add the <strong>Category prizes</strong> or{' '}
-        <strong>Final ranking</strong> export from chess-results.
-      </p>
-    );
-  }
+function NoCategories() {
+  return (
+    <p className="rounded-2xl bg-[#fdf9ef] p-4 text-[13px] text-[#6b5a2a]">
+      No players were found. Add the <strong>Final ranking</strong> export from chess-results —
+      the prizes are then typed in here, so that file is all you need.
+    </p>
+  );
+}
+
+/**
+ * The prize list survives a refresh, so say so: an organiser who does not know
+ * it was restored will not notice that it is last week's list.
+ */
+function Restored({ savedAt, onClear }: { savedAt: string; onClear: () => void }) {
+  const when = savedAt ? new Date(savedAt) : null;
+  const stamp =
+    when && !Number.isNaN(when.getTime())
+      ? when.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+      : null;
 
   return (
-    <div className="rounded-3xl border border-[#23201c]/10 bg-white p-6 md:p-8">
-      <h2 className="text-[15px] font-bold">Prize money</h2>
-      <p className="mt-1.5 text-[13px] leading-relaxed text-[#5c564d]">
-        One line per category, biggest prize first: <code>4500, 3500, 2500</code>. Write{' '}
-        <code>Trophy</code> for a trophy. Leave a category blank if it has no prize. The winners
-        below update as you type.
-      </p>
-      <div className="mt-5 space-y-3">
-        {categories.map((category) => (
-          <div key={category.id} className="grid gap-2 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-center">
-            <label htmlFor={`amounts-${category.id}`} className="text-[13px]">
-              <span className="font-semibold">{category.label}</span>
-              <span className="ml-2 text-[12px] text-[#8a8378]">
-                {category.players.length} player{category.players.length === 1 ? '' : 's'}
-              </span>
-            </label>
-            <input
-              id={`amounts-${category.id}`}
-              type="text"
-              inputMode="numeric"
-              value={amountsText[category.id] ?? ''}
-              onChange={(event) => onChange(category.id, event.target.value)}
-              placeholder="e.g. 1000, 800, 700"
-              className="w-full rounded-xl border border-[#23201c]/15 bg-[#fcfbf9] px-3 py-2 text-[13px] tabular-nums outline-none transition-colors focus:border-[#8a6f2c]"
-            />
-          </div>
-        ))}
-      </div>
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#23201c]/10 bg-[#fcfbf9] px-4 py-3 text-[13px]">
+      <span className="text-[#5c564d]">
+        Your prize list from this browser was restored{stamp ? ` — saved ${stamp}` : ''}.
+      </span>
+      <button
+        type="button"
+        onClick={onClear}
+        className="font-semibold text-[#8a6f2c] underline hover:text-[#6b5a2a]"
+      >
+        Start the prize list again
+      </button>
     </div>
   );
 }

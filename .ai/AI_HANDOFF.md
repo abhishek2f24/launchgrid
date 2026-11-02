@@ -337,3 +337,45 @@ Fixing chess is one click (add the host; the CNAME is there). Fixing storefronts
 is not — the nameservers are GoDaddy, so a wildcard cert needs either Vercel
 nameservers or a maintained `_acme-challenge` TXT record, and the durable answer
 is to call the Vercel domains API from `src/actions/onboarding.ts` at signup.
+
+## 2026-11-02 (third pass) — ChessGrid: prizes typed on the page, and rating bands (Claude Opus 5)
+
+Three things the organiser reported after using it on a real event.
+
+**1. Rating bands were wrong, and this is the important one.** A player rated
+1452 appeared in the "under 1600" category when an "under 1500" prize also
+existed. Bands sit beside each other: under 1600 means 1500–1599. The legacy
+ChessWinners path had this right from the start (`closestLimit`, Mode 1); the
+chess-results path never got it. The rule now lives in
+`src/lib/chess/categorySpec.ts` and both paths share it, and a bounded band
+prints its range — `Under 1600 (1500–1599)` — so narrowing is visible when the
+lower prize is added. Checked against the organiser's own 54-player file: the
+real 1452 player (Taksh Vyas) moves to under 1500.
+
+**2. The prize spreadsheet was not being recognised** — `F`, `Ph`, `Un`,
+`Below_1500` all failed to match. Rather than widen the matching, categories are
+now **rules over the ranking list**, picked from a dropdown on the page: Overall,
+Best female, Unrated, every Type and Gr value (S60, Ph, …), and any rating band.
+One row per prize; finishing a row makes the next appear. `src/lib/chess/prizePlan.ts`
+turns the rows into what `allocate()` wants, which is untouched. A prize sheet
+still works if they have one — it now seeds the rows, and an amount that cannot
+be placed arrives as a row with the dropdown open. That closes the TODO P2 about
+naming an unmatched category, which is removed.
+
+**3. The list is remembered** (`src/lib/chess/savedSetup.ts`) in this browser's
+localStorage, tagged with the tournament name so next month's event starts empty.
+Every read and write is guarded — a private window throws rather than returning
+null, and failing to remember must never break the page.
+
+**The only required upload is now the Final ranking export.** Category prizes is
+optional and adds its own blocks as extra pickable categories.
+
+Verified: 40 chess test cases (19 new in `tests/chessPrizePlan.test.ts`), 235
+tests overall across both suites, eslint and `npm run build` clean, and the form
+driven end to end in the browser — rows auto-append, the band label narrows, the
+list is restored after a reload.
+
+Watch out for: the dev server's console holds 52 **stale** errors naming imports
+(`parseWorkbook`, `MissingSheetError`) that the turn-1 version of
+`WinnersTool.tsx` had. The current file does not import them and the production
+build is clean; they are a stale module graph, not a live fault.

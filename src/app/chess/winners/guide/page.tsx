@@ -6,7 +6,7 @@ import { PageHeader, serif } from '@/components/chess/ChessShell';
 export const metadata: Metadata = {
   title: 'Which files the prize winners tool needs',
   description:
-    'How to export the Category prizes and Final ranking lists from chess-results.com, what the prize sheet should look like, and how prizes are shared out one per player.',
+    'How to export the Final ranking and Category prizes lists from chess-results.com, how to enter the prize money on the page, and how prizes are shared out one per player.',
   alternates: { canonical: 'https://chess.launchgrid.in/winners/guide' },
 };
 
@@ -20,63 +20,66 @@ export default function GuidePage() {
         </p>
       </PageHeader>
 
-      <Section title="1. Category prizes — who is in each category">
+      <Section title="1. Final ranking — the only file you need">
         <p>
           On your tournament’s page on <strong>chess-results.com</strong>, choose{' '}
-          <em>Category prizes</em> in the list selector, then use the Excel button to download it.
-          The file holds one block per category — “age group S60”, “group PH”, “best female”,
-          “rating between 1400 and 1499” — each already in order.
+          <em>Final ranking</em> (or <em>Interim ranking</em> while the event is still running)
+          and use the Excel button to download it. Drop that in and you are ready to type the
+          prizes.
         </p>
         <p>
-          This is the file that matters most: your tournament software has already decided who
-          counts as a veteran and who is in which rating band, so the tool never has to guess.
+          Everything the prize list needs is in that one file: the order of play, each player’s
+          rating, the sex column, and the Type and Gr columns your software puts the veterans and
+          the PH players in. So the tool can offer <em>Best female</em>, <em>Unrated</em>,{' '}
+          <em>S60</em>, <em>Ph</em> and any rating band without you naming them anywhere.
         </p>
       </Section>
 
-      <Section title="2. Final ranking — everyone who played">
+      <Section title="2. Category prizes — optional">
         <p>
-          The same page, <em>Final ranking</em> (or <em>Interim ranking</em> while the event is
-          still running). It is optional but worth adding, for two reasons.
+          The same page, <em>Category prizes</em>. Add it and every category block your software
+          printed is offered by its own name as well, which is worth doing when a category is one
+          only you know the rule for — a club prize, or a hand-picked list.
         </p>
-        <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>
-            chess-results prints only as many players per category as it has prize ranks for. With
-            one prize per player those short lists run out, and a prize that should have moved down
-            to the seventh veteran instead goes to nobody. The ranking list fills them back in.
-          </li>
-          <li>
-            It lets the tool build the categories chess-results never printed — the unrated prize,
-            or a “Below 1500” prize whose bounds do not line up with the bands in the export.
-          </li>
-        </ul>
+        <p>
+          chess-results prints only as many players per category as it has prize ranks for. Those
+          short lists run out once one prize per player is enforced, so the ranking list is used to
+          fill them back in.
+        </p>
       </Section>
 
-      <Section title="3. Your prize sheet — the money (optional)">
+      <Section title="3. The prize money — typed on this page">
         <p>
-          A two-column sheet: the category in the first column, the amount in the second, one row
-          per prize. This is the list most organisers already keep.
-        </p>
-        <pre className="mt-3 overflow-x-auto rounded-2xl border border-[#23201c]/10 bg-white p-4 text-[12.5px] leading-relaxed">{`Prize        Prize Money
-1            4500
-2            3500
-3            2500
-Un           1500
-Below_1500   1000
-F            1000
-S60          1000
-Ph           1000`}</pre>
-        <p className="mt-3">
-          Numbers are the overall places — 1 is the first prize, 2 the second. The rest are matched
-          to your categories: <code>F</code> or <code>W</code> to the female list, <code>S60</code>{' '}
-          and <code>Ph</code> to the age and disability groups, <code>Un</code> or <code>Ur</code>{' '}
-          to the unrated players, <code>Below_1500</code> to rated players under 1500. Anything the
-          tool cannot place confidently is left for you to type, and it says so rather than
-          guessing.
+          There is no prize sheet to prepare. Each prize is one row: choose the category from the
+          dropdown, type the amount, and the next row appears by itself. Write{' '}
+          <code>Trophy</code> instead of an amount for a trophy.
         </p>
         <p className="mt-3">
-          You do not need this file at all. Without it, type the amounts for each category
-          straight into the form: <code>4500, 3500, 2500</code>, biggest first, or the word{' '}
-          <code>Trophy</code>.
+          The list is kept in this browser, so a refresh or a closed laptop lid does not lose it.
+          It is tagged with the tournament name it was typed for, so next month’s event starts
+          empty rather than inheriting this one’s prizes. Nothing is sent anywhere.
+        </p>
+        <p className="mt-3">
+          If you already keep a two-column prize sheet, you can still drop it in and the rows are
+          filled in from it. Anything it cannot place arrives as a row with the amount set and the
+          category left for you to choose.
+        </p>
+      </Section>
+
+      <Section title="Rating prizes are bands, not cut-offs">
+        <p>
+          This is the one thing worth reading twice. If your list has prizes for{' '}
+          <em>under 1600</em> and <em>under 1500</em>, then <strong>under 1600 means 1500 to
+          1599</strong> — a player rated 1452 is in the under-1500 prize only, and does not appear
+          in the under-1600 list at all.
+        </p>
+        <p className="mt-3">
+          That is how tournaments are actually run: the bands sit next to each other rather than
+          nesting, so the strongest player in each band wins its prize. The tool shows the range
+          back to you — <code>Under 1600 (1500–1599)</code> — so you can see a band narrow the
+          moment you add a lower prize. A single <em>under 1600</em> prize with nothing beneath it
+          covers everyone below 1600, as you would expect. Unrated players are never in a rating
+          band; give them their own <em>Unrated</em> prize.
         </p>
       </Section>
 

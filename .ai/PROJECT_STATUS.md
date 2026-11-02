@@ -95,20 +95,33 @@ Verified by reading the implementation.
   `src/utils/supabase/bearer.ts`
 
 ### ChessGrid — chess tournament tools on a reserved subdomain
-- **Reads what organisers actually have:** the chess-results.com "Category
-  prizes" and "Final ranking" exports (.xls), plus an optional prize sheet.
-  Verified against a real tournament's files end to end, including the printed
-  prize list and the .xlsx export.
+- **One upload, prizes typed on the page:** the chess-results.com "Final
+  ranking" export (.xls) is the only file needed. The "Category prizes" export
+  is optional and adds its own blocks as pickable categories; a two-column prize
+  sheet still works if an organiser keeps one, and seeds the rows.
+- **Categories are rules, not spreadsheet names:** `src/lib/chess/categorySpec.ts`
+  derives Overall, Best female, Unrated, every Type and Gr value (S60, Ph, U11)
+  and any rating band from the ranking list, so the dropdown offers them without
+  anything having to be recognised from a file. This replaced matching an
+  organiser's prize-sheet vocabulary, which kept failing on exactly those names.
+- **Rating prizes are bands:** with under-1600 and under-1500 prizes both
+  declared, under 1600 means 1500–1599 and a 1452 player is in the under-1500
+  prize only. Same rule the ChessWinners path applies in Mode 1, now shared.
+- **The prize list survives a refresh:** kept in the browser's localStorage,
+  tagged with the tournament name so the next event starts empty.
 - **Where:** `src/app/chess/`, `src/components/chess/`, `src/lib/chess/`,
   `src/lib/reservedSubdomains.ts`, `src/proxy.ts`
 - **Verified:** `/chess`, `/chess/winners`, `/chess/winners/guide`,
   `/chess/about`, `/chess/sitemap.xml` and `/chess/robots.txt` all render in the
   production build. The proxy serves them for `chess.launchgrid.in` — checked
-  with `Host:` headers. The prize-winners tool was run end to end in the browser
-  on the sample workbook and reproduced the reference worked example in both
-  modes. 21 test cases in `tests/chessWinners.test.ts`.
-- **Note:** the DNS record and the Vercel domain for `chess.launchgrid.in` are
-  not set up yet — that is a human task.
+  with `Host:` headers. The band rule was checked against the organiser's real
+  54-player ranking file (the 1452 player moves to under 1500), and the form was
+  driven end to end in the browser: rows auto-append, the band label narrows,
+  and the list is restored after a reload. 40 test cases across
+  `tests/chessWinners.test.ts`, `tests/chessResults.test.ts` and
+  `tests/chessPrizePlan.test.ts`.
+- **Note:** `chess.launchgrid.in` has DNS but **no TLS certificate** — see the
+  first P1 in `.ai/TODO.md`. Only `launchgrid.in` is reachable over HTTPS.
 
 ### Sibling subprojects
 `launchgrid-android` (has its own CI), `launchgrid-extension` (Chrome extension),
