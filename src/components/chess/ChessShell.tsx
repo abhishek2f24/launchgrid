@@ -20,8 +20,9 @@ export const serif = '[font-family:var(--font-playfair),serif]';
 
 export function ChessShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f6f3] text-[#23201c] antialiased">
-      <header className="sticky top-0 z-40 border-b border-[#23201c]/10 bg-[#f7f6f3]/90 backdrop-blur">
+    <div className="min-h-screen flex flex-col bg-[#f7f6f3] text-[#23201c] antialiased print:min-h-0 print:bg-white">
+      {/* The printed page is the prize list and nothing else: no nav, no footer. */}
+      <header className="sticky top-0 z-40 border-b border-[#23201c]/10 bg-[#f7f6f3]/90 backdrop-blur print:hidden">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-5 py-4">
           <Link href="/chess" className="group flex items-center gap-2.5">
             <Board />
@@ -45,7 +46,7 @@ export function ChessShell({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-[#23201c]/10 bg-[#efece5]">
+      <footer className="border-t border-[#23201c]/10 bg-[#efece5] print:hidden">
         <div className="mx-auto max-w-5xl px-5 py-10 text-[13px] leading-relaxed text-[#5c564d]">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-md">
@@ -66,7 +67,7 @@ export function ChessShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <p className="mt-8 border-t border-[#23201c]/10 pt-6 text-xs">
-            The prize winners tool is based on ChessWinners by Zaheer Beig, used under its
+            The ChessWinners workbook mode is based on ChessWinners by Zaheer Beig, used under its
             licence. See <Link href="/chess/about" className="underline">About</Link> for the full
             notice. Not endorsed by or affiliated with the author.
           </p>

@@ -230,3 +230,40 @@ on its own CDN. ExcelJS is ~900 KB, so it must not sit in the page's first load.
 Excel's display string, which is equivalent for the columns this tool reads
 (whole numbers and plain text) but could differ for exotic number formats. Only
 .xlsx is accepted; the original's library could also read .xls.
+
+## Decision: chess-results exports are the input, not a workbook we invented
+
+**Decision** — The prize tool's primary input is the pair of .xls files
+chess-results.com already produces. Category membership is taken from its
+"Category prizes" export rather than re-derived from rating and age rules.
+
+**Reason** — Every organiser has those files the moment the last round ends.
+The first version asked them to build a two-sheet workbook by hand, which is
+both work and a chance to get the categories wrong; the tournament software has
+already decided who is a veteran and who is in which band, and it is the
+authority.
+
+**Consequences** — The parser has to tolerate real-world Swiss-Manager output
+(blank Rank cells on ties, an unnamed sex column, varying column sets, the
+footer). chess-results truncates each category list to the prize ranks it
+printed, so the lists have to be extended from the full ranking or the
+one-prize cascade runs out of players. Categories an organiser's prize sheet
+implies but the export never had are built from the ranking and flagged for
+checking.
+
+## Decision: SheetJS is vendored, not taken from npm
+
+**Decision** — `vendor/xlsx-0.20.3.tgz`, installed as `"xlsx":
+"file:vendor/xlsx-0.20.3.tgz"`.
+
+**Reason** — chess-results hands out .xls, which ExcelJS cannot read, so
+SheetJS is needed. SheetJS stopped publishing to npm at 0.18.5, which carries a
+prototype-pollution advisory (CVE-2023-30533) a hostile workbook can reach —
+and this code runs on a `*.launchgrid.in` origin. The current build is only
+distributed from the vendor's own CDN; committing the tarball keeps the build
+reproducible and offline instead of fetching a third-party URL during every
+Vercel deploy.
+
+**Consequences** — A 2.4 MB blob in git, and upgrading means downloading a new
+tarball rather than bumping a version. ExcelJS stays for writing, since the
+free SheetJS build cannot write cell styles; both are dynamically imported.

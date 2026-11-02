@@ -95,6 +95,10 @@ Verified by reading the implementation.
   `src/utils/supabase/bearer.ts`
 
 ### ChessGrid — chess tournament tools on a reserved subdomain
+- **Reads what organisers actually have:** the chess-results.com "Category
+  prizes" and "Final ranking" exports (.xls), plus an optional prize sheet.
+  Verified against a real tournament's files end to end, including the printed
+  prize list and the .xlsx export.
 - **Where:** `src/app/chess/`, `src/components/chess/`, `src/lib/chess/`,
   `src/lib/reservedSubdomains.ts`, `src/proxy.ts`
 - **Verified:** `/chess`, `/chess/winners`, `/chess/winners/guide`,

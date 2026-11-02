@@ -86,6 +86,14 @@ From the 2026-09-30 audit. Every item names a real file and a verified gap.
   added to the project, and the sitemap submitted in Search Console.
 - **⚠️ Human task** — needs DNS and Vercel console access.
 
+### Let organisers name a category the tool could not match
+- **Location:** `src/lib/chess/importFiles.ts`, `src/lib/chess/allocate.ts`
+- **Problem:** A prize row whose name matches no category is reported and left
+  for the organiser to type into the right box. There is no way to say "this
+  name means that category" and have it remembered.
+- **Expected result:** A dropdown beside each unmatched row, and the amounts
+  moved into the chosen category.
+
 ### Swiss pairing and tournament manager
 - **Location:** new, under `src/app/chess/`
 - **Problem:** `/chess` says a pairing tool is being built. Nothing is there yet,

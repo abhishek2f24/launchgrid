@@ -4,138 +4,120 @@ import Link from 'next/link';
 import { PageHeader, serif } from '@/components/chess/ChessShell';
 
 export const metadata: Metadata = {
-  title: 'Workbook format for the prize winners tool',
+  title: 'Which files the prize winners tool needs',
   description:
-    'The sort and Ranklist sheets the chess prize winners tool reads: column order, category names, rating bands, age groups, club and disability prizes.',
+    'How to export the Category prizes and Final ranking lists from chess-results.com, what the prize sheet should look like, and how prizes are shared out one per player.',
   alternates: { canonical: 'https://chess.launchgrid.in/winners/guide' },
 };
-
-const RANK_COLUMNS = [
-  ['A', 'Rank', 'Whole number. Required — rows without one are skipped, so title and header rows are safely ignored.'],
-  ['B', 'SNo.', 'Starting number. Stored, never printed.'],
-  ['C', 'Title', 'GM, IM, FM. Not read at all.'],
-  ['D', 'Name', 'The player’s name, as it should appear on the prize list.'],
-  ['E', 'Gender', '"F" (any case) is female. Anything else, blank included, is treated as male.'],
-  ['F', 'IRtg', 'Rating. Must be a whole number — use 0 for unrated, never a blank or a dash.'],
-  ['G', 'Club', 'State, club or district code: GOA, KA, MH.'],
-  ['H', 'Age', 'Whole number. Blank or non-numeric becomes 0.'],
-  ['I', 'Type', 'Age group exactly as your prize list spells it: U09, U15, F07, S60.'],
-  ['J', 'Gr', 'Disability group: PC, VC, HI.'],
-  ['K', 'Pts', 'Points. Copied to the output as text.'],
-] as const;
-
-const CATEGORIES = [
-  ['Main, Main_1, Main_2 …', 'Overall prizes — any player. Capital M required, and the prize must be cash: a "Main" trophy is never awarded.'],
-  ['Below_1800', 'Mode 1: a band. With Below_1800 and Below_1600 present, Below_1800 means 1600–1799 and unrated players are excluded. Mode 2: anyone rated under 1800, unrated included.'],
-  ['Un', 'Unrated players (rating 0). Capital U, small n. Careful: any category containing "Un" is treated this way, so a club called "Union" behaves oddly.'],
-  ['GOA', 'A club prize: players whose Club column is GOA.'],
-  ['U15, U09, F07, S60', 'Mode 1: players whose Type column is exactly that. Mode 2: U-names mean age at or below the number for any gender; F, M and lowercase u names mean age at or below the number for girls only.'],
-  ['PC, VC, HI', 'Players whose Gr column is exactly that code. An exact match — "PC or VC" does not work.'],
-  ['W', 'Women: gender F whose Type contains no F, so girls already in F07 or F09 are left for their own prizes.'],
-  ['GOA_M, GOA_F', 'Club and gender together.'],
-  ['GOA_U15, GOA_F07', 'Club and age group together.'],
-] as const;
 
 export default function GuidePage() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 md:py-16">
-      <PageHeader eyebrow="Usage guide" title="What the workbook must look like">
+      <PageHeader eyebrow="Usage guide" title="Which files you need">
         <p>
-          One .xlsx file, two sheets: <strong>sort</strong> for the prizes and{' '}
-          <strong>Ranklist</strong> for the standings. Sheet names are matched ignoring case. The
-          quickest start is to{' '}
-          <Link href="/chess/winners" className="underline">
-            download the sample workbook
-          </Link>{' '}
-          and paste your own Swiss-Manager export over the Ranklist sheet.
+          Everything comes from the tournament software you already use. Nothing has to be retyped,
+          and nothing is uploaded — the files are read inside your browser.
         </p>
       </PageHeader>
 
-      <Section title="The 'sort' sheet — one row per prize">
+      <Section title="1. Category prizes — who is in each category">
         <p>
-          Column A is the category, column B is the prize: a whole number (commas are fine) or the
-          word <strong>Trophy</strong>. Anything else — “Medal”, “Rs 500”,
-          “10000.50” — makes the
-          row be skipped silently, so the tool warns you when it sees one.
+          On your tournament’s page on <strong>chess-results.com</strong>, choose{' '}
+          <em>Category prizes</em> in the list selector, then use the Excel button to download it.
+          The file holds one block per category — “age group S60”, “group PH”, “best female”,
+          “rating between 1400 and 1499” — each already in order.
+        </p>
+        <p>
+          This is the file that matters most: your tournament software has already decided who
+          counts as a veteran and who is in which rating band, so the tool never has to guess.
+        </p>
+      </Section>
+
+      <Section title="2. Final ranking — everyone who played">
+        <p>
+          The same page, <em>Final ranking</em> (or <em>Interim ranking</em> while the event is
+          still running). It is optional but worth adding, for two reasons.
         </p>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
           <li>
-            <strong>Sort the rows by amount, highest first.</strong> Prizes are handed out top to
-            bottom, and a player who takes a small prize first and a bigger one later keeps only the
-            bigger one — the small prize then goes to nobody.
+            chess-results prints only as many players per category as it has prize ranks for. With
+            one prize per player those short lists run out, and a prize that should have moved down
+            to the seventh veteran instead goes to nobody. The ranking list fills them back in.
           </li>
           <li>
-            <strong>Put every Trophy row below every cash row.</strong> Cash after a trophy stops
-            the run with an error, as it crashes the desktop program.
+            It lets the tool build the categories chess-results never printed — the unrated prize,
+            or a “Below 1500” prize whose bounds do not line up with the bands in the export.
           </li>
-          <li>
-            Several prizes in one category: write <code>Main_1</code>, <code>Main_2</code>,{' '}
-            <code>Main_3</code>. A number from 1 to 99 after the last underscore is a row number and
-            is stripped. <code>Below_1800</code> and <code>GOA_U15</code> keep their suffix.
-          </li>
-          <li>A header row spelled “Prize” and “Prize Money” is skipped. Blank rows are skipped.</li>
         </ul>
       </Section>
 
-      <Section title="The 'Ranklist' sheet — one row per player, in rank order">
+      <Section title="3. Your prize sheet — the money (optional)">
         <p>
-          Columns are read <strong>by position</strong>, not by heading, so the order below matters
-          and the header spelling does not. Players are taken in row order, not sorted by the Rank
-          value: an unsorted sheet gives the wrong winners.
+          A two-column sheet: the category in the first column, the amount in the second, one row
+          per prize. This is the list most organisers already keep.
         </p>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-[#23201c]/10 bg-white">
-          <table className="w-full border-collapse text-[13px]">
-            <tbody>
-              {RANK_COLUMNS.map(([letter, name, note]) => (
-                <tr key={letter} className="border-b border-[#23201c]/8 last:border-0">
-                  <td className="w-8 px-3 py-2.5 font-mono text-[12px] text-[#8a8378]">{letter}</td>
-                  <td className="w-24 px-1 py-2.5 font-semibold">{name}</td>
-                  <td className="px-3 py-2.5 text-[#5c564d]">{note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Section>
-
-      <Section title="Category names">
-        <p>
-          Names must match your Ranklist exactly. If the prize list says <code>F07</code>, the Type
-          column must say <code>F07</code> and not <code>F7</code>. Matching ignores upper and lower
-          case for club, type and disability codes, but the special names below are
-          case-sensitive: <code>Main</code>, <code>Below</code> and <code>Un</code> must be spelled
-          that way.
-        </p>
-        <dl className="mt-4 space-y-3">
-          {CATEGORIES.map(([name, note]) => (
-            <div key={name} className="rounded-xl border border-[#23201c]/10 bg-white p-4">
-              <dt className="font-mono text-[13px] font-semibold">{name}</dt>
-              <dd className="mt-1 text-[13px] leading-relaxed text-[#5c564d]">{note}</dd>
-            </div>
-          ))}
-        </dl>
+        <pre className="mt-3 overflow-x-auto rounded-2xl border border-[#23201c]/10 bg-white p-4 text-[12.5px] leading-relaxed">{`Prize        Prize Money
+1            4500
+2            3500
+3            2500
+Un           1500
+Below_1500   1000
+F            1000
+S60          1000
+Ph           1000`}</pre>
         <p className="mt-3">
-          Any other name is matched against the Club, Type and Gr columns in that order.
+          Numbers are the overall places — 1 is the first prize, 2 the second. The rest are matched
+          to your categories: <code>F</code> or <code>W</code> to the female list, <code>S60</code>{' '}
+          and <code>Ph</code> to the age and disability groups, <code>Un</code> or <code>Ur</code>{' '}
+          to the unrated players, <code>Below_1500</code> to rated players under 1500. Anything the
+          tool cannot place confidently is left for you to type, and it says so rather than
+          guessing.
+        </p>
+        <p className="mt-3">
+          You do not need this file at all. Without it, type the amounts for each category
+          straight into the form: <code>4500, 3500, 2500</code>, biggest first, or the word{' '}
+          <code>Trophy</code>.
         </p>
       </Section>
 
-      <Section title="The tournament title (optional)">
+      <Section title="How the prizes are shared out">
         <p>
-          If the first sheet of the workbook is neither “sort” nor “Ranklist”, its top rows become
-          the heading of the winners list. Reading stops at the first cell containing “Main”, which
-          is how a Swiss-Manager export’s name, venue and date lines end up in the title and the
-          event line does not.
+          Every prize in the tournament is ordered by its value, biggest first, and handed to the
+          best-placed player in its category who has not already won something. That one rule is
+          what organisers mean by “one prize per player”, and it has consequences worth knowing
+          before the ceremony:
+        </p>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>
+            Whoever takes a place in the open prizes disappears from every other list, so the
+            veterans’ first prize can go to the second or third veteran.
+          </li>
+          <li>
+            A category can run out of players. The tool prints “not awarded” rather than quietly
+            dropping the prize, so you can decide what to do with the money.
+          </li>
+          <li>
+            Two prizes of the same amount are handed out in the order you listed them.
+          </li>
+        </ul>
+        <p className="mt-3">
+          Check the result on screen, then print it or download the Excel file.
         </p>
       </Section>
 
-      <Section title="Mode 1 or Mode 2">
+      <Section title="Already have a ChessWinners workbook?">
         <p>
-          <strong>Mode 1</strong> is what almost every organiser wants: rating categories are bands
-          and age categories come from the Type column. <strong>Mode 2</strong> treats “under X” as
-          anyone at or below X, so <code>Below_1800</code> includes unrated players and{' '}
-          <code>U15</code> includes everyone aged 15 or less regardless of their Type. It was
-          experimental in the original program and it stays experimental here. Use “Compare both
-          modes” on the tool if you are unsure which your prize list means.
+          Drop it in and it is used as-is. A workbook with <code>sort</code> and{' '}
+          <code>Ranklist</code> sheets is worked out with the ChessWinners rules — rating bands,
+          <code>Main</code>, <code>Un</code>, <code>W</code>, club and age categories, Mode 1 and
+          Mode 2 — reproduced faithfully, quirks included, so the answers match the desktop
+          program. See <Link href="/chess/about" className="underline">About</Link> for the credit
+          and licence.
+        </p>
+        <p className="mt-3">
+          If you drop that workbook in <em>alongside</em> a chess-results export, its{' '}
+          <code>sort</code> sheet is read as your prize sheet instead, and the categories come from
+          chess-results.
         </p>
       </Section>
     </div>

@@ -263,3 +263,51 @@ file, `npm run build`, and an end-to-end run in the browser — the sample workb
 through the real UI produces exactly the winners the specification's worked
 example lists, in both modes. Host routing checked with `Host:` headers for
 `chess.launchgrid.in`, `launchgrid.in` and a merchant subdomain.
+
+## 2026-11-02 (later) — ChessGrid reads the real chess-results files (Claude Opus 5)
+
+The first version only accepted a hand-built ChessWinners workbook. Organisers
+do not have one; they have two .xls files that chess-results.com gave them and
+a prize list of their own. The tool now takes those directly, and the printed
+prize list is the deliverable.
+
+- **`src/lib/chess/swissManager.ts`** parses the Swiss-Manager export shape that
+  both the "Final ranking" and "Category prizes" lists share: a tournament
+  line, a section line, then blocks of players under an optional category
+  label. Columns are read **by header name** — the sex column's header is
+  empty, and chess-results emits different column sets per tournament. Two
+  things found only by looking at a real file: a tie leaves the Rank cell
+  **blank** on the second player (dropping those rows loses players), and the
+  footer's "2025/12/11" is the only safe place to read the tournament year
+  from, because a Birth cell is the same shape.
+- **`src/lib/chess/allocate.ts`** hands every prize out in descending order of
+  money, each to the best-placed player in its category who has not won yet.
+  That is the whole "one prize per player" rule, and it makes the cascade
+  (4th overall vacates the veterans' first prize) fall out by itself.
+- **`src/lib/chess/importFiles.ts`** reconciles the three files: it extends the
+  truncated category lists from the full ranking (chess-results prints only as
+  many players as it has prize ranks for, so the lists run out mid-cascade),
+  builds the categories an organiser's sheet implies but the export never had
+  (`Un`/`Ur` → Unrated, `Below_1500` → rated under 1500), and prefills the
+  amounts where the match is certain. Anything uncertain is reported, never
+  guessed.
+- **Reading** moved to SheetJS (`src/lib/chess/readSheet.ts`) because
+  chess-results hands out **.xls**, which ExcelJS cannot read. ExcelJS still
+  writes the output. SheetJS is vendored at `vendor/xlsx-0.20.3.tgz` — see
+  `.ai/DECISIONS.md` for why not the npm copy.
+- **UI**: `WinnersTool.tsx` is now drop-files → check amounts → print. Results
+  recompute as the amounts are typed. `PrizeList.tsx` is the same component on
+  screen and on paper (`print:` variants; the shell hides itself when printing).
+  The ChessWinners workbook mode still works, by its own rules, through
+  `legacyAdapter.ts`; drop that workbook in *beside* a chess-results export and
+  its `sort` sheet is read as the prize list instead.
+
+Verified against the organiser's own files (Bhatt Chess Academy 12th Rapid,
+54 players, 7 category blocks, 34 prizes): every prize row matched a category,
+₹37,700 allocated, nobody twice, and the one prize that genuinely had nobody
+left is reported rather than dropped. Checked in the browser with those files
+and in Node end to end into the .xlsx. `npm test` 100/100, `src/**` 116/116,
+eslint clean on changed files, `npm run build`.
+
+Watch out for: the files live in the user's Downloads, not in the repo — the
+fixtures in `tests/chessResults.test.ts` copy their shape with invented names.

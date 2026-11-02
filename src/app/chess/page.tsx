@@ -32,9 +32,9 @@ export default function ChessHomePage() {
           <div className="flex-1">
             <h2 className={`${serif} text-2xl font-bold`}>Prize Winners</h2>
             <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#5c564d]">
-              Upload one workbook with your prize list and your final ranklist. It decides who takes
-              each prize under the one-prize-per-player rule, shows the result on screen and gives
-              you a formatted winners list to print.
+              Drop in the Category prizes and Final ranking exports from chess-results, type the
+              prize money, and print the list. It applies the one-prize-per-player rule across
+              every category, so nobody collects twice and no prize is quietly left unawarded.
             </p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-[#8a6f2c]">
               Open the tool
@@ -48,11 +48,11 @@ export default function ChessHomePage() {
         <Feature icon={<ShieldCheck className="h-4 w-4" />} title="Nothing is uploaded">
           The workbook is read and written inside your browser. No server sees your players.
         </Feature>
-        <Feature icon={<Zap className="h-4 w-4" />} title="Same answers as the desktop app">
-          The rules are a faithful port of ChessWinners v2.0, quirks included, so results match.
+        <Feature icon={<Zap className="h-4 w-4" />} title="Your files, as they are">
+          Reads the .xls chess-results gives you. A ChessWinners workbook works too, by its own rules.
         </Feature>
-        <Feature icon={<Users className="h-4 w-4" />} title="Warns instead of surprising you">
-          Unsorted prize rows, categories nobody matches, prizes that will go unawarded.
+        <Feature icon={<Users className="h-4 w-4" />} title="Ready for the notice board">
+          Print the prize list straight from the page, or take the Excel file away.
         </Feature>
       </div>
 
