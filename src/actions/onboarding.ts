@@ -1,6 +1,7 @@
 'use server'
 
 import { createServiceClient } from '@/utils/supabase/service'
+import { isReservedSubdomain } from '@/lib/reservedSubdomains'
 
 /**
  * Check if a subdomain is available in either tenants or active subdomain locks
@@ -8,6 +9,10 @@ import { createServiceClient } from '@/utils/supabase/service'
 export async function checkSubdomainAvailability(subdomain: string): Promise<{ available: boolean }> {
   const supabase = createServiceClient()
   const cleanSubdomain = subdomain.trim().toLowerCase()
+
+  // 0. Names the proxy serves itself (chess, api, www...) would give the
+  // merchant a storefront no visitor could reach.
+  if (isReservedSubdomain(cleanSubdomain)) return { available: false }
 
   try {
     // 1. Check if already registered in active tenants

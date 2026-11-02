@@ -76,6 +76,25 @@ From the 2026-09-30 audit. Every item names a real file and a verified gap.
 
 ## P2 — Medium
 
+### Point chess.launchgrid.in at Vercel
+- **Location:** DNS for `launchgrid.in`, Vercel project domains
+- **Problem:** The ChessGrid product is built and served by `src/proxy.ts` for
+  the host `chess.launchgrid.in`, but that host does not exist yet, so the pages
+  are only reachable at `launchgrid.in/chess/*` — which every canonical URL and
+  the chess sitemap point away from.
+- **Expected result:** A CNAME for `chess` to Vercel, `chess.launchgrid.in`
+  added to the project, and the sitemap submitted in Search Console.
+- **⚠️ Human task** — needs DNS and Vercel console access.
+
+### Swiss pairing and tournament manager
+- **Location:** new, under `src/app/chess/`
+- **Problem:** `/chess` says a pairing tool is being built. Nothing is there yet,
+  and the page deliberately does not link to a tile that does not exist. The
+  prize-winners tool only covers the end of an event.
+- **Expected result:** Entries, round pairings, tiebreaks and a publishable
+  ranklist, with the pairing rules in `src/lib/chess/` and tested the way
+  `winners.ts` is.
+
 ### Resolve migration ordering and drift
 - **Location:** `supabase/migrations/` (48 files), `MIGRATION_DRIFT_AUDIT.md`
 - **Problem:** Migrations are applied by hand in the Supabase SQL editor and

@@ -1,7 +1,7 @@
 # AI Handoff
 
 **Last AI:** Claude (Opus 5)
-**Last Updated:** 2026-09-30
+**Last Updated:** 2026-11-02
 
 > This file is the communication layer between AI agents. **Any agent doing work
 > on this repository must update it before finishing.**
@@ -225,3 +225,41 @@ treats `localhost:3000` as the main domain; on any other port send
 `Host: launchgrid.in` or every route 404s as a "merchant subdomain".
 
 Not done here: deploying (push to main), Google Search Console indexing request.
+
+## 2026-11-02 — ChessGrid: chess.launchgrid.in and the prize winners tool (Claude Opus 5)
+
+A second product on its own subdomain, built from a reverse-engineering spec of
+**ChessWinners v2.0** (a 2019 desktop prize-distribution program by Zaheer Beig,
+BSD-style licence). It decides which player wins which prize in a chess
+tournament from one Excel workbook, entirely in the browser.
+
+- **Routing:** `src/proxy.ts` now checks `RESERVED_SUBDOMAINS`
+  (`src/lib/reservedSubdomains.ts`) **before** the merchant-storefront rewrite,
+  so `chess.launchgrid.in/x` serves `/chess/x`. Paths that already start with
+  `/chess` are not prefixed twice, so every internal link works on both hosts.
+  `checkSubdomainAvailability` in `src/actions/onboarding.ts` now refuses
+  reserved names — previously a merchant could have registered `www`, `api` or
+  `chess` and got a storefront no visitor could reach.
+- **The rules:** `src/lib/chess/winners.ts`, a faithful port including the
+  original's quirks, with `inputWarnings()` reporting them instead of silently
+  "fixing" them. `tests/chessWinners.test.ts` (21 cases) pins the specification's
+  worked example in both modes and every documented quirk.
+- **Excel:** `src/lib/chess/workbook.ts` reads and writes with **ExcelJS**
+  (dynamically imported — it is ~900 KB) and builds the sample workbook.
+- **Pages:** `src/app/chess/` — hub, `/winners` (client tool in
+  `src/components/chess/WinnersTool.tsx`), `/winners/guide`, `/about`, plus a
+  subdomain `sitemap.ts` and a `robots.txt` route handler (Next's `robots.ts`
+  convention only works at the app root).
+- **Licence:** `src/lib/chess/licence.ts` holds the required credit; it is shown
+  on first use, on `/about` and in the generated workbook's footer. Do not remove
+  it, and do not market the site using the author's name.
+
+**Still a human task:** point the `chess` DNS record at Vercel and add
+`chess.launchgrid.in` as a domain on the project. Until then the routes are only
+reachable at `launchgrid.in/chess/*`.
+
+Verified: `npm test` 80/80, `src/**` tests 116/116, eslint clean on every changed
+file, `npm run build`, and an end-to-end run in the browser — the sample workbook
+through the real UI produces exactly the winners the specification's worked
+example lists, in both modes. Host routing checked with `Host:` headers for
+`chess.launchgrid.in`, `launchgrid.in` and a merchant subdomain.

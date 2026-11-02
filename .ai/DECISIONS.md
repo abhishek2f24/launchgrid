@@ -175,3 +175,58 @@ file is missing; `.env.deploy.local.example` is committed as a template;
 
 **Consequences** — The script still works, and no secret is tracked. **The
 historical exposure is not undone** — rotation is P0 in `.ai/TODO.md`.
+
+## Decision: Products get a reserved subdomain of launchgrid.in, served from the same app
+
+**Decision** — `chess.launchgrid.in` is a name in `RESERVED_SUBDOMAINS`
+(`src/lib/reservedSubdomains.ts`) that `src/proxy.ts` rewrites onto `/chess/*`
+in the existing Next.js app, rather than a separate deployment.
+
+**Reason** — The same reason the marketing site, portal and storefronts share a
+codebase: one deployment and one set of components for a single maintainer. The
+subdomain exists so the product reads as its own thing to chess organisers, who
+are not the seller audience the rest of the site addresses.
+
+**Consequences** — Every page is reachable at two URLs
+(`chess.launchgrid.in/winners` and `launchgrid.in/chess/winners`); the canonical
+tags and the chess sitemap name the subdomain, and internal links use the
+`/chess/...` form so they work on both. A reserved name can no longer be
+registered as a merchant subdomain — which also closed a real hole, since `www`
+and `api` were registrable before this.
+
+## Decision: Copy ChessWinners' quirks instead of fixing them, and warn instead
+
+**Decision** — `src/lib/chess/winners.ts` reproduces the original desktop
+program's behaviour exactly, bugs included (unrated players excluded from Mode 1
+rating bands, a "Main" trophy never awarded, Mode 2 age categories without a
+capital U matching girls only, a lost prize when rows are unsorted).
+`inputWarnings()` reports each situation on screen.
+
+**Reason** — Organisers run both tools over the same workbook during a
+transition. A tool that hands out different prizes than the one they have used
+for years is not "better", it is wrong, and the disagreement surfaces at a prize
+ceremony. Warning them about their sheet fixes the underlying problem — the
+sheet — without changing the answer.
+
+**Alternatives** — Fixing the rules silently (rejected: unexplainable
+differences); a toggle per quirk (rejected: nobody can answer those questions).
+
+**Consequences** — Two cases deviate, both because the original simply crashes:
+cash below a trophy row, and a category that is only a row number, raise a clear
+error. `tests/chessWinners.test.ts` encodes the agreement, so breaking it breaks
+the suite.
+
+## Decision: ExcelJS for both reading and writing the chess workbooks
+
+**Decision** — `src/lib/chess/workbook.ts` uses ExcelJS on both halves, loaded
+with a dynamic `import()` inside the handlers.
+
+**Reason** — The output needs merged cells, fills and borders, which the free
+SheetJS edition cannot write; using ExcelJS to read as well avoids a second
+spreadsheet dependency, and the npm build of SheetJS lags the version published
+on its own CDN. ExcelJS is ~900 KB, so it must not sit in the page's first load.
+
+**Consequences** — Cell text comes from ExcelJS's own formatting rather than
+Excel's display string, which is equivalent for the columns this tool reads
+(whole numbers and plain text) but could differ for exotic number formats. Only
+.xlsx is accepted; the original's library could also read .xls.

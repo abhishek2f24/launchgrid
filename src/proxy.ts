@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
+import { RESERVED_SUBDOMAINS } from '@/lib/reservedSubdomains'
 
 export async function proxy(request: NextRequest) {
   // 1. First, check and update Supabase auth sessions
@@ -40,6 +41,25 @@ export async function proxy(request: NextRequest) {
     }
     
     return authResponse
+  }
+
+  // Reserved product subdomains. These are OURS, not merchants': without this
+  // branch the block below would look for a storefront with the slug 'chess'.
+  // A reserved name serves /<subdomain> from the app; see src/lib/reservedSubdomains.ts.
+  if (RESERVED_SUBDOMAINS.has(subdomain)) {
+    const url = request.nextUrl.clone()
+    // Links inside the product use /chess/... so they work on launchgrid.in too;
+    // on the subdomain those paths are already correct and must not be prefixed
+    // twice. Everything else gets the prefix, so chess.launchgrid.in/winners
+    // and launchgrid.in/chess/winners are the same page.
+    if (url.pathname !== `/${subdomain}` && !url.pathname.startsWith(`/${subdomain}/`)) {
+      url.pathname = `/${subdomain}${url.pathname === '/' ? '' : url.pathname}`
+    }
+    const reservedResponse = NextResponse.rewrite(url)
+    authResponse.cookies.getAll().forEach(cookie => {
+      reservedResponse.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return reservedResponse
   }
 
   // Merchant Subdomain routing

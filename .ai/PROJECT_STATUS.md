@@ -1,6 +1,6 @@
 # Project Status
 
-**Last Updated:** 2026-09-30
+**Last Updated:** 2026-11-02
 **Current Phase:** Live in production on Vercel, actively developed
 **Overall Status:** Builds and tests pass. **One critical security item is open**
 — see Current Blockers.
@@ -93,6 +93,18 @@ Verified by reading the implementation.
 ### Mobile / extension API
 - **Where:** `src/app/api/v1/` — account, devices, entitlements, meta;
   `src/utils/supabase/bearer.ts`
+
+### ChessGrid — chess tournament tools on a reserved subdomain
+- **Where:** `src/app/chess/`, `src/components/chess/`, `src/lib/chess/`,
+  `src/lib/reservedSubdomains.ts`, `src/proxy.ts`
+- **Verified:** `/chess`, `/chess/winners`, `/chess/winners/guide`,
+  `/chess/about`, `/chess/sitemap.xml` and `/chess/robots.txt` all render in the
+  production build. The proxy serves them for `chess.launchgrid.in` — checked
+  with `Host:` headers. The prize-winners tool was run end to end in the browser
+  on the sample workbook and reproduced the reference worked example in both
+  modes. 21 test cases in `tests/chessWinners.test.ts`.
+- **Note:** the DNS record and the Vercel domain for `chess.launchgrid.in` are
+  not set up yet — that is a human task.
 
 ### Sibling subprojects
 `launchgrid-android` (has its own CI), `launchgrid-extension` (Chrome extension),
