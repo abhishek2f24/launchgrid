@@ -3,11 +3,16 @@
 /**
  * The prize list, typed on the page.
  *
- * One row per prize, in the order they will be read out: pick the category,
- * type the amount, and the next blank row appears by itself. That is the whole
- * interaction, and it replaced asking organisers to prepare a spreadsheet in a
- * vocabulary this tool could recognise — which is where it kept failing, on
- * exactly the categories every Indian tournament has: best female, Ph, unrated.
+ * One row per *category*, not per prize: choose the category once, then type
+ * its prizes best-first across a row of small boxes, and the next empty box
+ * appears as you fill the current one. Typing a second female amount is how
+ * the organiser says there are two female prizes — there is nothing else to
+ * declare and no count to set.
+ *
+ * It was one box per row before, and organisers typed "600,800" into it. That
+ * is the correct instinct and the wrong model, so the model moved: the boxes
+ * are per prize, and anything separator-shaped pasted into one box is split
+ * across them on blur rather than being read as a single strange amount.
  *
  * Rating prizes get a limit box rather than their own dropdown entry, because
  * "under 1600" is only meaningful next to the other limits on the same list.
@@ -17,6 +22,7 @@
 
 import { Plus, X } from 'lucide-react';
 
+import { parseAmounts } from '@/lib/chess/allocate';
 import {
   type CatalogEntry,
   type CategorySpec,
@@ -24,7 +30,15 @@ import {
   resolvedLabel,
   underLimits,
 } from '@/lib/chess/categorySpec';
-import { type PrizeRow, isComplete, newRow } from '@/lib/chess/prizePlan';
+import {
+  type PrizeGroup,
+  filledAmounts,
+  newGroup,
+  withTrailingGroup,
+  withTrailingSlot,
+} from '@/lib/chess/prizePlan';
+
+import { placeLabel } from './PrizeList';
 
 /** The dropdown value that asks for a rating limit instead of naming a category. */
 const UNDER_PENDING = 'under:';
@@ -37,24 +51,14 @@ function underLimitOf(key: string): string {
   return key.startsWith('under:') ? key.slice('under:'.length) : '';
 }
 
-/**
- * Keep exactly one blank row at the end: finishing the last row is what makes
- * the next one appear, so there is never an empty form and never a stray blank
- * in the middle of the list.
- */
-export function withTrailingBlank(rows: PrizeRow[]): PrizeRow[] {
-  const last = rows[rows.length - 1];
-  return last && !isComplete(last) ? rows : [...rows, newRow()];
-}
-
 export function PrizeBuilder({
-  rows,
+  groups,
   catalog,
   memberCounts,
   onChange,
   playerCount,
 }: {
-  rows: PrizeRow[];
+  groups: PrizeGroup[];
   catalog: CatalogEntry[];
   /**
    * How many players each chosen category holds, keyed by spec key. A rating
@@ -62,63 +66,84 @@ export function PrizeBuilder({
    * the counts are worked out with the plan and handed back here.
    */
   memberCounts: Record<string, number>;
-  onChange: (rows: PrizeRow[]) => void;
+  onChange: (groups: PrizeGroup[]) => void;
   playerCount: number;
 }) {
-  const groups = [...new Set(catalog.map((entry) => entry.group))];
+  const catalogGroups = [...new Set(catalog.map((entry) => entry.group))];
   const limits = underLimits(
-    rows
-      .map((row) => parseSpecKey(row.categoryKey))
+    groups
+      .map((group) => parseSpecKey(group.categoryKey))
       .filter((spec): spec is CategorySpec => spec !== null),
   );
 
-  const update = (id: string, patch: Partial<PrizeRow>) => {
-    onChange(
-      withTrailingBlank(rows.map((row) => (row.id === id ? { ...row, ...patch } : row))),
-    );
+  const replace = (id: string, next: PrizeGroup) => {
+    onChange(withTrailingGroup(groups.map((group) => (group.id === id ? next : group))));
   };
 
-  const remove = (id: string) => {
-    const kept = rows.filter((row) => row.id !== id);
-    onChange(withTrailingBlank(kept));
+  const setAmount = (group: PrizeGroup, index: number, value: string) => {
+    const amounts = [...group.amounts];
+    amounts[index] = value;
+    // Growing happens on every keystroke, so the next box is already waiting;
+    // blanks in the middle are only tidied on blur, or clearing a box would
+    // yank the one after it out from under the cursor.
+    const grown = index === amounts.length - 1 && value.trim() !== '' ? [...amounts, ''] : amounts;
+    replace(group.id, { ...group, amounts: grown });
+  };
+
+  /** "600,800" pasted into one box becomes two prizes; "4,500" stays one. */
+  const normalise = (group: PrizeGroup, index: number) => {
+    const raw = group.amounts[index] ?? '';
+    const pieces = parseAmounts(raw);
+    const amounts =
+      pieces.length > 1
+        ? [...group.amounts.slice(0, index), ...pieces, ...group.amounts.slice(index + 1)]
+        : group.amounts;
+    replace(group.id, withTrailingSlot({ ...group, amounts }));
   };
 
   return (
     <div className="rounded-3xl border border-[#23201c]/10 bg-white p-6 md:p-8">
       <h2 className="text-[15px] font-bold">The prizes</h2>
       <p className="mt-1.5 text-[13px] leading-relaxed text-[#5c564d]">
-        One row per prize, biggest first within each category. Write an amount like{' '}
-        <code>4500</code>, or the word <code>Trophy</code>. The winners below update as you type,
-        and a new row appears as soon as you finish this one.
+        One row per category. Type its prizes biggest first — a box for the next prize appears as
+        you fill the current one, so two amounts under <em>Best female</em> means two female
+        prizes. Write an amount like <code>4500</code>, or the word <code>Trophy</code>.
       </p>
 
-      <div className="mt-5 space-y-2">
-        <div className="hidden gap-3 px-1 text-[11px] font-semibold uppercase tracking-wider text-[#8a8378] md:grid md:grid-cols-[minmax(0,1fr)_120px_32px]">
-          <span>Category</span>
-          <span>Amount</span>
-          <span />
-        </div>
-
-        {rows.map((row, index) => {
-          const spec = parseSpecKey(row.categoryKey);
+      <div className="mt-5 space-y-4">
+        {groups.map((group, groupIndex) => {
+          const spec = parseSpecKey(group.categoryKey);
           const band = spec?.kind === 'under' ? resolvedLabel(spec, limits) : null;
-          const members = spec ? countFor(row.categoryKey, memberCounts, catalog) : null;
+          const members = spec ? countFor(group.categoryKey, memberCounts, catalog) : null;
+          const prizeCount = filledAmounts(group).length;
 
           return (
-            <div key={row.id} className="grid gap-3 md:grid-cols-[minmax(0,1fr)_120px_32px] md:items-start">
+            <div
+              key={group.id}
+              className="rounded-2xl border border-[#23201c]/10 bg-[#fcfbf9] p-4 md:grid md:grid-cols-[minmax(0,320px)_minmax(0,1fr)_32px] md:items-start md:gap-4"
+            >
               <div className="space-y-1.5">
+                <label
+                  className="block text-[11px] font-semibold uppercase tracking-wider text-[#8a8378]"
+                  htmlFor={`category-${group.id}`}
+                >
+                  Category
+                </label>
                 <div className="flex gap-2">
                   <select
-                    aria-label={`Category for prize ${index + 1}`}
-                    value={isUnderKey(row.categoryKey) ? UNDER_PENDING : row.categoryKey}
-                    onChange={(event) => update(row.id, { categoryKey: event.target.value })}
-                    className="w-full rounded-xl border border-[#23201c]/15 bg-[#fcfbf9] px-3 py-2 text-[13px] outline-none transition-colors focus:border-[#8a6f2c]"
+                    id={`category-${group.id}`}
+                    aria-label={`Category for row ${groupIndex + 1}`}
+                    value={isUnderKey(group.categoryKey) ? UNDER_PENDING : group.categoryKey}
+                    onChange={(event) =>
+                      replace(group.id, { ...group, categoryKey: event.target.value })
+                    }
+                    className="w-full rounded-xl border border-[#23201c]/15 bg-white px-3 py-2 text-[13px] outline-none transition-colors focus:border-[#8a6f2c]"
                   >
                     <option value="">Choose a category…</option>
-                    {groups.map((group) => (
-                      <optgroup key={group} label={group}>
+                    {catalogGroups.map((name) => (
+                      <optgroup key={name} label={name}>
                         {catalog
-                          .filter((entry) => entry.group === group)
+                          .filter((entry) => entry.group === name)
                           .map((entry) => (
                             <option key={entry.key} value={entry.key}>
                               {entry.label} ({entry.count})
@@ -131,51 +156,75 @@ export function PrizeBuilder({
                     </optgroup>
                   </select>
 
-                  {isUnderKey(row.categoryKey) ? (
+                  {isUnderKey(group.categoryKey) ? (
                     <input
                       type="text"
                       inputMode="numeric"
-                      aria-label={`Rating limit for prize ${index + 1}`}
-                      value={underLimitOf(row.categoryKey)}
+                      aria-label={`Rating limit for row ${groupIndex + 1}`}
+                      value={underLimitOf(group.categoryKey)}
                       onChange={(event) =>
-                        update(row.id, {
+                        replace(group.id, {
+                          ...group,
                           categoryKey: `under:${event.target.value.replace(/\D/g, '')}`,
                         })
                       }
                       placeholder="1600"
-                      className="w-24 shrink-0 rounded-xl border border-[#23201c]/15 bg-[#fcfbf9] px-3 py-2 text-[13px] tabular-nums outline-none transition-colors focus:border-[#8a6f2c]"
+                      className="w-24 shrink-0 rounded-xl border border-[#23201c]/15 bg-white px-3 py-2 text-[13px] tabular-nums outline-none transition-colors focus:border-[#8a6f2c]"
                     />
                   ) : null}
                 </div>
 
                 {band ? (
-                  <p className="px-1 text-[12px] text-[#8a6f2c]">
+                  <p className="text-[12px] text-[#8a6f2c]">
                     {band} · {members ?? 0} player{members === 1 ? '' : 's'}
                   </p>
                 ) : null}
-                {!band && members !== null && members === 0 ? (
-                  <p className="px-1 text-[12px] text-[#a4251f]">
+                {!band && members === 0 ? (
+                  <p className="text-[12px] text-[#a4251f]">
                     Nobody in the ranking list is in this category.
                   </p>
                 ) : null}
               </div>
 
-              <input
-                type="text"
-                inputMode="numeric"
-                aria-label={`Amount for prize ${index + 1}`}
-                value={row.amount}
-                onChange={(event) => update(row.id, { amount: event.target.value })}
-                placeholder="4500"
-                className="w-full rounded-xl border border-[#23201c]/15 bg-[#fcfbf9] px-3 py-2 text-[13px] tabular-nums outline-none transition-colors focus:border-[#8a6f2c]"
-              />
+              <div className="mt-3 space-y-1.5 md:mt-0">
+                <span className="block text-[11px] font-semibold uppercase tracking-wider text-[#8a8378]">
+                  {prizeCount > 0
+                    ? `${prizeCount} prize${prizeCount === 1 ? '' : 's'}, biggest first`
+                    : 'Prize money, biggest first'}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {group.amounts.map((amount, index) => (
+                    <label key={index} className="block">
+                      <span className="sr-only">
+                        {placeLabel(index + 1)} prize for row {groupIndex + 1}
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={amount}
+                        onChange={(event) => setAmount(group, index, event.target.value)}
+                        onBlur={() => normalise(group, index)}
+                        placeholder={index === 0 ? '4500' : placeLabel(index + 1)}
+                        title={`${placeLabel(index + 1)} prize`}
+                        className="w-24 rounded-xl border border-[#23201c]/15 bg-white px-3 py-2 text-[13px] tabular-nums outline-none transition-colors focus:border-[#8a6f2c]"
+                      />
+                    </label>
+                  ))}
+                </div>
+                {members !== null && prizeCount > members ? (
+                  <p className="text-[12px] text-[#a4251f]">
+                    {prizeCount} prizes but only {members} player{members === 1 ? '' : 's'} here —
+                    the last of them will have nobody left to take it.
+                  </p>
+                ) : null}
+              </div>
 
-              {rows.length > 1 ? (
+              {groups.length > 1 ? (
                 <button
                   type="button"
-                  onClick={() => remove(row.id)}
-                  aria-label={`Remove prize ${index + 1}`}
-                  className="flex h-9 w-8 items-center justify-center rounded-lg text-[#8a8378] transition-colors hover:bg-[#23201c]/[0.06] hover:text-[#a4251f]"
+                  onClick={() => onChange(withTrailingGroup(groups.filter((g) => g.id !== group.id)))}
+                  aria-label={`Remove row ${groupIndex + 1}`}
+                  className="mt-3 flex h-9 w-8 items-center justify-center rounded-lg text-[#8a8378] transition-colors hover:bg-[#23201c]/[0.06] hover:text-[#a4251f] md:mt-7"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -189,11 +238,11 @@ export function PrizeBuilder({
 
       <button
         type="button"
-        onClick={() => onChange([...rows, newRow()])}
+        onClick={() => onChange([...groups, newGroup()])}
         className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-[#23201c]/15 px-3 py-2 text-[13px] font-semibold transition-colors hover:border-[#23201c]/35"
       >
         <Plus className="h-3.5 w-3.5" />
-        Add a prize
+        Add a category
       </button>
 
       <p className="mt-4 text-[12px] text-[#8a8378]">

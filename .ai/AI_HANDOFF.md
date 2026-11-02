@@ -379,3 +379,32 @@ Watch out for: the dev server's console holds 52 **stale** errors naming imports
 (`parseWorkbook`, `MissingSheetError`) that the turn-1 version of
 `WinnersTool.tsx` had. The current file does not import them and the production
 build is clean; they are a stale module graph, not a live fault.
+
+## 2026-11-02 (fourth pass) — ChessGrid: a category per row, prizes that grow (Claude Opus 5)
+
+The organiser used the new form and hit its design flaw straight away. One row
+meant one prize, so to give two female prizes they typed `600,800` into the
+single amount box — which `isCash` rejected (`/^\d+$/`), making it a non-cash
+award worth nothing. Their screenshot showed "₹39,000 across 3 prizes" with two
+of the three prizes silently uncounted.
+
+The instinct was right and the model was wrong, so the model moved. A row is now
+a **category with an ordered list of amounts** (`PrizeGroup` in
+`src/lib/chess/prizePlan.ts`): choose the category once, type its prizes biggest
+first across small boxes, and the next empty box appears as the current one is
+filled. Typing a second female amount is how you say there are two female
+prizes; there is no count to set.
+
+Also added, because it is the same mistake:
+- Several amounts typed into one box are split on blur (`parseAmounts` already
+  distinguished `600,800` from `4,500`), so pasting a line still works.
+- A group showing more prizes than its category has players says so inline.
+
+`allocate()` is untouched — `buildPrizePlan` still hands it `CategoryAmounts`.
+Two groups naming the same category merge in order rather than duplicating.
+`savedSetup` moved to a **v2** localStorage key, since a v1 value holds the old
+one-prize rows; `parseSetup` returns null for it rather than half-reading it.
+
+Verified in the browser: boxes grow 1 → 2 → 3, `788, 677` splits into two cash
+prizes totalling ₹1,588, the over-allocation warning fires, and the setup saves
+under v2. 240 tests (24 in `tests/chessPrizePlan.test.ts`), lint and build clean.

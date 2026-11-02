@@ -12,14 +12,16 @@
  * silently would be worse than starting empty.
  */
 
-import { type PrizeRow, isComplete } from './prizePlan';
+import { type PrizeGroup, filledAmounts, isComplete } from './prizePlan';
 
-const KEY = 'chessgrid.winners.setup.v1';
+// v2: the saved shape changed from one row per prize to a category with its
+// amounts, so a v1 value must be ignored rather than half-read.
+const KEY = 'chessgrid.winners.setup.v2';
 
 export type SavedSetup = {
   /** The tournament the rows were entered for, as the export named it. */
   tournament: string | null;
-  rows: PrizeRow[];
+  groups: PrizeGroup[];
   /** ISO timestamp, shown to the organiser so they know how old it is. */
   savedAt: string;
 };
@@ -37,16 +39,20 @@ function storage(): Storage | null {
   }
 }
 
-export function saveSetup(tournament: string | null, rows: PrizeRow[]): void {
+export function saveSetup(tournament: string | null, groups: PrizeGroup[]): void {
   const store = storage();
   if (!store) return;
-  const keep = rows.filter(isComplete);
+  // Only the amounts actually typed are kept: the trailing empty slot is a
+  // property of the form, not of the organiser's prize list.
+  const keep = groups
+    .filter(isComplete)
+    .map((group) => ({ ...group, amounts: filledAmounts(group) }));
   try {
     if (keep.length === 0) {
       store.removeItem(KEY);
       return;
     }
-    const setup: SavedSetup = { tournament, rows: keep, savedAt: new Date().toISOString() };
+    const setup: SavedSetup = { tournament, groups: keep, savedAt: new Date().toISOString() };
     store.setItem(KEY, JSON.stringify(setup));
   } catch {
     // A quota error must not take the page down with it.
@@ -89,21 +95,26 @@ export function readSetup(): SavedSetup | null {
 export function parseSetup(value: unknown): SavedSetup | null {
   if (typeof value !== 'object' || value === null) return null;
   const record = value as Record<string, unknown>;
-  if (!Array.isArray(record.rows)) return null;
+  if (!Array.isArray(record.groups)) return null;
 
-  const rows: PrizeRow[] = [];
-  for (const entry of record.rows) {
+  const groups: PrizeGroup[] = [];
+  for (const entry of record.groups) {
     if (typeof entry !== 'object' || entry === null) continue;
-    const row = entry as Record<string, unknown>;
-    if (typeof row.categoryKey !== 'string' || typeof row.amount !== 'string') continue;
-    const id = typeof row.id === 'string' && row.id !== '' ? row.id : `row-${rows.length}`;
-    rows.push({ id, categoryKey: row.categoryKey, amount: row.amount });
+    const group = entry as Record<string, unknown>;
+    if (typeof group.categoryKey !== 'string' || !Array.isArray(group.amounts)) continue;
+    const amounts = group.amounts.filter(
+      (amount): amount is string => typeof amount === 'string' && amount.trim() !== '',
+    );
+    if (amounts.length === 0) continue;
+    const id =
+      typeof group.id === 'string' && group.id !== '' ? group.id : `group-saved-${groups.length}`;
+    groups.push({ id, categoryKey: group.categoryKey, amounts });
   }
-  if (rows.length === 0) return null;
+  if (groups.length === 0) return null;
 
   return {
     tournament: typeof record.tournament === 'string' ? record.tournament : null,
-    rows,
+    groups,
     savedAt: typeof record.savedAt === 'string' ? record.savedAt : '',
   };
 }

@@ -20,7 +20,15 @@ import {
   specKey,
   underLimits,
 } from '../src/lib/chess/categorySpec';
-import { buildPrizePlan, isComplete, newRow, seedRows } from '../src/lib/chess/prizePlan';
+import {
+  buildPrizePlan,
+  filledAmounts,
+  isComplete,
+  newGroup,
+  seedGroups,
+  withTrailingGroup,
+  withTrailingSlot,
+} from '../src/lib/chess/prizePlan';
 import { matchesTournament, parseSetup } from '../src/lib/chess/savedSetup';
 import type { RankedPlayer } from '../src/lib/chess/swissManager';
 
@@ -52,8 +60,8 @@ const RANKING: RankedPlayer[] = [
   player({ rank: 8, name: 'Hotel', rating: 0, female: true }),
 ];
 
-const rowsFor = (pairs: [string, string][]) =>
-  pairs.map(([key, amount]) => newRow(key, amount));
+const groupsFor = (pairs: [string, string[]][]) =>
+  pairs.map(([key, amounts]) => newGroup(key, amounts));
 
 // ---------- the band rule ----------
 
@@ -163,20 +171,19 @@ test('spec keys survive a round trip through storage', () => {
 test('a half-typed rating limit is not yet a category', () => {
   assert.equal(parseSpecKey('under:'), null);
   assert.equal(parseSpecKey('under:abc'), null);
-  assert.equal(isComplete(newRow('under:', '1000')), false, 'the form must not add a row yet');
-  assert.equal(isComplete(newRow('under:1600', '')), false);
-  assert.equal(isComplete(newRow('under:1600', '1000')), true);
+  assert.equal(isComplete(newGroup('under:', ['1000'])), false, 'the form must not grow yet');
+  assert.equal(isComplete(newGroup('under:1600', [''])), false);
+  assert.equal(isComplete(newGroup('under:1600', ['1000'])), true);
 });
 
 // ---------- rows to a plan ----------
 
 test('rows become one category per distinct choice, in the order typed', () => {
   const plan = buildPrizePlan(
-    rowsFor([
-      ['overall', '4500'],
-      ['overall', '3500'],
-      ['female', '1000'],
-      ['', '800'],
+    groupsFor([
+      ['overall', ['4500', '3500']],
+      ['female', ['1000']],
+      ['', ['800']],
     ]),
     RANKING,
     [],
@@ -187,17 +194,17 @@ test('rows become one category per distinct choice, in the order typed', () => {
     ['Overall', 'Best female'],
   );
   assert.deepEqual(plan.amounts[0], { categoryId: 'overall', amounts: ['4500', '3500'] });
-  assert.equal(plan.incomplete.length, 1, 'the row with no category is reported, not dropped');
+  assert.equal(plan.incomplete.length, 1, 'the group with no category is reported, not dropped');
 });
 
 test('the band narrows as soon as the lower prize is added', () => {
-  const before = buildPrizePlan(rowsFor([['under:1600', '1000']]), RANKING, []);
+  const before = buildPrizePlan(groupsFor([['under:1600', ['1000']]]), RANKING, []);
   assert.equal(before.categories[0].players.length, 5);
 
   const after = buildPrizePlan(
-    rowsFor([
-      ['under:1600', '1000'],
-      ['under:1500', '800'],
+    groupsFor([
+      ['under:1600', ['1000']],
+      ['under:1500', ['800']],
     ]),
     RANKING,
     [],
@@ -211,10 +218,10 @@ test('the band narrows as soon as the lower prize is added', () => {
 
 test('the 1452 player takes the under-1500 prize, not the under-1600 one', () => {
   const plan = buildPrizePlan(
-    rowsFor([
-      ['overall', '4500'],
-      ['under:1600', '1000'],
-      ['under:1500', '800'],
+    groupsFor([
+      ['overall', ['4500']],
+      ['under:1600', ['1000']],
+      ['under:1500', ['800']],
     ]),
     RANKING,
     [],
@@ -231,10 +238,9 @@ test('the 1452 player takes the under-1500 prize, not the under-1600 one', () =>
 test('a player still takes only their biggest prize across bands', () => {
   // Bravo is 2nd overall, so the under-1600 prize moves down to Charlie.
   const plan = buildPrizePlan(
-    rowsFor([
-      ['overall', '4500'],
-      ['overall', '3500'],
-      ['under:1600', '1000'],
+    groupsFor([
+      ['overall', ['4500', '3500']],
+      ['under:1600', ['1000']],
     ]),
     RANKING,
     [],
@@ -248,10 +254,7 @@ test('a player still takes only their biggest prize across bands', () => {
 
 test('two rows for the same band are that band’s 1st and 2nd prize', () => {
   const plan = buildPrizePlan(
-    rowsFor([
-      ['under:1600', '1000'],
-      ['under:1600', '800'],
-    ]),
+    groupsFor([['under:1600', ['1000', '800']]]),
     RANKING,
     [],
   );
@@ -269,34 +272,37 @@ test('two rows for the same band are that band’s 1st and 2nd prize', () => {
 // ---------- seeding from a prize sheet that was dropped in anyway ----------
 
 test('an unplaceable amount arrives as a row with no category', () => {
-  const rows = seedRows(
+  const groups = seedGroups(
     [{ categoryId: 'overall', amounts: ['4500', '3500'] }],
     [{ id: 'overall', label: 'Overall', players: RANKING }],
     ['1000'],
   );
   assert.deepEqual(
-    rows.map((row) => [row.categoryKey, row.amount]),
+    groups.map((group) => [group.categoryKey, group.amounts]),
     [
-      ['overall', '4500'],
-      ['overall', '3500'],
-      ['', '1000'],
+      ['overall', ['4500', '3500']],
+      ['', ['1000']],
     ],
   );
 });
 
 test('a derived "Rated below 1500" category seeds a real rating band', () => {
-  const rows = seedRows(
+  const groups = seedGroups(
     [{ categoryId: 'rated-below-1500', amounts: ['800'] }],
     [{ id: 'rated-below-1500', label: 'Rated below 1500', players: [] }],
     [],
   );
-  assert.equal(rows[0].categoryKey, 'under:1500');
+  assert.equal(groups[0].categoryKey, 'under:1500');
 });
 
 // ---------- what gets remembered ----------
 
 test('a saved setup is only restored for the tournament it was typed for', () => {
-  const setup = { tournament: 'Example Rapid - Open', rows: [newRow('overall', '4500')], savedAt: '' };
+  const setup = {
+    tournament: 'Example Rapid - Open',
+    groups: [newGroup('overall', ['4500'])],
+    savedAt: '',
+  };
   assert.equal(matchesTournament(setup, 'Example Rapid - Open'), true);
   assert.equal(matchesTournament(setup, 'example rapid - open'), true);
   assert.equal(matchesTournament(setup, 'Other Event 2026'), false);
@@ -305,15 +311,80 @@ test('a saved setup is only restored for the tournament it was typed for', () =>
 
 test('a damaged saved setup comes back as nothing', () => {
   assert.equal(parseSetup(null), null);
-  assert.equal(parseSetup({ rows: 'nope' }), null);
-  assert.equal(parseSetup({ rows: [] }), null);
-  assert.equal(parseSetup({ rows: [{ categoryKey: 'overall' }] }), null, 'no amount, no row');
+  assert.equal(parseSetup({ groups: 'nope' }), null);
+  assert.equal(parseSetup({ groups: [] }), null);
+  assert.equal(parseSetup({ groups: [{ categoryKey: 'overall', amounts: [] }] }), null);
+  assert.equal(
+    parseSetup({ rows: [{ id: 'r1', categoryKey: 'overall', amount: '4500' }] }),
+    null,
+    'a v1 value is ignored rather than half-read',
+  );
 
   const good = parseSetup({
     tournament: 'X',
-    rows: [{ id: 'r1', categoryKey: 'overall', amount: '4500' }],
+    groups: [{ id: 'g1', categoryKey: 'overall', amounts: ['4500', '3500'] }],
     savedAt: '2026-11-02T10:00:00.000Z',
   });
-  assert.equal(good?.rows.length, 1);
-  assert.equal(good?.rows[0].amount, '4500');
+  assert.equal(good?.groups.length, 1);
+  assert.deepEqual(good?.groups[0].amounts, ['4500', '3500']);
+});
+
+// ---------- the growing amount slots ----------
+
+test('a group always offers one empty slot after the last prize typed', () => {
+  assert.deepEqual(withTrailingSlot(newGroup('female', ['1000'])).amounts, ['1000', '']);
+  assert.deepEqual(withTrailingSlot(newGroup('female', ['1000', ''])).amounts, ['1000', '']);
+  assert.deepEqual(
+    withTrailingSlot(newGroup('female', ['1000', '', '800'])).amounts,
+    ['1000', '800', ''],
+    'a blank left in the middle is closed up, not kept as a place',
+  );
+});
+
+test('typing a second amount is what makes it a second prize', () => {
+  const one = buildPrizePlan(groupsFor([['female', ['500']]]), RANKING, []);
+  assert.deepEqual(one.amounts[0].amounts, ['500']);
+
+  const two = buildPrizePlan(groupsFor([['female', ['500', '300']]]), RANKING, []);
+  assert.deepEqual(two.amounts[0].amounts, ['500', '300']);
+  const allocation = allocate(two.categories, two.amounts);
+  assert.deepEqual(
+    allocation.awards.map((award) => [award.place, award.winner?.name, award.amount]),
+    [
+      [1, 'Echo', '500'],
+      [2, 'Hotel', '300'],
+    ],
+  );
+});
+
+test('trailing empty slots never become prizes', () => {
+  const plan = buildPrizePlan(groupsFor([['female', ['500', '', '']]]), RANKING, []);
+  assert.deepEqual(plan.amounts[0].amounts, ['500']);
+  assert.equal(filledAmounts(newGroup('female', ['500', ''])).length, 1);
+});
+
+test('a second group for the same category continues its prize list', () => {
+  const plan = buildPrizePlan(
+    groupsFor([
+      ['female', ['500']],
+      ['overall', ['4500']],
+      ['female', ['300']],
+    ]),
+    RANKING,
+    [],
+  );
+  assert.equal(plan.categories.length, 2, 'no duplicate Best female category');
+  const female = plan.amounts.find((entry) => entry.categoryId === 'female');
+  assert.deepEqual(female?.amounts, ['500', '300']);
+});
+
+test('the list of groups keeps one blank group waiting at the end', () => {
+  const groups = withTrailingGroup([newGroup('female', ['500'])]);
+  assert.equal(groups.length, 2);
+  assert.equal(groups[1].categoryKey, '');
+  assert.equal(
+    withTrailingGroup(groups).length,
+    2,
+    'it does not keep adding while the last one is still blank',
+  );
 });

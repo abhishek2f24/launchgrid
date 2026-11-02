@@ -29,7 +29,13 @@ import {
 import { allocate, isCash } from '@/lib/chess/allocate';
 import { buildCatalog } from '@/lib/chess/categorySpec';
 import { type ImportResult, importFiles } from '@/lib/chess/importFiles';
-import { type PrizeRow, buildPrizePlan, newRow, seedRows } from '@/lib/chess/prizePlan';
+import {
+  type PrizeGroup,
+  buildPrizePlan,
+  newGroup,
+  seedGroups,
+  withTrailingGroup,
+} from '@/lib/chess/prizePlan';
 import { clearSetup, matchesTournament, readSetup, saveSetup } from '@/lib/chess/savedSetup';
 import { legacySections } from '@/lib/chess/legacyAdapter';
 import { buildSampleWorkbook } from '@/lib/chess/sampleWorkbook';
@@ -45,7 +51,7 @@ import {
 } from '@/lib/chess/winners';
 import { type PrizeSection, buildWinnerWorkbook, outputFileName } from '@/lib/chess/workbook';
 
-import { PrizeBuilder, withTrailingBlank } from './PrizeBuilder';
+import { PrizeBuilder } from './PrizeBuilder';
 import { PrizeList, RankingTable, money } from './PrizeList';
 
 const KIND_LABELS: Record<string, string> = {
@@ -67,7 +73,7 @@ function downloadBlob(blob: Blob, fileName: string) {
 
 export function WinnersTool() {
   const [imported, setImported] = useState<ImportResult | null>(null);
-  const [rows, setRows] = useState<PrizeRow[]>([newRow()]);
+  const [groups, setGroups] = useState<PrizeGroup[]>([newGroup()]);
   const [restoredAt, setRestoredAt] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(MODE_1);
   const [busy, setBusy] = useState(false);
@@ -93,15 +99,15 @@ export function WinnersTool() {
       // tournament.
       const saved = readSetup();
       if (saved && matchesTournament(saved, result.tournament)) {
-        setRows(withTrailingBlank(saved.rows));
+        setGroups(withTrailingGroup(saved.groups));
         setRestoredAt(saved.savedAt);
       } else {
-        const seeded = seedRows(
+        const seeded = seedGroups(
           result.amounts,
           result.categories,
           result.unmatched.map((row) => row.prize),
         );
-        setRows(withTrailingBlank(seeded));
+        setGroups(withTrailingGroup(seeded));
         setRestoredAt(null);
       }
     } catch (e) {
@@ -117,7 +123,7 @@ export function WinnersTool() {
 
   const reset = () => {
     setImported(null);
-    setRows([newRow()]);
+    setGroups([newGroup()]);
     setRestoredAt(null);
     setError(null);
     setShowRanking(false);
@@ -130,8 +136,8 @@ export function WinnersTool() {
   // about to restore.
   useEffect(() => {
     if (!imported) return;
-    saveSetup(imported.tournament, rows);
-  }, [imported, rows]);
+    saveSetup(imported.tournament, groups);
+  }, [imported, groups]);
 
   const catalog = useMemo(
     () => (imported ? buildCatalog(imported.ranking, imported.categories) : []),
@@ -171,7 +177,7 @@ export function WinnersTool() {
       }
     }
 
-    const plan = buildPrizePlan(rows, imported.ranking, imported.categories);
+    const plan = buildPrizePlan(groups, imported.ranking, imported.categories);
     const allocation = allocate(plan.categories, plan.amounts);
     return {
       sections: allocation.byCategory.map<PrizeSection>((entry) => ({
@@ -185,7 +191,7 @@ export function WinnersTool() {
         plan.categories.map((category) => [category.id, category.players.length]),
       ) as Record<string, number>,
     };
-  }, [imported, rows, mode]);
+  }, [imported, groups, mode]);
 
   const download = async () => {
     if (!result) return;
@@ -233,14 +239,14 @@ export function WinnersTool() {
           ) : (
             <>
               {restoredAt ? <Restored savedAt={restoredAt} onClear={() => {
-                setRows([newRow()]);
+                setGroups([newGroup()]);
                 setRestoredAt(null);
               }} /> : null}
               <PrizeBuilder
-                rows={rows}
+                groups={groups}
                 catalog={catalog}
                 memberCounts={result?.memberCounts ?? {}}
-                onChange={setRows}
+                onChange={setGroups}
                 playerCount={imported.ranking.length}
               />
             </>

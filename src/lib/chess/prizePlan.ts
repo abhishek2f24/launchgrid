@@ -1,13 +1,15 @@
 /**
  * The prize list as the organiser types it, turned into something allocatable.
  *
- * On the page a prize list is a flat sequence of rows — pick a category, type
- * an amount — because that is how it is written on paper and read out at the
- * ceremony. `allocate()` wants it grouped by category, with each category's
- * prizes in order. This module is the join between the two, and it is where
- * the rating bands get resolved: the set of "under" limits is only knowable
- * once every row has been entered, so no single row can work out its own
- * membership.
+ * A prize list is written one category at a time — "female: 1000, 800" — not
+ * one prize at a time, so that is the shape here: a group is a category and
+ * the amounts under it, best first. The form gives each group a fresh empty
+ * slot as the last one is filled, which is how the organiser tells us there
+ * are two female prizes rather than one: they type the second amount.
+ *
+ * That ordering is load-bearing twice over. Within a group it decides which
+ * prize is 1st and which is 2nd, and across groups it is what `allocate()`
+ * uses to break a tie between two prizes of the same amount.
  */
 
 import type { Category, CategoryAmounts } from './allocate';
@@ -21,74 +23,98 @@ import {
 } from './categorySpec';
 import type { RankedPlayer } from './swissManager';
 
-export type PrizeRow = {
-  /** Stable across re-renders and reorderings; not meaningful to the plan. */
+export type PrizeGroup = {
+  /** Stable across re-renders; not meaningful to the plan. */
   id: string;
   /** A `specKey`, or '' while the organiser has not chosen a category yet. */
   categoryKey: string;
-  /** "4500", or "Trophy". Free text, validated when the plan is built. */
-  amount: string;
+  /** Amounts in prize order, best first. May hold blanks while being typed. */
+  amounts: string[];
 };
 
 export type PrizePlan = {
   categories: Category[];
   amounts: CategoryAmounts[];
-  /** Rows that are not yet a prize — no category, or no amount. */
-  incomplete: PrizeRow[];
+  /** Groups that are not yet a prize — no category, or no amount typed. */
+  incomplete: PrizeGroup[];
 };
 
-export function newRow(categoryKey = '', amount = ''): PrizeRow {
-  return { id: `row-${Math.random().toString(36).slice(2, 10)}`, categoryKey, amount };
+let counter = 0;
+
+export function newGroup(categoryKey = '', amounts: string[] = ['']): PrizeGroup {
+  counter += 1;
+  return { id: `group-${counter}-${Math.random().toString(36).slice(2, 8)}`, categoryKey, amounts };
+}
+
+/** The amounts actually typed, in order, with the empty trailing slots dropped. */
+export function filledAmounts(group: PrizeGroup): string[] {
+  return group.amounts.map((amount) => amount.trim()).filter((amount) => amount !== '');
 }
 
 /**
- * A row counts once it names a category we can resolve and an amount. The
- * category check is not just "not empty": picking "Under…" from the dropdown
- * leaves a half-built key until the limit is typed, and a half-built row must
- * not be treated as a prize.
+ * A group counts once it names a category we can resolve and holds at least
+ * one amount. The category check is not just "not empty": picking "Under…"
+ * leaves a half-built key until the limit is typed, and a half-built group
+ * must not be treated as a prize.
  */
-export function isComplete(row: PrizeRow): boolean {
-  return row.amount.trim() !== '' && parseSpecKey(row.categoryKey) !== null;
+export function isComplete(group: PrizeGroup): boolean {
+  return parseSpecKey(group.categoryKey) !== null && filledAmounts(group).length > 0;
 }
 
 /**
- * Build the plan from the rows.
+ * Keep exactly one empty slot at the end of a group, so finishing a prize is
+ * what offers the next one. A blank in the middle is dropped — it came from
+ * clearing a box, and leaving it would silently shift every prize below it up
+ * a place.
+ */
+export function withTrailingSlot(group: PrizeGroup): PrizeGroup {
+  return { ...group, amounts: [...filledAmounts(group), ''] };
+}
+
+/** The same, for the list of groups: one blank group waiting at the end. */
+export function withTrailingGroup(groups: PrizeGroup[]): PrizeGroup[] {
+  const last = groups[groups.length - 1];
+  return last && !isComplete(last) ? groups : [...groups, newGroup()];
+}
+
+/**
+ * Build the plan from the groups.
  *
- * Row order is kept, and it matters twice: it decides each category's 1st,
- * 2nd, 3rd prize, and `allocate()` uses it to break ties between two prizes of
- * the same amount.
+ * Two groups naming the same category are merged, in the order they appear, so
+ * an organiser who adds a second "Best female" row further down gets 3rd and
+ * 4th female prizes rather than a duplicate category.
  */
 export function buildPrizePlan(
-  rows: PrizeRow[],
+  groups: PrizeGroup[],
   ranking: RankedPlayer[],
   exportCategories: Category[],
 ): PrizePlan {
-  const complete = rows.filter(isComplete);
-  const specs: { row: PrizeRow; spec: CategorySpec }[] = [];
-  for (const row of complete) {
-    const spec = parseSpecKey(row.categoryKey);
-    if (spec) specs.push({ row, spec });
+  const resolved: { spec: CategorySpec; amounts: string[] }[] = [];
+  for (const group of groups) {
+    const spec = parseSpecKey(group.categoryKey);
+    const amounts = filledAmounts(group);
+    if (spec && amounts.length > 0) resolved.push({ spec, amounts });
   }
 
   // Every declared limit, before any membership is worked out: "under 1600"
-  // only means 1500–1599 once the under-1500 row exists.
-  const limits = underLimits(specs.map((entry) => entry.spec));
+  // only means 1500–1599 once the under-1500 prize exists.
+  const limits = underLimits(resolved.map((entry) => entry.spec));
 
   const categories: Category[] = [];
   const amounts = new Map<string, string[]>();
-  for (const { row, spec } of specs) {
-    const key = specKey(spec);
+  for (const entry of resolved) {
+    const key = specKey(entry.spec);
     if (!amounts.has(key)) {
       amounts.set(key, []);
       categories.push({
         // The spec key is already unique and stable, and two different rating
         // bands must not collapse into one category.
         id: key,
-        label: resolvedLabel(spec, limits),
-        players: membersOf(spec, ranking, exportCategories, limits),
+        label: resolvedLabel(entry.spec, limits),
+        players: membersOf(entry.spec, ranking, exportCategories, limits),
       });
     }
-    amounts.get(key)!.push(row.amount.trim());
+    amounts.get(key)!.push(...entry.amounts);
   }
 
   return {
@@ -97,38 +123,37 @@ export function buildPrizePlan(
       categoryId: category.id,
       amounts: amounts.get(category.id) ?? [],
     })),
-    incomplete: rows.filter((row) => !isComplete(row)),
+    incomplete: groups.filter((group) => !isComplete(group)),
   };
 }
 
 /**
- * Seed rows from an organiser's own prize sheet, where they dropped one in.
+ * Seed groups from an organiser's own prize sheet, where they dropped one in.
  *
  * Amounts the sheet could not place keep their money and lose their category,
- * so they arrive as a row with the dropdown open rather than as a warning the
- * organiser has to act on somewhere else.
+ * so they arrive as a group with the dropdown open rather than as a warning
+ * the organiser has to act on somewhere else.
  */
-export function seedRows(
+export function seedGroups(
   amounts: CategoryAmounts[],
   exportCategories: Category[],
   unmatchedAmounts: string[],
-): PrizeRow[] {
+): PrizeGroup[] {
   const labelById = new Map(exportCategories.map((category) => [category.id, category.label]));
-  const rows: PrizeRow[] = [];
+  const groups: PrizeGroup[] = [];
 
   for (const entry of amounts) {
     const label = labelById.get(entry.categoryId);
     if (label === undefined) continue;
-    const key = keyForImportedCategory(label);
-    for (const amount of entry.amounts) {
-      if (amount.trim() !== '') rows.push(newRow(key, amount.trim()));
-    }
+    const typed = entry.amounts.map((amount) => amount.trim()).filter((amount) => amount !== '');
+    if (typed.length === 0) continue;
+    groups.push(newGroup(keyForImportedCategory(label), typed));
   }
   for (const amount of unmatchedAmounts) {
-    if (amount.trim() !== '') rows.push(newRow('', amount.trim()));
+    if (amount.trim() !== '') groups.push(newGroup('', [amount.trim()]));
   }
 
-  return rows;
+  return groups;
 }
 
 /**

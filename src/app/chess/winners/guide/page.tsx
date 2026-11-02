@@ -50,9 +50,15 @@ export default function GuidePage() {
 
       <Section title="3. The prize money — typed on this page">
         <p>
-          There is no prize sheet to prepare. Each prize is one row: choose the category from the
-          dropdown, type the amount, and the next row appears by itself. Write{' '}
+          There is no prize sheet to prepare. One row per category: choose it from the dropdown,
+          then type that category’s prizes biggest first. A box for the next prize appears as you
+          fill the current one, so <strong>two amounts under “Best female” is how you say there
+          are two female prizes</strong> — there is no count to set anywhere. Write{' '}
           <code>Trophy</code> instead of an amount for a trophy.
+        </p>
+        <p className="mt-3">
+          If you type several amounts into one box — <code>1000, 800</code> — they are split into
+          separate prizes when you move on, so pasting a line from your own list works too.
         </p>
         <p className="mt-3">
           The list is kept in this browser, so a refresh or a closed laptop lid does not lose it.
