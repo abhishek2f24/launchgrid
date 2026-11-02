@@ -311,3 +311,29 @@ eslint clean on changed files, `npm run build`.
 
 Watch out for: the files live in the user's Downloads, not in the repo — the
 fixtures in `tests/chessResults.test.ts` copy their shape with invented names.
+
+## 2026-11-02 (later still) — no HTTPS on any subdomain (Claude Opus 5)
+
+No code changed. Checking the chess deploy turned up a production gap that is
+bigger than ChessGrid, now written up as the first P1 in `.ai/TODO.md`.
+
+The certificate production serves has `SAN: DNS:launchgrid.in` and nothing
+else — **no wildcard**. So every subdomain dies at the TLS handshake, not at
+routing: `chess.launchgrid.in` and an invented `zzz-nonexistent.launchgrid.in`
+both give `ECONNRESET` on SNI, while plain HTTP serves all of them fine (a
+wildcard `*.launchgrid.in` → `cname.vercel-dns.com` already exists in DNS).
+
+That means **merchant storefronts are affected too**. Vercel issues a cert per
+domain *added to the project*, and nothing here ever adds one — no Vercel
+domains API call anywhere in `src`/`scripts`, no Vercel vars in `.env.example`.
+A merchant finishing onboarding gets a `tenants` row, working DNS, and a URL
+that fails in every browser; `/discover` links stores at exactly that URL.
+
+Two caveats on the finding: the Vercel dashboard was not visible from here, so
+a store domain added by hand could exist, and `/discover` listed no stores, so
+no live tenant subdomain was testable.
+
+Fixing chess is one click (add the host; the CNAME is there). Fixing storefronts
+is not — the nameservers are GoDaddy, so a wildcard cert needs either Vercel
+nameservers or a maintained `_acme-challenge` TXT record, and the durable answer
+is to call the Vercel domains API from `src/actions/onboarding.ts` at signup.

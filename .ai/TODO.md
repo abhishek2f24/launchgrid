@@ -67,6 +67,44 @@ From the 2026-09-30 audit. Every item names a real file and a verified gap.
   no secrets: it completed successfully in this audit from a clean install.
 - **Verification:** The workflow goes green, and a deliberately broken type fails it.
 
+### No HTTPS on any subdomain — storefronts and ChessGrid are unreachable
+- **Location:** Vercel project domains, DNS for `launchgrid.in`, `src/proxy.ts`,
+  `src/app/discover/page.tsx` (links stores as `https://<subdomain>.launchgrid.in`)
+- **Problem:** The production certificate covers **`launchgrid.in` only** — its
+  SAN list is exactly `DNS:launchgrid.in`, with no wildcard. Every subdomain
+  therefore fails at the TLS handshake (`ECONNRESET` on SNI), including
+  `chess.launchgrid.in` and any made-up name. Plain HTTP works for all of them,
+  because a wildcard `*.launchgrid.in` → `cname.vercel-dns.com` already exists in
+  DNS — so routing and `src/proxy.ts` are fine and this is purely a certificate
+  gap. Vercel issues a certificate per domain **added to the project**, and
+  nothing in this codebase ever adds one: `grep -rniE
+  "api\.vercel\.com|vercel.*domains|VERCEL_(TOKEN|PROJECT_ID|TEAM)" src scripts`
+  returns nothing, and `.env.example` has no Vercel entries. A merchant who
+  completes onboarding today gets a `tenants` row, a working DNS record, and a
+  storefront URL that fails in every browser.
+- **Verified 2026-11-02:** `launchgrid.in` → `TLS OK | CN: launchgrid.in | SAN:
+  DNS:launchgrid.in`; `chess.launchgrid.in` and `zzz-nonexistent.launchgrid.in`
+  → `ECONNRESET`; `http://chess.launchgrid.in/` and every `/chess/*` route → 200.
+  `/discover` listed no stores, so no live tenant subdomain was testable, and the
+  Vercel dashboard was not visible from here — an individually added store domain
+  may exist.
+- **Expected result:** Two parts, and they are not the same job.
+  1. **ChessGrid** — add the single host `chess.launchgrid.in` in the project's
+     Domains settings. Needs nothing else; the CNAME is already there. This also
+     closes the P2 item below.
+  2. **Storefronts** — these need a wildcard, which is harder. The nameservers
+     are GoDaddy (`ns23`/`ns24.domaincontrol.com`), not Vercel's, so Let's Encrypt
+     cannot be satisfied automatically: either move the nameservers to Vercel, or
+     add the `_acme-challenge` TXT record Vercel asks for and keep it renewed.
+     The alternative, and the usual pattern for this shape of product, is to call
+     the Vercel domains API from `src/actions/onboarding.ts` as each subdomain is
+     claimed. That is real work and needs a `VERCEL_TOKEN` and project id in env.
+- **Verification:** `https://chess.launchgrid.in` and a real storefront
+  subdomain both load with a valid certificate; a newly claimed subdomain is
+  reachable over HTTPS without manual steps.
+- **⚠️ Part 1 and the DNS/nameserver choice in part 2 are human tasks** — they
+  need Vercel and registrar console access.
+
 ### Use a constant-time comparison for the webhook signature
 - **Location:** `src/app/api/webhooks/razorpay/route.ts`
 - **Problem:** `expectedSignature !== signature` is not constant-time.
@@ -76,15 +114,13 @@ From the 2026-09-30 audit. Every item names a real file and a verified gap.
 
 ## P2 — Medium
 
-### Point chess.launchgrid.in at Vercel
-- **Location:** DNS for `launchgrid.in`, Vercel project domains
-- **Problem:** The ChessGrid product is built and served by `src/proxy.ts` for
-  the host `chess.launchgrid.in`, but that host does not exist yet, so the pages
-  are only reachable at `launchgrid.in/chess/*` — which every canonical URL and
-  the chess sitemap point away from.
-- **Expected result:** A CNAME for `chess` to Vercel, `chess.launchgrid.in`
-  added to the project, and the sitemap submitted in Search Console.
-- **⚠️ Human task** — needs DNS and Vercel console access.
+### Submit the ChessGrid sitemap in Search Console
+- **Location:** `src/app/chess/sitemap.ts`, `src/app/chess/robots.txt/route.ts`
+- **Problem:** The chess pages advertise `https://chess.launchgrid.in` as their
+  canonical host and ship their own sitemap and robots, but nothing has been
+  submitted for that host. Blocked until the certificate exists — see the P1
+  above.
+- **⚠️ Human task** — needs Search Console access.
 
 ### Let organisers name a category the tool could not match
 - **Location:** `src/lib/chess/importFiles.ts`, `src/lib/chess/allocate.ts`
